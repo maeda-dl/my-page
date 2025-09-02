@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>はじめてのGitHub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 html, body {
   margin:0; padding:0; height:100%;
@@ -17,30 +18,38 @@ html, body {
   position:relative; z-index:1;
   display:flex; flex-direction:column; align-items:center;
   justify-content:center;
-  width:100%; height:100%;
+  width:90%; /* 左右5%ずつ余白 */
   text-align:center;
+  max-width:600px;
 }
 
 .message{
-  font-size:3em;
+  font-size:clamp(20px,5vw,60px); /* 画面幅に応じて文字サイズ調整 */
   margin:0.2em 0;
   padding:5px 10px;
-  border-radius:10px; background:rgba(0,0,0,0.3);
+  border-radius:10px;
+  background:rgba(0,0,0,0.3);
   opacity:0; position:relative;
 }
 
 #dataLine{
   display:flex; justify-content:center; gap:0.5em;
-  font-size:2.5em;
+  font-size:clamp(18px,4vw,50px);
   opacity:0;
 }
 
 img{
-  opacity:0; max-width:90vw; height:auto; position:relative; margin:5px 0;
+  opacity:0;
+  width:100%;
+  height:auto;
+  max-height:40vh;
+  object-fit:contain;
+  margin:10px 0;
 }
 
-#imgA{position:relative; width:80%; max-height:40vh; object-fit:contain;}
-#imgB{width:80%; max-height:40vh; object-fit:contain;}
+#imgA,#imgB{
+  max-width:100%;
+}
 
 canvas{
   position:absolute; top:0; left:0; z-index:0;
@@ -84,21 +93,30 @@ setInterval(changeBackground, 3000);
 // アニメーション
 // --------------------------
 const tl = gsap.timeline();
+
+// はじめまして
 gsap.set("#msg1",{opacity:0, y:50});
 tl.to("#msg1",{opacity:1, y:0, duration:1.5, ease:"power2.out"});
 
+// Data Line
 gsap.set("#dataLine",{opacity:0, y:30});
 tl.to("#dataLine",{opacity:1, y:0, duration:1, ease:"power2.out"}, "+=0.5");
 
+// の
 gsap.set("#msg4",{opacity:0, scale:0});
 tl.to("#msg4",{opacity:1, scale:1, duration:1, ease:"back.out(1.7)"}, "+=0.5");
 
-gsap.set("#imgA",{opacity:0, scale:0.9});
-tl.to("#imgA",{opacity:1, scale:1, duration:1.5, ease:"power2.out"}, "+=0.5");
+// 画像A表示
+const imgA = document.getElementById("imgA");
+gsap.set(imgA,{opacity:0, scale:0.9});
+tl.to(imgA,{opacity:1, scale:1, duration:1.5, ease:"power2.out"}, "+=0.5");
 
-gsap.set(["#imgB","#msg5"],{opacity:0});
-tl.to("#imgA",{opacity:0,duration:0.5}, "+=1");
-tl.to(["#imgB","#msg5"],{opacity:1,duration:0.5}, "-=0.2");
+// 画像Aを消して画像Bと前田です表示
+const imgB = document.getElementById("imgB");
+const msgFinal = document.getElementById("msg5");
+gsap.set([imgB,msgFinal],{opacity:0});
+tl.to(imgA,{opacity:0,duration:0.5}, "+=1");
+tl.to([imgB,msgFinal],{opacity:1,duration:0.5}, "-=0.2");
 
 // --------------------------
 // 粒子背景
@@ -108,6 +126,7 @@ const ctx=canvas.getContext("2d");
 let w,h;
 function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
 window.addEventListener("resize",resize); resize();
+
 const particles=[]; const numParticles=100;
 for(let i=0;i<numParticles;i++){
   particles.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*3+1, dx:(Math.random()-0.5)*1.5, dy:(Math.random()-0.5)*1.5});
