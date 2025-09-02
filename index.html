@@ -1,164 +1,162 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>アニメーション表示</title>
-<style>
-html, body {
-  margin:0; padding:0; height:100%;
-  font-family:sans-serif;
-  overflow:hidden;
-  background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
-  transition: background 1s ease;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アニメーション表示</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: sans-serif;
+      overflow-y: auto; /* ← スクロール可能に */
+      background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
+      transition: background 1s ease;
+    }
 
-/* 粒子キャンバス */
-#particles {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
+    #particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
 
-/* コンテナ */
-.container {
-  position: relative;
-  top:5%;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  text-align: center;
-}
+    .container {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      z-index: 2;
+      text-align: center;
+      padding-top: 5vh;
+    }
 
-/* 文字共通 */
-.message {
-  opacity: 0;
-  margin: 0.5em 0;
-  white-space: nowrap;
-  position: relative;
-}
+    .message {
+      opacity: 0;
+      margin: 0.5em 0;
+      white-space: nowrap;
+      position: relative;
+    }
 
-/* 文字サイズ */
-#msg1 { font-size: clamp(20px,5vw,60px); }  /* はじめまして */
-#dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; }
+    #msg1 {
+      font-size: clamp(20px, 5vw, 60px);
+    }
 
-/* 画像 */
-.image {
-  position: absolute; /* 画面中央 */
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 80%;
-  opacity: 0;
-  transition: opacity 1s ease;
-  box-shadow: 0 0 30px rgba(0,0,0,0.3); /* 枠ぼかし */
-  border-radius: 10px;
-}
+    #dataLine {
+      font-size: clamp(24px, 6vw, 70px);
+      font-weight: bold;
+    }
 
-/* 前田です */
-#msgFinal {
-  position: absolute;
-  bottom: 20%;
-  left: 50%;
-  transform: translate(-50%, 150%);
-  font-size: clamp(40px, 8vw, 80px);
-  padding: 10px 20px;
-  border-radius: 15px;
-  opacity: 0;
-  z-index: 3;
-}
+    .image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 80vw;
+      max-height: 40vh; /* スマホ対応：画像の高さを制限 */
+      opacity: 0;
+      transition: opacity 1s ease;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      z-index: 2;
+    }
 
-
-</style>
+    #msgFinal {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(24px, 6vw, 60px);
+      padding: 10px 20px;
+      border-radius: 15px;
+      opacity: 0;
+      z-index: 3;
+    }
+  </style>
 </head>
 <body>
-<canvas id="particles"></canvas>
+  <canvas id="particles"></canvas>
 
-<div class="container">
-  <div id="msg1" class="message">はじめまして</div>
-  <div id="dataLine" class="message">Data Line</div>
-  <img id="imgA" class="image" src="A.png">
-  <img id="imgB" class="image" src="B.png">
-  <div id="msgFinal">前田です</div>
-</div>
+  <div class="container">
+    <div id="msg1" class="message">はじめまして</div>
+    <div id="dataLine" class="message">Data Line</div>
+    <img id="imgA" class="image" src="A.png">
+    <img id="imgB" class="image" src="B.png">
+    <div id="msgFinal">前田です</div>
+  </div>
 
-<script>
-// -----------------------------
-// 粒子エフェクト（グレー濃め）
-// -----------------------------
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+  <script>
+    // 粒子アニメーション
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-let particles = [];
-for (let i=0;i<100;i++){
-  particles.push({
-    x: Math.random()*canvas.width,
-    y: Math.random()*canvas.height,
-    r: Math.random()*3+1,
-    dx: (Math.random()-0.5)*1.2,
-    dy: (Math.random()-0.5)*1.2
-  });
-}
+    let particles = [];
+    for (let i = 0; i < 100; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 3 + 1,
+        dx: (Math.random() - 0.5) * 1.2,
+        dy: (Math.random() - 0.5) * 1.2
+      });
+    }
 
-function drawParticles(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = "rgba(128,128,128,0.9)";
-  particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fill();
-    p.x += p.dx; p.y += p.dy;
-    if(p.x<0||p.x>canvas.width) p.dx*=-1;
-    if(p.y<0||p.y>canvas.height) p.dy*=-1;
-  });
-  requestAnimationFrame(drawParticles);
-}
-drawParticles();
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(128,128,128,0.9)";
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
 
-window.addEventListener("resize", ()=>{
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
 
-// -----------------------------
-// 背景色を3秒ごとに淡く変化
-// -----------------------------
-const bgColors = ["#f0f8ff","#e6f7ff","#f5f5dc","#fffaf0"];
-let colorIndex = 0;
-setInterval(()=>{
-  colorIndex = (colorIndex+1)%bgColors.length;
-  document.body.style.background = bgColors[colorIndex];
-},3000);
+    // 背景色の変化
+    const bgColors = ["#f0f8ff", "#e6f7ff", "#f5f5dc", "#fffaf0"];
+    let colorIndex = 0;
+    setInterval(() => {
+      colorIndex = (colorIndex + 1) % bgColors.length;
+      document.body.style.background = bgColors[colorIndex];
+    }, 3000);
 
-// -----------------------------
-// 文字と画像の順番にアニメーション
-// -----------------------------
-function fadeIn(el, delay){
-  setTimeout(()=>{ el.style.opacity = 1; }, delay);
-}
+    // フェードイン処理
+    function fadeIn(el, delay) {
+      setTimeout(() => {
+        el.style.opacity = 1;
+      }, delay);
+    }
 
-fadeIn(document.getElementById("msg1"), 500);
-fadeIn(document.getElementById("dataLine"), 2000);
-fadeIn(document.getElementById("imgA"), 5000);
+    fadeIn(document.getElementById("msg1"), 500);
+    fadeIn(document.getElementById("dataLine"), 2000);
+    fadeIn(document.getElementById("imgA"), 5000);
 
-setTimeout(()=>{
-  document.getElementById("imgA").style.opacity = 0;
-  document.getElementById("imgB").style.opacity = 1;
-  document.getElementById("msgFinal").style.opacity = 1;
-},8000);
-</script>
+    // 画像切り替えと「前田です」の表示
+    setTimeout(() => {
+      const imgA = document.getElementById("imgA");
+      const imgB = document.getElementById("imgB");
+      const msgFinal = document.getElementById("msgFinal");
+
+      imgA.style.opacity = 0;
+      imgB.style.opacity = 1;
+      msgFinal.style.opacity = 1;
+
+      // 画像Bの下に配置
+      const imgRect = imgB.getBoundingClientRect();
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      msgFinal.style.top = (imgRect.bottom + scrollTop + 20) + "px";
+    }, 8000);
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
