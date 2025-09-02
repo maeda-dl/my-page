@@ -27,12 +27,12 @@ html, body {
   padding:5px 10px;
   border-radius:10px;
   opacity:0; position:relative;
-  background:none; /* 背景削除 */
+  background:none;
 }
 
 #dataLine{
   display:flex; justify-content:center; gap:0.5em;
-  font-size:clamp(24px,6vw,70px); /* 文字を少し大きく */
+  font-size:clamp(24px,6vw,70px);
   opacity:0;
 }
 
@@ -102,11 +102,15 @@ const imgA = document.getElementById("imgA");
 gsap.set(imgA,{opacity:0, scale:0.9});
 tl.to(imgA,{opacity:1, scale:1, duration:1.5, ease:"power2.out"}, "+=0.5");
 
-// 画像A消して画像Bと前田です表示（上端揃え）
+// 画像A消して画像Bと前田です表示（上端揃え、同じ位置）
 const imgB = document.getElementById("imgB");
 const msgFinal = document.getElementById("msg5");
 gsap.set([imgB,msgFinal],{opacity:0});
+
+// 画像Aをフェードアウト
 tl.to(imgA,{opacity:0,duration:0.5}, "+=1");
+
+// 画像Bと前田ですを同時表示
 tl.to([imgB,msgFinal],{opacity:1,duration:0.5}, "-=0.2");
 
 // 粒子背景
