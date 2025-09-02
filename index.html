@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>社員紹介</title>
+  <title>社員紹介＋くじ引き</title>
   <style>
     html, body {
       margin: 0;
@@ -77,6 +77,47 @@
       box-shadow: 0 0 30px rgba(0,0,0,0.3);
       border-radius: 10px;
     }
+
+    #lotteryBtn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 3;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background: #0366d6;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    #points {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      background: rgba(255,255,255,0.7);
+      padding: 8px 12px;
+      border-radius: 8px;
+      z-index: 3;
+    }
+
+    #congrats {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      font-size: clamp(32px, 8vw, 80px);
+      font-weight: bold;
+      color: red;
+      opacity: 0;
+      z-index: 4;
+      transition: opacity 1s ease;
+      text-shadow: 0 0 20px white;
+    }
   </style>
 </head>
 <body>
@@ -95,6 +136,10 @@
     </div>
   </div>
 
+  <button id="lotteryBtn">抽選！</button>
+  <div id="points">ポイント: 0</div>
+  <div id="congrats">🎉おめでとう！🎉</div>
+
   <script>
     // 粒子アニメーション
     const canvas = document.getElementById("particles");
@@ -102,10 +147,10 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const particleChars = "MAEDA";
+    const particleChars = "MAEDA当たり";
     let particles = [];
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 120; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -165,6 +210,28 @@
       imgB.style.opacity = 1;
       name.style.opacity = 1;
     }, 8000);
+
+    // --- くじ引き機能 ---
+    let points = 0;
+    const btn = document.getElementById("lotteryBtn");
+    const congrats = document.getElementById("congrats");
+    const pointsEl = document.getElementById("points");
+
+    btn.addEventListener("click", () => {
+      // ランダムで粒子を拾う
+      const pick = particles[Math.floor(Math.random() * particles.length)];
+      if (pick.char === "当" || pick.char === "た" || pick.char === "り") {
+        // 当たりの場合
+        points += 10;
+        pointsEl.textContent = `ポイント: ${points}`;
+        congrats.style.opacity = 1;
+        setTimeout(() => {
+          congrats.style.opacity = 0;
+        }, 2000);
+      } else {
+        alert(`ハズレ… (${pick.char})`);
+      }
+    });
   </script>
 </body>
 </html>
