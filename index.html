@@ -1,76 +1,63 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>社員紹介</title>
-  <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: sans-serif;
-  background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
-  transition: background 1s ease;
-  overflow: hidden; /* ここでスクロール禁止 */
-}
-
-    #particles {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-.container {
-  position: relative;
-  width: 100%;
-  height: 100vh; /* min-height から height に変更 */
-  z-index: 2;
-  text-align: center;
-  padding-top: 5vh;
-  box-sizing: border-box; /* padding含めて高さ調整 */
-}
-
-    .message {
-      opacity: 0;
-      margin: 0.5em 0;
-      white-space: nowrap;
-      position: relative;
-    }
-
-    #msg1 {
-      font-size: clamp(20px, 5vw, 60px);
-    }
-
-    #dataLine {
-      font-size: clamp(24px, 6vw, 70px);
-      font-weight: bold;
-    }
-
-    #name {
-      font-size: clamp(24px, 6vw, 60px);
-      font-weight: bold;
-      opacity: 0;
-      transition: opacity 1s ease;
-      z-index: 3;
-      margin: 1em 0;
-    }
-
-    .image {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      max-width: 80vw;
-      max-height: 40vh;
-      opacity: 0;
-      transition: opacity 1s ease;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-      border-radius: 10px;
-      z-index: 2;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>社員紹介</title>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    height: 100%;
+    font-family: sans-serif;
+    background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
+    transition: background 1s ease;
+    overflow: hidden;
+  }
+  #particles {
+    position: absolute;
+    width: 100%; height: 100%;
+    z-index: 1;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 縦中央 */
+    align-items: center;     /* 横中央 */
+    height: 100vh;
+    position: relative;
+    padding: 5vh 0;
+    box-sizing: border-box;
+    text-align: center;
+    z-index: 2;
+  }
+  .message, #name {
+    opacity: 0;
+    margin: 0.5em 0;
+    white-space: nowrap;
+    font-weight: bold;
+    transition: opacity 1s ease;
+  }
+  #msg1 {
+    font-size: clamp(20px, 5vw, 60px);
+  }
+  #dataLine {
+    font-size: clamp(24px, 6vw, 70px);
+  }
+  #name {
+    font-size: clamp(24px, 6vw, 60px);
+  }
+  .image {
+    position: static; /* 絶対配置をやめる */
+    max-width: 80vw;
+    max-height: 40vh;
+    margin: 1em 0;
+    opacity: 0;
+    transition: opacity 1s ease;
+    box-shadow: 0 0 30px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    z-index: 2;
+  }
+</style>
 </head>
 <body>
   <canvas id="particles"></canvas>
@@ -79,12 +66,12 @@ html, body {
     <div id="msg1" class="message">はじめまして</div>
     <div id="dataLine" class="message">Data Line</div>
     <div id="name">前田だよ</div>
-    <img id="imgA" class="image" src="A.png">
-    <img id="imgB" class="image" src="B.png">
+    <img id="imgA" class="image" src="A.png" alt="画像A" />
+    <img id="imgB" class="image" src="B.png" alt="画像B" />
   </div>
 
   <script>
-    // 粒子アニメーション（文字タイプ：MAEDA）
+    // 粒子アニメーションはそのまま
     const canvas = document.getElementById("particles");
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
@@ -124,7 +111,6 @@ html, body {
       canvas.height = window.innerHeight;
     });
 
-    // 背景色の変化
     const bgColors = ["#f0f8ff", "#e6f7ff", "#f5f5dc", "#fffaf0"];
     let colorIndex = 0;
     setInterval(() => {
@@ -132,7 +118,6 @@ html, body {
       document.body.style.background = bgColors[colorIndex];
     }, 3000);
 
-    // フェードイン処理
     function fadeIn(el, delay) {
       setTimeout(() => {
         el.style.opacity = 1;
@@ -143,7 +128,6 @@ html, body {
     fadeIn(document.getElementById("dataLine"), 2000);
     fadeIn(document.getElementById("imgA"), 5000);
 
-    // 画像切り替えと名前表示（8秒後）
     setTimeout(() => {
       const imgA = document.getElementById("imgA");
       const imgB = document.getElementById("imgB");
@@ -156,4 +140,3 @@ html, body {
   </script>
 </body>
 </html>
-
