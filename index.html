@@ -21,7 +21,6 @@ html, body {
 }
 .content{
   position:relative; z-index:1;
-  display:flex; flex-direction:column; align-items:center;
   width:100%; text-align:center;
 }
 .message{
@@ -29,7 +28,7 @@ html, body {
   margin:0.2em 0;
   padding:5px 10px;
   border-radius:10px; background:rgba(0,0,0,0.3);
-  opacity:0; position:relative;
+  opacity:0; position:absolute; left:50%;
 }
 .line{
   display:inline-block;
@@ -62,7 +61,12 @@ const tl = gsap.timeline();
 const msgHi = document.createElement("div");
 msgHi.className="message"; msgHi.textContent="はじめまして";
 content.insertBefore(msgHi, content.firstChild);
-gsap.set(msgHi,{y:window.innerHeight, x:0, opacity:0});
+gsap.set(msgHi,{
+  y: window.innerHeight,
+  x: "50%",
+  xPercent: -50,
+  opacity:0
+});
 tl.to(msgHi,{y:10, opacity:1, duration:1.5, ease:"power2.out"});
 
 // 「Data Line」 はじめまして下に中央
@@ -73,7 +77,7 @@ tl.add(()=>{
   const msgLine = document.createElement("span"); msgLine.className="line"; msgLine.textContent="Line";
   wrapper.appendChild(msgData); wrapper.appendChild(msgLine);
   content.insertBefore(wrapper,msgHi.nextSibling);
-  gsap.set(wrapper,{opacity:0});
+  gsap.set(wrapper,{x:"50%", xPercent:-50, opacity:0});
   gsap.to(wrapper,{opacity:1,duration:1});
 }, "+=0.5");
 
@@ -82,46 +86,5 @@ tl.add(()=>{
   const divNo = document.createElement("div");
   divNo.className="message"; divNo.textContent="の";
   content.insertBefore(divNo, content.querySelector("#imgA"));
-  gsap.set(divNo,{scale:0,opacity:0});
-  gsap.to(divNo,{scale:1, opacity:1, duration:1, ease:"back.out(1.7)"});
-}, "+=0.5");
-
-// 画像A 下半分にじわり表示
-const imgA = document.getElementById("imgA");
-gsap.set(imgA,{opacity:0, scale:1});
-tl.to(imgA,{opacity:1, duration:1.5, ease:"power1.out"}, "+=0.5");
-
-// 画像A消して、画像Bと前田です 同時にぱっと表示
-const imgB = document.getElementById("imgB");
-const msgFinal = document.getElementById("msgFinal");
-gsap.set([imgB,msgFinal],{opacity:0});
-tl.to(imgA,{opacity:0,duration:0.5}, "+=1");
-tl.to([imgB,msgFinal],{opacity:1,duration:0.5}, "-=0.2");
-
-// 粒子背景
-const canvas=document.getElementById("particleCanvas");
-const ctx=canvas.getContext("2d");
-let w,h;
-function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
-window.addEventListener("resize",resize); resize();
-const particles=[]; const numParticles=100;
-for(let i=0;i<numParticles;i++){
-  particles.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*3+1, dx:(Math.random()-0.5)*1.5, dy:(Math.random()-0.5)*1.5});
-}
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle="rgba(255,255,255,0.8)";
-    ctx.fill();
-    p.x+=p.dx; p.y+=p.dy;
-    if(p.x<0||p.x>w) p.dx*=-1;
-    if(p.y<0||p.y>h) p.dy*=-1;
-  });
-  requestAnimationFrame(draw);
-}
-draw();
-</script>
-</body>
-</html>
+  gsap.set(divNo,{scale:0, opacity:0, x:"50%", xPercent:-50});
+  gsap.to(divNo,{scale:1, o
