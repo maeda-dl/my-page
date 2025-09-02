@@ -6,22 +6,11 @@
 <title>アニメーション表示</title>
 <style>
 html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
+  margin:0; padding:0; height:100%;
+  font-family:sans-serif;
+  overflow:hidden;
   background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
-  animation: bgColor 12s ease-in-out infinite alternate;
-  overflow: hidden;
-  font-family: sans-serif;
-}
-
-/* 背景色の淡い変化 */
-@keyframes bgColor {
-  0% { background: #f0f8ff; }
-  25% { background: #e6f7ff; }
-  50% { background: #f5f5dc; }
-  75% { background: #fffaf0; }
-  100% { background: #f0f8ff; }
+  transition: background 1s ease;
 }
 
 #particles {
@@ -50,8 +39,9 @@ html, body {
 }
 
 .data-line {
-  font-size: 28px;
+  font-size: clamp(24px,6vw,70px);
   font-weight: bold;
+  opacity: 0;
 }
 
 .image {
@@ -63,18 +53,36 @@ html, body {
   z-index: 5;
   transition: opacity 1s ease;
 }
+
+#imgA, #imgB {
+  top: 45%; /* 上端揃え */
+}
+
+#msgFinal {
+  font-size: clamp(30px,8vw,80px);
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(6px);
+  padding: 10px 20px;
+  border-radius: 15px;
+  opacity: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 75%;
+  z-index: 10;
+}
 </style>
 </head>
 <body>
 <canvas id="particles"></canvas>
 
 <div class="container">
-  <div id="msg1" class="message" style="top: 20%;">はじめまして</div>
-  <div id="msg2" class="message data-line" style="top: 30%;">Data Line</div>
-  <div id="msg3" class="message" style="top: 38%;">の</div>
-  <img id="imgA" class="image" src="A.png" style="top: 45%;">
-  <img id="imgB" class="image" src="B.png" style="top: 45%;"> <!-- 上端を揃える -->
-  <div id="msg4" class="message" style="top: 75%;">前田です</div>
+  <div id="msg1" class="message" style="top:10%;">はじめまして</div>
+  <div id="dataLine" class="data-line" style="top:20%;">Data Line</div>
+  <div id="msg3" class="message" style="top:28%;">の</div>
+  <img id="imgA" class="image" src="A.png">
+  <img id="imgB" class="image" src="B.png">
+  <div id="msgFinal">前田です</div>
 </div>
 
 <script>
@@ -83,6 +91,7 @@ const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+
 let particles = [];
 for (let i = 0; i < 80; i++) {
   particles.push({
@@ -93,6 +102,7 @@ for (let i = 0; i < 80; i++) {
     dy: (Math.random() - 0.5) * 0.5
   });
 }
+
 function drawParticles() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "rgba(255,255,255,0.6)";
@@ -108,18 +118,33 @@ function drawParticles() {
 }
 drawParticles();
 
-// 文字と画像の順番表示
+// アニメーション
 setTimeout(() => { document.getElementById("msg1").style.opacity = 1; }, 500);
-setTimeout(() => { document.getElementById("msg2").style.opacity = 1; }, 2000);
+setTimeout(() => { document.getElementById("dataLine").style.opacity = 1; }, 2000);
 setTimeout(() => { document.getElementById("msg3").style.opacity = 1; }, 3500);
 setTimeout(() => { document.getElementById("imgA").style.opacity = 1; }, 5000);
 
-// 画像Aをフェードアウトして画像Bを表示
+// 画像Aを消して画像Bと前田です表示
 setTimeout(() => { 
   document.getElementById("imgA").style.opacity = 0; 
-  document.getElementById("imgB").style.opacity = 1; // 上端揃え
-  document.getElementById("msg4").style.opacity = 1;
+  document.getElementById("imgB").style.opacity = 1;
+  document.getElementById("msgFinal").style.opacity = 1;
 }, 8000);
+
+// 背景色を3秒ごとに淡く変化
+const bgColors = [
+  "#f0f8ff", "#e6f7ff", "#f5f5dc", "#fffaf0"
+];
+let colorIndex = 0;
+setInterval(()=>{
+  colorIndex = (colorIndex+1)%bgColors.length;
+  document.body.style.background = bgColors[colorIndex];
+}, 3000);
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
 </script>
 </body>
 </html>
