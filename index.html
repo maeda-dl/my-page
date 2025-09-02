@@ -2,144 +2,87 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>はじめてのGitHub</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アニメーションページ</title>
 <style>
-html, body {
-  margin:0; padding:0; height:100%;
-  font-family:sans-serif;
-  overflow:hidden;
-  display:flex; justify-content:center; align-items:flex-start;
-  color:#fff;
-  transition: background 1s ease;
-}
-
-.content{
-  position:relative; z-index:1;
-  display:flex; flex-direction:column; align-items:center;
-  width:90%; /* 左右5%余白 */
-  text-align:center;
-}
-
-.message{
-  font-size:clamp(20px,5vw,60px);
-  margin:0.2em 0;
-  padding:5px 10px;
-  border-radius:10px;
-  opacity:0; position:relative;
-  background:none;
-}
-
-#dataLine{
-  display:flex; justify-content:center; gap:0.5em;
-  font-size:clamp(24px,6vw,70px);
-  opacity:0;
-}
-
-img{
-  opacity:0;
-  height:auto;
-  margin:10px 0;
-}
-
-#imgA, #imgB{
-  max-width:90vw; 
-  position:relative; /* 上端揃え */
-}
-
-canvas{
-  position:absolute; top:0; left:0; z-index:0;
-}
+  body {
+    margin: 0;
+    padding: 0 5%;
+    background: #fff;
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+  #title {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    margin: 0;
+  }
+  #dataLine {
+    margin-top: 60px;
+    font-size: 28px;
+    font-weight: bold;
+    transition: color 1s ease;
+  }
+  .image-container {
+    position: relative;
+    width: 100%;
+    margin-top: 40px;
+  }
+  .image-container img {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 500px;
+    opacity: 0;
+    display: none;
+  }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
 
-<canvas id="particleCanvas"></canvas>
+<h1 id="title">はじめまして</h1>
+<div id="dataLine">Data Line</div>
 
-<div class="content" id="content">
-  <div id="msg1" class="message">はじめまして</div>
-  <div id="dataLine"><span>Data</span><span>Line</span></div>
-  <div id="msg4" class="message">の</div>
-  <img id="imgA" src="A.png" alt="画像A">
-  <div id="msg5" class="message">前田です。</div>
-  <img id="imgB" src="B.png" alt="画像B">
+<div class="image-container">
+  <img id="imgA" src="A.png" alt="Image A">
+  <img id="imgB" src="B.png" alt="Image B">
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script>
-// 背景色を3秒ごとに変更
-const bgColors = [
-  "linear-gradient(270deg, #ff5f6d, #ffc371)",
-  "linear-gradient(270deg, #24c6dc, #514a9d)",
-  "linear-gradient(270deg, #ff9a9e, #fad0c4)",
-  "linear-gradient(270deg, #a18cd1, #fbc2eb)"
-];
-let colorIndex = 0;
-function changeBackground(){
-  document.body.style.background = bgColors[colorIndex];
-  colorIndex = (colorIndex + 1) % bgColors.length;
-}
-changeBackground();
-setInterval(changeBackground, 3000);
+  window.addEventListener('load', () => {
+    const title = document.getElementById('title');
+    const dataLine = document.getElementById('dataLine');
+    const imgA = document.getElementById('imgA');
+    const imgB = document.getElementById('imgB');
 
-// アニメーション
-const tl = gsap.timeline();
+    // GSAPタイムライン
+    const tl = gsap.timeline();
 
-// はじめまして
-gsap.set("#msg1",{opacity:0, y:50});
-tl.to("#msg1",{opacity:1, y:0, duration:1.5, ease:"power2.out"});
+    // タイトルを下から移動させる
+    tl.to(title, { top: 10, duration: 1, ease: "power2.out" })
 
-// Data Line
-gsap.set("#dataLine",{opacity:0, y:30});
-tl.to("#dataLine",{opacity:1, y:0, duration:1, ease:"power2.out"}, "+=0.5");
+      // 画像Aを表示
+      .set(imgA, { display: "block" })
+      .to(imgA, { opacity: 1, duration: 1 }, "+=0.5")
 
-// の
-gsap.set("#msg4",{opacity:0, scale:0});
-tl.to("#msg4",{opacity:1, scale:1, duration:1, ease:"back.out(1.7)"}, "+=0.5");
+      // 3秒後に画像Aを消して画像Bを表示
+      .to(imgA, { opacity: 0, duration: 1, delay: 3, onComplete: () => {
+          imgA.style.display = "none";
+          imgB.style.display = "block";
+      }})
+      .to(imgB, { opacity: 1, duration: 1 }, ">");
 
-// 画像A表示
-const imgA = document.getElementById("imgA");
-gsap.set(imgA,{opacity:0, scale:0.9});
-tl.to(imgA,{opacity:1, scale:1, duration:1.5, ease:"power2.out"}, "+=0.5");
-
-// 画像A消して画像Bと前田です表示（上端揃え、同じ位置）
-const imgA = document.getElementById("imgB");
-const msgFinal = document.getElementById("msg5");
-gsap.set([imgA,msgFinal],{opacity:0});
-
-// 画像Aをフェードアウト
-tl.to(imgA,{opacity:0,duration:0.5}, "+=1");
-
-// 画像Bと前田ですを同時表示
-tl.to([imgB,msgFinal],{opacity:1,duration:0.5}, "-=0.2");
-
-// 粒子背景
-const canvas=document.getElementById("particleCanvas");
-const ctx=canvas.getContext("2d");
-let w,h;
-function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
-window.addEventListener("resize",resize); resize();
-
-const particles=[]; const numParticles=100;
-for(let i=0;i<numParticles;i++){
-  particles.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*3+1, dx:(Math.random()-0.5)*1.5, dy:(Math.random()-0.5)*1.5});
-}
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle="rgba(255,255,255,0.8)";
-    ctx.fill();
-    p.x+=p.dx; p.y+=p.dy;
-    if(p.x<0||p.x>w) p.dx*=-1;
-    if(p.y<0||p.y>h) p.dy*=-1;
+    // Data Line の色を3秒ごとに変更
+    setInterval(() => {
+      dataLine.style.color = `hsl(${Math.floor(Math.random()*360)}, 70%, 50%)`;
+    }, 3000);
   });
-  requestAnimationFrame(draw);
-}
-draw();
 </script>
 </body>
 </html>
-
-
