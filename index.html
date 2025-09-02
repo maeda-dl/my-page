@@ -42,9 +42,9 @@ html, body {
 }
 
 /* 各文字サイズ・位置を均等配置 */
-#msg1 { font-size: clamp(20px,5vw,60px); top:10%; }  /* はじめまして */
-#dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; opacity:0; top:30%; }
-#msg3 { font-size: clamp(20px,5vw,60px); top:50%; }
+#msg1 { font-size: clamp(20px,5vw,60px); top:5%; }  /* はじめまして */
+#dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; opacity:0; top:10%; }
+#msg3 { font-size: clamp(20px,5vw,60px); top:15%; }
 
 /* 画像 */
 .image {
@@ -106,7 +106,7 @@ for (let i=0;i<100;i++){
 
 function drawParticles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = "rgba(120,120,120,0.8)"; // グレー濃め
+  ctx.fillStyle = "rgba(255,255,255,0.6)"; // グレー濃め
   particles.forEach(p=>{
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
@@ -151,3 +151,4 @@ setTimeout(()=>{
 </script>
 </body>
 </html>
+
