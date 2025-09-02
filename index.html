@@ -1,211 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lottery Demo</title>
+  <meta charset="UTF-8">
+  <title>Lottery with Star</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: sans-serif;
-      background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
-      transition: background 1s ease;
+      background: #111;
+      color: white;
       overflow: hidden;
+      font-family: sans-serif;
+      text-align: center;
     }
 
     #particles {
       position: absolute;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 1;
     }
 
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      z-index: 2;
-    }
-
-    .text-area {
-      position: absolute;
-      top: 10vh;
-      width: 100%;
-      text-align: center;
-    }
-
-    .message, #name {
-      opacity: 0;
-      margin: 0.5em 0;
-      white-space: nowrap;
-      font-weight: bold;
-      transition: opacity 1s ease;
-    }
-
-    #msg1 {
-      font-size: clamp(20px, 5vw, 60px);
-    }
-
-    #dataLine {
-      font-size: clamp(24px, 6vw, 70px);
-    }
-
-    #name {
-      font-size: clamp(24px, 6vw, 60px);
-      z-index: 3;
-    }
-
-    .image-wrapper {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-    }
-
-    .image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform: translate(-50%, -50%);
-      max-width: 80vw;
-      max-height: 40vh;
-      opacity: 0;
-      transition: opacity 1s ease;
-      box-shadow: 0 0 30px rgba(0,0,0,0.3);
-      border-radius: 10px;
-    }
-
-    /* 抽選ボタン */
-    #lotteryBtn {
-      position: absolute;
-      bottom: 100px;
-      right: 30px;
-      z-index: 3;
-      padding: 12px 28px;
-      font-size: 22px;
-      border: none;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.9);
-      color: #0366d6;
-      cursor: pointer;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 1s ease, transform 1s ease;
-    }
-
-    /* 浮かび上がる演出 */
-    #lotteryBtn.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Info */
-    #lotteryInfo {
+    #drawBtn {
       position: absolute;
       bottom: 60px;
-      right: 30px;
-      font-size: 14px;
-      background: rgba(255,255,255,0.8);
-      padding: 6px 10px;
-      border-radius: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      padding: 12px 30px;
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: all 0.3s ease;
       z-index: 3;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    #drawBtn:hover {
+      opacity: 1;
+      transform: translate(-50%, -3px) scale(1.05);
     }
 
-    /* ポイント表示 */
     #points {
       position: absolute;
       bottom: 20px;
       left: 20px;
-      font-size: 22px;
-      font-weight: bold;
-      background: rgba(255,255,255,0.85);
-      padding: 8px 14px;
-      border-radius: 10px;
+      font-size: 20px;
       z-index: 3;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    }
+
+    #lotteryInfo {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      font-size: 14px;
+      opacity: 0.7;
+      z-index: 3;
+    }
+
+    #result {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 60px;
+      font-weight: bold;
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 1s ease, transform 1s ease;
+      transition: opacity 0.8s ease;
+      text-shadow: 0 0 20px rgba(255,255,255,0.7);
+      z-index: 4;
     }
+    #result.win { color: #ff4040; }
+    #result.lose { color: #ccc; }
 
-    #points.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* 当たり/外れメッセージ */
-    #congrats, #fail {
+    #pickedChar {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%,-50%);
-      font-size: clamp(32px, 8vw, 80px);
-      font-weight: bold;
+      transform: translate(-50%, -50%) scale(0.1);
+      font-size: 80px;
       opacity: 0;
       z-index: 4;
-      transition: opacity 0.8s ease;
-      text-shadow: 0 0 20px white;
+      transition: all 0.8s ease;
     }
-
-    #congrats { color: red; }
-    #fail { color: #333; }
   </style>
 </head>
 <body>
   <canvas id="particles"></canvas>
-
-  <div class="container">
-    <div class="text-area">
-      <div id="msg1" class="message">Hello</div>
-      <div id="dataLine" class="message">Data Line</div>
-      <div id="name">This is Maeda</div>
-    </div>
-
-    <div class="image-wrapper">
-      <img id="imgA" class="image" src="A.png" alt="Image A" />
-      <img id="imgB" class="image" src="B.png" alt="Image B" />
-    </div>
-  </div>
-
-  <button id="lotteryBtn">Draw</button>
-  <div id="lotteryInfo">Total: 0<br>Last: -</div>
+  <button id="drawBtn">Draw</button>
   <div id="points">Points: 0</div>
-  <div id="congrats">🎉 Congratulations! 🎉</div>
-  <div id="fail">Try again…</div>
+  <div id="lotteryInfo">Total: 0<br>Last: -</div>
+  <div id="pickedChar"></div>
+  <div id="result"></div>
 
   <script>
-    // 粒子アニメーション
     const canvas = document.getElementById("particles");
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const particleChars = "MAEDA";
-    const specialWord = "当たり"; // 当たりは1セット
+    // 粒子文字セット（⭐️を1個含める）
+    const particleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let particles = [];
+    let hasStar = false;
 
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 80; i++) {
+      let char;
+      if (!hasStar) {
+        char = "⭐️"; // 最初の1回だけ必ず入れる
+        hasStar = true;
+      } else {
+        char = particleChars[Math.floor(Math.random() * particleChars.length)];
+      }
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         r: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 1.2,
-        dy: (Math.random() - 0.5) * 1.2,
-        char: Math.random() < 0.05 ? specialWord : // 5%で「当たり」
-              particleChars[Math.floor(Math.random() * particleChars.length)]
+        dx: (Math.random() - 0.5) * 1.5,
+        dy: (Math.random() - 0.5) * 1.5,
+        char: char
       });
     }
 
     function drawParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(80,80,80,0.8)";
+      ctx.fillStyle = "rgba(200,200,200,0.8)";
       particles.forEach(p => {
-        ctx.font = `${p.r * 6}px sans-serif`;
+        ctx.font = `${p.r * 8}px sans-serif`;
         ctx.fillText(p.char, p.x, p.y);
         p.x += p.dx;
         p.y += p.dy;
@@ -221,74 +142,49 @@
       canvas.height = window.innerHeight;
     });
 
-    // 背景色の変化
-    const bgColors = ["#f0f8ff", "#e6f7ff", "#f5f5dc", "#fffaf0"];
-    let colorIndex = 0;
-    setInterval(() => {
-      colorIndex = (colorIndex + 1) % bgColors.length;
-      document.body.style.background = bgColors[colorIndex];
-    }, 3000);
-
-    // フェードイン処理
-    function fadeIn(el, delay) {
-      setTimeout(() => {
-        el.style.opacity = 1;
-      }, delay);
-    }
-
-    fadeIn(document.getElementById("msg1"), 500);
-    fadeIn(document.getElementById("dataLine"), 2000);
-    fadeIn(document.getElementById("imgA"), 5000);
-
-    setTimeout(() => {
-      document.getElementById("imgA").style.opacity = 0;
-      document.getElementById("imgB").style.opacity = 1;
-      document.getElementById("name").style.opacity = 1;
-    }, 8000);
-
-    // くじ機能
+    // Lottery logic
     let points = 0;
     let count = 0;
-    const btn = document.getElementById("lotteryBtn");
-    const congrats = document.getElementById("congrats");
-    const fail = document.getElementById("fail");
+    const btn = document.getElementById("drawBtn");
+    const pickedChar = document.getElementById("pickedChar");
+    const result = document.getElementById("result");
     const pointsEl = document.getElementById("points");
     const infoEl = document.getElementById("lotteryInfo");
 
-    function showMessage(el) {
-      el.style.opacity = 1;
-      setTimeout(() => { el.style.opacity = 0; }, 2000);
-    }
-
     function updateInfo() {
       const now = new Date();
-      const dateStr = now.getFullYear() + "/" +
-                      String(now.getMonth()+1).padStart(2,"0") + "/" +
-                      String(now.getDate()).padStart(2,"0") + " " +
-                      String(now.getHours()).padStart(2,"0") + ":" +
-                      String(now.getMinutes()).padStart(2,"0") + ":" +
-                      String(now.getSeconds()).padStart(2,"0");
+      const dateStr = now.toLocaleString("ja-JP");
       infoEl.innerHTML = `Total: ${count}<br>Last: ${dateStr}`;
+    }
+
+    function showResult(text, type) {
+      result.textContent = text;
+      result.className = type;
+      result.style.opacity = 1;
+      setTimeout(() => { result.style.opacity = 0; }, 2000);
     }
 
     btn.addEventListener("click", () => {
       count++;
-      const pick = particles[Math.floor(Math.random() * particles.length)];
-      if (pick.char === specialWord) {
-        points += 10;
-        pointsEl.textContent = `Points: ${points}`;
-        showMessage(congrats);
-      } else {
-        showMessage(fail);
-      }
-      updateInfo();
+      // 粒子からランダムに1つ選ぶ
+      const chosen = particles[Math.floor(Math.random() * particles.length)];
+      pickedChar.textContent = chosen.char;
+      pickedChar.style.opacity = 1;
+      pickedChar.style.transform = "translate(-50%, -50%) scale(1.5)";
+      
+      setTimeout(() => {
+        pickedChar.style.opacity = 0;
+        pickedChar.style.transform = "translate(-50%, -50%) scale(0.1)";
+        if (chosen.char === "⭐️") {
+          points += 10;
+          pointsEl.textContent = `Points: ${points}`;
+          showResult("🎉 Congratulations! 🎉", "win");
+        } else {
+          showResult("Try Again...", "lose");
+        }
+        updateInfo();
+      }, 1500);
     });
-
-    // ボタンとポイントを浮かび上がらせる
-    setTimeout(() => {
-      btn.classList.add("show");
-      pointsEl.classList.add("show");
-    }, 4000);
   </script>
 </body>
 </html>
