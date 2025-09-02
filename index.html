@@ -48,6 +48,10 @@
       font-size: clamp(24px, 6vw, 70px);
       font-weight: bold;
     }
+    #name {
+      font-size: clamp(24px, 6vw, 70px);
+      font-weight: bold;
+    }
 
     .image {
       position: absolute;
@@ -64,14 +68,16 @@
     }
 
 #msgFinal {
-  opacity: 0;
-  margin: 1em 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: clamp(24px, 6vw, 60px);
   padding: 10px 20px;
   border-radius: 15px;
-  position: relative;
+  opacity: 0;
   z-index: 3;
 }
+
 
   </style>
 </head>
@@ -81,7 +87,7 @@
   <div class="container">
     <div id="msg1" class="message">はじめまして</div>
     <div id="dataLine" class="message">Data Line</div>
-    <div id="msgFinal">前田だよ</div>
+    <div id="name">前田だよ</div>
     <img id="imgA" class="image" src="A.png">
     <img id="imgB" class="image" src="B.png">
   </div>
@@ -164,6 +170,7 @@ drawParticles();
   </script>
 </body>
 </html>
+
 
 
 
