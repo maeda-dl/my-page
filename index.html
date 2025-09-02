@@ -24,12 +24,14 @@
     display:flex; flex-direction:column; align-items:center;
   }
   .message{
-    font-size:2em; margin:5px; padding:5px 10px;
+    font-size:1.5em; /* 半分サイズ */
+    margin:5px; padding:5px 10px;
     border-radius:10px; background:rgba(0,0,0,0.3);
     opacity:0; position:relative;
   }
   img{
-    opacity:0; max-width:200px; position:relative; margin:5px 0;
+    opacity:0; max-width:90vw; /* 横幅に合わせて大きく */
+    height:auto; position:relative; margin:5px 0;
   }
   canvas{
     position:absolute; top:0; left:0; z-index:0;
@@ -51,13 +53,15 @@
 // --------------------------
 const messages = ["はじめまして", "Data", "Line"];
 const content = document.getElementById("content");
-let gap = 60;
+let gap = 40; // テキスト間隔を少し詰める
 messages.forEach((text, i) => {
   const div = document.createElement("div");
   div.className = "message";
   div.textContent = text;
   content.insertBefore(div, content.firstChild);
-  gsap.fromTo(div, {y:100, opacity:0}, {y:-i*gap, opacity:1, duration:1, ease:"power2.out", delay:i*1});
+
+  // 初期位置を下めに調整
+  gsap.fromTo(div, {y:60, opacity:0}, {y:-i*gap, opacity:1, duration:1, ease:"power2.out", delay:i*1});
 });
 
 // --------------------------
@@ -70,11 +74,11 @@ content.appendChild(divNo);
 gsap.fromTo(divNo, {scale:0, opacity:0}, {scale:1, opacity:1, duration:1, ease:"back.out(1.7)", delay:messages.length*1});
 
 // --------------------------
-// 画像A 下半分サイズで表示
+// 画像A 横幅大きめで表示
 // --------------------------
 const imgA = document.getElementById("imgA");
-gsap.set(imgA, {scale:0.5, opacity:0, y:50});
-gsap.to(imgA, {scale:0.5, opacity:1, y:0, duration:1, ease:"power2.out", delay:(messages.length+1)*1});
+gsap.set(imgA, {scale:1, opacity:0, y:50});
+gsap.to(imgA, {scale:1, opacity:1, y:0, duration:1, ease:"power2.out", delay:(messages.length+1)*1});
 
 // --------------------------
 // 画像Bと「前田です。」を切替
