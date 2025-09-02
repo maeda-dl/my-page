@@ -25,37 +25,34 @@ html, body {
 .container {
   position: relative;
   width: 90%; /* 左右5%余白 */
-  height: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1em; /* 要素間の縦スペース */
+  margin-top: 10%; /* 全体上端からの余白 */
   z-index: 2;
   text-align: center;
 }
 
-/* 文字共通 */
+/* 共通文字 */
 .message {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   opacity: 0;
-  transition: opacity 1s ease, top 1s ease;
-  white-space: nowrap;
+  transition: opacity 1s ease, transform 1s ease;
 }
 
-/* 各文字サイズ・位置を均等配置 */
-#msg1 { font-size: clamp(20px,5vw,60px); top:5%; }  /* はじめまして */
-#dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; opacity:0; top:10%; }
-#msg3 { font-size: clamp(20px,5vw,60px); top:15%; }
+/* 個別サイズ */
+#msg1 { font-size: clamp(20px,5vw,60px); }
+#dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; }
+#msg3 { font-size: clamp(20px,5vw,60px); }
 
 /* 画像 */
 .image {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   max-width: 80%;
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 1s ease, transform 1s ease;
 }
-#imgA, #imgB { top:60%; } /* 上端揃え、同じ位置 */
 
 /* 前田です */
 #msgFinal {
@@ -64,11 +61,7 @@ html, body {
   padding: 10px 20px;
   border-radius: 15px;
   opacity: 0;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top:80%; /* 画像Bより下 */
-  z-index: 10;
+  transition: opacity 1s ease, transform 1s ease;
 }
 </style>
 </head>
@@ -137,18 +130,32 @@ setInterval(()=>{
 // -----------------------------
 // アニメーション順序
 // -----------------------------
-setTimeout(()=>{ document.getElementById("msg1").style.opacity = 1; }, 500);
-setTimeout(()=>{ document.getElementById("dataLine").style.opacity = 1; }, 2000);
-setTimeout(()=>{ document.getElementById("msg3").style.opacity = 1; }, 3500);
-setTimeout(()=>{ document.getElementById("imgA").style.opacity = 1; }, 5000);
+function fadeIn(el, delay=0){
+  setTimeout(()=>{
+    el.style.opacity = 1;
+    el.style.transform = "translateY(0)";
+  }, delay);
+}
 
-// 画像Aを消して画像Bと前田です表示（上端揃え）
+// 下から少しスライドする初期値
+["msg1","dataLine","msg3","imgA","imgB","msgFinal"].forEach(id=>{
+  const el = document.getElementById(id);
+  el.style.transform = "translateY(20px)";
+});
+
+// フェードイン順
+fadeIn(document.getElementById("msg1"), 500);
+fadeIn(document.getElementById("dataLine"), 2000);
+fadeIn(document.getElementById("msg3"), 3500);
+fadeIn(document.getElementById("imgA"), 5000);
+
+// 画像Aを消して画像Bと前田です表示
 setTimeout(()=>{
   document.getElementById("imgA").style.opacity = 0;
   document.getElementById("imgB").style.opacity = 1;
   document.getElementById("msgFinal").style.opacity = 1;
 },8000);
+
 </script>
 </body>
 </html>
-
