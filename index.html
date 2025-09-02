@@ -4,90 +4,104 @@
 <meta charset="UTF-8">
 <title>はじめてのGitHub</title>
 <style>
-  html, body {
-    margin:0; padding:0; height:100%;
-    font-family:sans-serif;
-    overflow:hidden;
-    background: linear-gradient(270deg, #ff5f6d, #ffc371, #24c6dc, #514a9d);
-    background-size:100% 100%;
-    animation: gradientBG 20s ease infinite;
-    display:flex; justify-content:center; align-items:center;
-    flex-direction:column; color:#fff;
-  }
-  @keyframes gradientBG {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-  }
-  .content{
-    position:relative; z-index:1;
-    display:flex; flex-direction:column; align-items:center;
-  }
-  .message{
-    font-size:20em;
-    margin:5px; padding:5px 10px;
-    border-radius:10px; background:rgba(0,0,0,0.3);
-    opacity:0; position:relative;
-  }
-  img{
-    opacity:0; max-width:90vw; /* 横幅に合わせて大きく */
-    height:auto; position:relative; margin:5px 0;
-  }
-  canvas{
-    position:absolute; top:0; left:0; z-index:0;
-  }
+html, body {
+  margin:0; padding:0; height:100%;
+  font-family:sans-serif;
+  overflow:hidden;
+  background: linear-gradient(270deg, #ff5f6d, #ffc371, #24c6dc, #514a9d);
+  background-size:100% 100%;
+  animation: gradientBG 20s ease infinite;
+  display:flex; justify-content:center; align-items:center;
+  flex-direction:column; color:#fff;
+}
+@keyframes gradientBG {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+.content{
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center;
+  width:100%;
+  text-align:center;
+}
+.message{
+  font-size:3em;
+  margin:0.2em 0;
+  padding:5px 10px;
+  border-radius:10px; background:rgba(0,0,0,0.3);
+  opacity:0; position:relative;
+}
+.line{
+  display:inline-block;
+  margin:0 5px;
+}
+img{
+  opacity:0; max-width:90vw; height:auto; position:relative; margin:5px 0;
+}
+#imgA{position:absolute; bottom:0; width:100%; height:auto;}
+#imgB{max-width:90vw;}
+canvas{
+  position:absolute; top:0; left:0; z-index:0;
+}
 </style>
 </head>
 <body>
 <canvas id="particleCanvas"></canvas>
 <div class="content" id="content">
+  <div id="msgFinal" class="message">前田です。</div>
   <img id="imgA" src="A.png" alt="画像A">
   <img id="imgB" src="B.png" alt="画像B">
-  <div id="msgFinal" class="message">前田です。</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script>
-// --------------------------
-// 下から積み上げるテキスト
-// --------------------------
-const messages = ["はじめまして", "Data", "Line"];
 const content = document.getElementById("content");
-let gap = 40; // テキスト間隔を少し詰める
-messages.forEach((text, i) => {
-  const div = document.createElement("div");
-  div.className = "message";
-  div.textContent = text;
-  content.insertBefore(div, content.firstChild);
-
-  // 初期位置を下めに調整
-  gsap.fromTo(div, {y:60, opacity:0}, {y:-i*gap, opacity:1, duration:1, ease:"power2.out", delay:i*1});
-});
 
 // --------------------------
-// 「の」後ろから表示
+// タイムライン作成
 // --------------------------
-const divNo = document.createElement("div");
-divNo.className="message";
-divNo.textContent="の";
-content.appendChild(divNo);
-gsap.fromTo(divNo, {scale:0, opacity:0}, {scale:1, opacity:1, duration:1, ease:"back.out(1.7)", delay:messages.length*1});
+const tl = gsap.timeline();
 
-// --------------------------
-// 画像A 横幅大きめで表示
-// --------------------------
+// 1. 「はじめまして」 上から10px付近
+const msgHi = document.createElement("div");
+msgHi.className="message"; msgHi.textContent="はじめまして";
+content.insertBefore(msgHi, content.firstChild);
+gsap.set(msgHi,{y:10, opacity:0});
+tl.to(msgHi,{y:0, opacity:1, duration:1, ease:"power2.out"});
+
+// 2. 「Data Line」 はじめましての下に中央揃え
+tl.add(()=>{
+  const wrapper = document.createElement("div");
+  wrapper.id="dataLine";
+  const msgData = document.createElement("span"); msgData.className="line"; msgData.textContent="Data";
+  const msgLine = document.createElement("span"); msgLine.className="line"; msgLine.textContent="Line";
+  wrapper.appendChild(msgData); wrapper.appendChild(msgLine);
+  content.insertBefore(wrapper,msgHi.nextSibling);
+  gsap.set(wrapper,{opacity:0});
+  gsap.to(wrapper,{opacity:1,duration:1});
+}, "+=0.5");
+
+// 3. 「の」 DataLine下に中央
+tl.add(()=>{
+  const divNo = document.createElement("div");
+  divNo.className="message"; divNo.textContent="の";
+  content.insertBefore(divNo, content.querySelector("#imgA"));
+  gsap.set(divNo,{scale:0,opacity:0});
+  gsap.to(divNo,{scale:1, opacity:1, duration:1, ease:"back.out(1.7)"});
+}, "+=0.5");
+
+// 4. 画像A 下半分にじわり表示
 const imgA = document.getElementById("imgA");
-gsap.set(imgA, {scale:1, opacity:0, y:50});
-gsap.to(imgA, {scale:1, opacity:1, y:0, duration:1, ease:"power2.out", delay:(messages.length+1)*1});
+gsap.set(imgA,{opacity:0, scale:1});
+tl.to(imgA,{opacity:1, duration:1.5, ease:"power1.out"}, "+=0.5");
 
-// --------------------------
-// 画像Bと「前田です。」を切替
-// --------------------------
+// 5. 画像A消して、画像Bと前田です 同時にぱっと表示
 const imgB = document.getElementById("imgB");
 const msgFinal = document.getElementById("msgFinal");
-gsap.set([imgB, msgFinal], {opacity:0});
-gsap.to(imgB, {opacity:1, duration:0.5, delay:(messages.length+2)*1});
-gsap.to(msgFinal, {opacity:1, duration:0.5, delay:(messages.length+2.5)*1});
+gsap.set([imgB,msgFinal],{opacity:0});
+tl.to(imgA,{opacity:0,duration:0.5}, "+=1");
+tl.to([imgB,msgFinal],{opacity:1,duration:0.5}, "-=0.2");
 
 // --------------------------
 // 粒子背景
@@ -118,6 +132,3 @@ draw();
 </script>
 </body>
 </html>
-
-
-
