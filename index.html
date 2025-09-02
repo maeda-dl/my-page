@@ -68,7 +68,6 @@ html, body {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: 75%; /* 画像Bより下に表示 */
   z-index: 10;
 }
 </style>
@@ -78,8 +77,8 @@ html, body {
 
 <div class="container">
   <div id="msg1" class="message" style="top:10%;">はじめまして</div>
-  <div id="dataLine" class="data-line" style="top:20%;">Data Line</div>
-  <div id="msg3" class="message" style="top:28%;">の</div>
+  <div id="dataLine" class="data-line" ;">Data Line</div>
+  <div id="msg3" class="message" ;">の</div>
   <img id="imgA" class="image" src="A.png">
   <img id="imgB" class="image" src="B.png">
   <div id="msgFinal">前田です</div>
@@ -148,3 +147,4 @@ window.addEventListener("resize", () => {
 </script>
 </body>
 </html>
+
