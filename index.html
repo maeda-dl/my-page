@@ -5,124 +5,121 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>アニメーション表示</title>
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
-        animation: bgColor 12s ease-in-out infinite alternate;
-        overflow: hidden;
-    }
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
+  animation: bgColor 12s ease-in-out infinite alternate;
+  overflow: hidden;
+  font-family: sans-serif;
+}
 
-    /* 背景色の淡い変化 */
-    @keyframes bgColor {
-        0% { background: #f0f8ff; }
-        25% { background: #e6f7ff; }
-        50% { background: #f5f5dc; }
-        75% { background: #fffaf0; }
-        100% { background: #f0f8ff; }
-    }
+/* 背景色の淡い変化 */
+@keyframes bgColor {
+  0% { background: #f0f8ff; }
+  25% { background: #e6f7ff; }
+  50% { background: #f5f5dc; }
+  75% { background: #fffaf0; }
+  100% { background: #f0f8ff; }
+}
 
-    /* 粒子用キャンバス */
-    #particles {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-    }
+#particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
 
-    .container {
-        position: relative;
-        text-align: center;
-        height: 100%;
-        width: 90%;
-        margin: 0 auto;
-        z-index: 2;
-    }
+.container {
+  position: relative;
+  width: 90%; /* 左右5%余白 */
+  height: 100%;
+  margin: 0 auto;
+  text-align: center;
+  z-index: 2;
+}
 
-    .message {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 18px;
-        color: #333;
-        opacity: 0;
-        z-index: 10;
-        transition: opacity 1s ease, top 1s ease;
-    }
+.message {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  z-index: 10;
+  transition: opacity 1s ease, top 1s ease;
+}
 
-    .data-line {
-        font-size: 28px;
-        font-weight: bold;
-    }
+.data-line {
+  font-size: 28px;
+  font-weight: bold;
+}
 
-    .image {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        max-width: 80%;
-        opacity: 0;
-        z-index: 5;
-        transition: opacity 1s ease;
-    }
+.image {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 80%;
+  opacity: 0;
+  z-index: 5;
+  transition: opacity 1s ease;
+}
 </style>
 </head>
 <body>
 <canvas id="particles"></canvas>
 
 <div class="container">
-    <div id="msg1" class="message" style="top: 20%;">はじめまして</div>
-    <div id="msg2" class="message data-line" style="top: 30%;">Data Line</div>
-    <div id="msg3" class="message" style="top: 38%;">の</div>
-    <img id="imgA" class="image" src="A.png" style="top: 45%;">
-    <img id="imgB" class="image" src="B.png" style="top: 45%;">
-    <div id="msg4" class="message" style="top: 75%;">前田です</div>
+  <div id="msg1" class="message" style="top: 20%;">はじめまして</div>
+  <div id="msg2" class="message data-line" style="top: 30%;">Data Line</div>
+  <div id="msg3" class="message" style="top: 38%;">の</div>
+  <img id="imgA" class="image" src="A.png" style="top: 45%;">
+  <img id="imgB" class="image" src="B.png" style="top: 45%;"> <!-- 上端を揃える -->
+  <div id="msg4" class="message" style="top: 75%;">前田です</div>
 </div>
 
 <script>
-/* 粒子エフェクト */
+// 粒子エフェクト
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let particles = [];
 for (let i = 0; i < 80; i++) {
-    particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
-    });
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2 + 1,
+    dx: (Math.random() - 0.5) * 0.5,
+    dy: (Math.random() - 0.5) * 0.5
+  });
 }
 function drawParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
-    particles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-        p.x += p.dx;
-        p.y += p.dy;
-        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-    });
-    requestAnimationFrame(drawParticles);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(255,255,255,0.6)";
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+    p.x += p.dx; p.y += p.dy;
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  });
+  requestAnimationFrame(drawParticles);
 }
 drawParticles();
 
-/* テキストと画像の順番表示 */
+// 文字と画像の順番表示
 setTimeout(() => { document.getElementById("msg1").style.opacity = 1; }, 500);
 setTimeout(() => { document.getElementById("msg2").style.opacity = 1; }, 2000);
 setTimeout(() => { document.getElementById("msg3").style.opacity = 1; }, 3500);
 setTimeout(() => { document.getElementById("imgA").style.opacity = 1; }, 5000);
+
+// 画像Aをフェードアウトして画像Bを表示
 setTimeout(() => { 
-    document.getElementById("imgA").style.opacity = 0; 
+  document.getElementById("imgA").style.opacity = 0; 
+  document.getElementById("imgB").style.opacity = 1; // 上端揃え
+  document.getElementById("msg4").style.opacity = 1;
 }, 8000);
-setTimeout(() => { 
-    document.getElementById("imgB").style.opacity = 1; 
-    document.getElementById("msg4").style.opacity = 1;
-}, 9500);
 </script>
 </body>
 </html>
