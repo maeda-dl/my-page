@@ -4,129 +4,160 @@
 <meta charset="UTF-8">
 <title>はじめてのGitHub</title>
 <style>
-html, body {
-  margin:0; padding:0; height:100%;
-  font-family:sans-serif;
-  overflow:hidden;
-  background: linear-gradient(270deg, #ff5f6d, #ffc371, #24c6dc, #514a9d);
-  background-size:100% 100%;
-  animation: gradientBG 20s ease infinite;
-  display:flex; justify-content:flex-start; align-items:center;
-  flex-direction:column; color:#fff;
-}
-@keyframes gradientBG {
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-.content{
-  position:relative; z-index:1;
-  width:100%; text-align:center;
-}
-.message{
-  font-size:3em;
-  margin:0.2em 0;
-  padding:5px 10px;
-  border-radius:10px; background:rgba(0,0,0,0.3);
-  opacity:0; position:relative;
-}
-.line{
-  display:inline-block;
-  margin:0 5px;
-}
-img{
-  opacity:0; max-width:90vw; height:auto; position:relative; margin:5px 0;
-}
-#imgA{
-  position:absolute; bottom:0; width:100%; height:auto;
-}
-#imgB{
-  max-width:90vw;
-}
-canvas{
-  position:absolute; top:0; left:0; z-index:0;
-}
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: sans-serif;
+    overflow: hidden;
+    background: linear-gradient(270deg, #ff5f6d, #ffc371, #24c6dc, #514a9d);
+    background-size: 800% 800%;
+    animation: gradientBG 20s ease infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #fff;
+  }
+
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .message {
+    font-size: 2em;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    position: relative;
+  }
+
+  img {
+    max-width: 200px;
+    margin: 10px;
+    opacity: 0;
+    position: relative;
+  }
+
+  canvas { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    z-index: 0; 
+  }
+
+  .content {
+    position: relative;
+    z-index: 1; /* メッセージと画像を粒子の上に表示 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 </style>
 </head>
 <body>
+
 <canvas id="particleCanvas"></canvas>
-<div class="content" id="content">
-  <div id="msgFinal" class="message">前田です。</div>
+
+<div class="content">
+  <div id="msg1" class="message">はじめまして</div>
+  <div id="msg2" class="message">Data</div>
+  <div id="msg3" class="message">Line</div>
+  <div id="msg4" class="message">の</div>
   <img id="imgA" src="A.png" alt="画像A">
+  <div id="msg5" class="message">前田です。</div>
   <img id="imgB" src="B.png" alt="画像B">
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script>
-const content = document.getElementById("content");
-const tl = gsap.timeline();
+  // --------------------------
+  // 3秒ごと表示切替アニメーション
+  // --------------------------
+  const items = [
+    {id:"msg1", anim:{y:-50, opacity:0}},   // 上から
+    {id:"msg2", anim:{x:-100, opacity:0}},  // 左から
+    {id:"msg3", anim:{x:100, opacity:0}},   // 右から
+    {id:"msg4", anim:{scale:0, opacity:0}}, // 後ろから
+    {id:"imgA", anim:{scale:0, opacity:0}}, // 後ろから
+    {id:"msg5", anim:{y:50, opacity:0}},   // 下から
+    {id:"imgB", anim:{opacity:0}}           // ぱっと表示
+  ];
 
-// 1. 「はじめまして」 下から上端10pxで止める
-const msgHi = document.createElement("div");
-msgHi.className="message"; msgHi.textContent="はじめまして";
-content.insertBefore(msgHi, content.firstChild);
-gsap.set(msgHi,{y:100, opacity:0});
-tl.to(msgHi,{y:10, opacity:1, duration:1.5, ease:"power2.out"});
+  let current = -1;
 
-// 2. 「Data Line」 はじめまして下に中央
-tl.add(()=>{
-  const wrapper = document.createElement("div");
-  wrapper.id="dataLine";
-  const msgData = document.createElement("span"); msgData.className="line"; msgData.textContent="Data";
-  const msgLine = document.createElement("span"); msgLine.className="line"; msgLine.textContent="Line";
-  wrapper.appendChild(msgData); wrapper.appendChild(msgLine);
-  content.insertBefore(wrapper,msgHi.nextSibling);
-  gsap.set(wrapper,{opacity:0});
-  gsap.to(wrapper,{opacity:1,duration:1});
-}, "+=0.5");
-
-// 3. 「の」 DataLine下に中央
-tl.add(()=>{
-  const divNo = document.createElement("div");
-  divNo.className="message"; divNo.textContent="の";
-  content.insertBefore(divNo, content.querySelector("#imgA"));
-  gsap.set(divNo,{scale:0, opacity:0});
-  gsap.to(divNo,{scale:1, opacity:1, duration:1, ease:"back.out(1.7)"});
-}, "+=0.5");
-
-// 4. 画像A 下半分にじわり表示
-const imgA = document.getElementById("imgA");
-gsap.set(imgA,{opacity:0, scale:1});
-tl.to(imgA,{opacity:1, duration:1.5, ease:"power1.out"}, "+=0.5");
-
-// 5. 画像A消して、画像Bと前田です 同時にぱっと表示
-const imgB = document.getElementById("imgB");
-const msgFinal = document.getElementById("msgFinal");
-gsap.set([imgB,msgFinal],{opacity:0});
-tl.to(imgA,{opacity:0,duration:0.5}, "+=1");
-tl.to([imgB,msgFinal],{opacity:1,duration:0.5}, "-=0.2");
-
-// --------------------------
-// 粒子背景
-// --------------------------
-const canvas=document.getElementById("particleCanvas");
-const ctx=canvas.getContext("2d");
-let w,h;
-function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
-window.addEventListener("resize",resize); resize();
-const particles=[]; const numParticles=100;
-for(let i=0;i<numParticles;i++){
-  particles.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*3+1, dx:(Math.random()-0.5)*1.5, dy:(Math.random()-0.5)*1.5});
-}
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle="rgba(255,255,255,0.8)";
-    ctx.fill();
-    p.x+=p.dx; p.y+=p.dy;
-    if(p.x<0||p.x>w) p.dx*=-1;
-    if(p.y<0||p.y>h) p.dy*=-1;
+  // 初期状態はすべて非表示
+  items.forEach(item => {
+    gsap.set("#"+item.id, {opacity:0});
   });
-  requestAnimationFrame(draw);
-}
-draw();
+
+  function showNext() {
+    // 前の要素を非表示
+    if(current >= 0) {
+      gsap.to("#"+items[current].id, {opacity:0, duration:0.5});
+    }
+
+    // 次の要素
+    current = (current + 1) % items.length;
+    const item = items[current];
+
+    gsap.fromTo(
+      "#"+item.id,
+      item.anim,
+      {opacity:1, x:0, y:0, scale:1, duration:1, ease:"power2.out"}
+    );
+  }
+
+  showNext(); // 最初に表示
+  setInterval(showNext, 3000);
+
+  // --------------------------
+  // 粒子背景
+  // --------------------------
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  let w, h;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const particles = [];
+  const numParticles = 100;
+  for(let i=0;i<numParticles;i++){
+    particles.push({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      r: Math.random()*3+1,
+      dx: (Math.random()-0.5)*1.5,
+      dy: (Math.random()-0.5)*1.5
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0,0,w,h);
+    for(let p of particles){
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.fill();
+      p.x += p.dx;
+      p.y += p.dy;
+
+      if(p.x < 0 || p.x > w) p.dx *= -1;
+      if(p.y < 0 || p.y > h) p.dy *= -1;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
 </script>
+
 </body>
 </html>
