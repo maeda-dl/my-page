@@ -13,6 +13,7 @@ html, body {
   transition: background 1s ease;
 }
 
+/* 粒子キャンバス */
 #particles {
   position: absolute;
   width: 100%;
@@ -20,42 +21,43 @@ html, body {
   z-index: 1;
 }
 
+/* コンテナ */
 .container {
   position: relative;
   width: 90%; /* 左右5%余白 */
   height: 100%;
   margin: 0 auto;
-  text-align: center;
   z-index: 2;
+  text-align: center;
 }
 
+/* 文字共通 */
 .message {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
-  z-index: 10;
   transition: opacity 1s ease, top 1s ease;
+  white-space: nowrap;
 }
 
+/* 各文字サイズ・位置 */
 #msg1 { font-size: clamp(20px,5vw,60px); top:10%; }  /* はじめまして */
-#dataLine { position: relative;font-size: clamp(24px,6vw,70px); font-weight:bold; opacity:0; top:20%; }
-#msg3 { position: relative; font-size: clamp(20px,5vw,60px); top:20%; }
+#dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; opacity:0; top:22%; }
+#msg3 { font-size: clamp(20px,5vw,60px); top:32%; }
 
+/* 画像 */
 .image {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   max-width: 80%;
   opacity: 0;
-  z-index: 5;
   transition: opacity 1s ease;
 }
+#imgA, #imgB { top:42%; } /* 上端揃え、同じ位置 */
 
-#imgA, #imgB {
-  top: 38%; /* 上端揃え、同じ位置 */
-}
-
+/* 前田です */
 #msgFinal {
   font-size: clamp(30px,8vw,80px);
   background: rgba(0,0,0,0.3);
@@ -66,7 +68,7 @@ html, body {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: 70%; /* 画像Bより下に表示 */
+  top:70%; /* 画像Bより下 */
   z-index: 10;
 }
 </style>
@@ -76,7 +78,7 @@ html, body {
 
 <div class="container">
   <div id="msg1" class="message">はじめまして</div>
-  <div id="dataLine">Data Line</div>
+  <div id="dataLine" class="message">Data Line</div>
   <div id="msg3" class="message">の</div>
   <img id="imgA" class="image" src="A.png">
   <img id="imgB" class="image" src="B.png">
@@ -84,68 +86,70 @@ html, body {
 </div>
 
 <script>
+// -----------------------------
 // 粒子エフェクト
+// -----------------------------
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let particles = [];
-for (let i = 0; i < 100; i++) {
+for (let i=0;i<100;i++){
   particles.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 3 + 1,
-    dx: (Math.random() - 0.5) * 1.2,
-    dy: (Math.random() - 0.5) * 1.2
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    r: Math.random()*3+1,
+    dx: (Math.random()-0.5)*1.2,
+    dy: (Math.random()-0.5)*1.2
   });
 }
 
-function drawParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.fillStyle = "rgba(255,255,255,0.9)";
-  particles.forEach(p => {
+  particles.forEach(p=>{
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
     ctx.fill();
     p.x += p.dx; p.y += p.dy;
-    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+    if(p.x<0||p.x>canvas.width) p.dx*=-1;
+    if(p.y<0||p.y>canvas.height) p.dy*=-1;
   });
   requestAnimationFrame(drawParticles);
 }
 drawParticles();
 
-// アニメーション
-setTimeout(() => { document.getElementById("msg1").style.opacity = 1; }, 500);
-setTimeout(() => { document.getElementById("dataLine").style.opacity = 1; }, 2000);
-setTimeout(() => { document.getElementById("msg3").style.opacity = 1; }, 3500);
-setTimeout(() => { document.getElementById("imgA").style.opacity = 1; }, 5000);
+window.addEventListener("resize", ()=>{
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
 
-// 画像Aを消して画像Bと前田です表示（上端揃え、同じ位置）
-setTimeout(() => { 
-  document.getElementById("imgA").style.opacity = 0; 
-  document.getElementById("imgB").style.opacity = 1;
-  document.getElementById("msgFinal").style.opacity = 1;
-}, 8000);
-
+// -----------------------------
 // 背景色を3秒ごとに淡く変化
-const bgColors = [
-  "#f0f8ff", "#e6f7ff", "#f5f5dc", "#fffaf0"
-];
+// -----------------------------
+const bgColors = ["#f0f8ff","#e6f7ff","#f5f5dc","#fffaf0"];
 let colorIndex = 0;
 setInterval(()=>{
   colorIndex = (colorIndex+1)%bgColors.length;
   document.body.style.background = bgColors[colorIndex];
-}, 3000);
+},3000);
 
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
+// -----------------------------
+// アニメーション順序
+// -----------------------------
+setTimeout(()=>{ document.getElementById("msg1").style.opacity = 1; }, 500);
+setTimeout(()=>{ document.getElementById("dataLine").style.opacity = 1; }, 2000);
+setTimeout(()=>{ document.getElementById("msg3").style.opacity = 1; }, 3500);
+setTimeout(()=>{ document.getElementById("imgA").style.opacity = 1; }, 5000);
+
+// 画像Aを消して画像Bと前田です表示（上端揃え）
+setTimeout(()=>{
+  document.getElementById("imgA").style.opacity = 0;
+  document.getElementById("imgB").style.opacity = 1;
+  document.getElementById("msgFinal").style.opacity = 1;
+},8000);
+
 </script>
 </body>
 </html>
-
-
-
