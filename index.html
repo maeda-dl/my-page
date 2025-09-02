@@ -57,14 +57,17 @@ html, body {
 
 /* 前田です */
 #msgFinal {
-  position: relative; /* 画像ブロック下に配置 */
-  font-size: clamp(30px,8vw,80px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 150%); /* 画像の真下にずらす */
+  font-size: clamp(30px, 8vw, 80px);
   padding: 10px 20px;
   border-radius: 15px;
   opacity: 0;
-  margin-top: calc(50% + 200px); /* 画像中央から下にスペース */
-  z-index: 10;
+  z-index: 3;
 }
+
 </style>
 </head>
 <body>
@@ -147,6 +150,7 @@ setTimeout(()=>{
 </script>
 </body>
 </html>
+
 
 
 
