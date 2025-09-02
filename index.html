@@ -62,7 +62,7 @@ canvas{
   <div id="msg4" class="message">の</div>
   <img id="imgA" src="A.png" alt="画像A">
   <div id="msg5" class="message">前田です。</div>
-  <img id="imgA" src="B.png" alt="画像B">
+  <img id="imgB" src="B.png" alt="画像B">
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
@@ -103,9 +103,9 @@ gsap.set(imgA,{opacity:0, scale:0.9});
 tl.to(imgA,{opacity:1, scale:1, duration:1.5, ease:"power2.out"}, "+=0.5");
 
 // 画像A消して画像Bと前田です表示（上端揃え、同じ位置）
-const imgB = document.getElementById("imgB");
+const imgA = document.getElementById("imgB");
 const msgFinal = document.getElementById("msg5");
-gsap.set([imgB,msgFinal],{opacity:0});
+gsap.set([imgA,msgFinal],{opacity:0});
 
 // 画像Aをフェードアウト
 tl.to(imgA,{opacity:0,duration:0.5}, "+=1");
@@ -141,4 +141,5 @@ draw();
 </script>
 </body>
 </html>
+
 
