@@ -76,16 +76,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script>
   // --------------------------
-  // 3秒ごと表示切替アニメーション
+  // 3秒ごとの表示切替アニメーション
   // --------------------------
   const items = [
-    {id:"msg1", anim:{y:-50, opacity:0}},   // 上から
-    {id:"msg2", anim:{x:-100, opacity:0}},  // 左から
-    {id:"msg3", anim:{x:100, opacity:0}},   // 右から
-    {id:"msg4", anim:{scale:0, opacity:0}}, // 後ろから
-    {id:"imgA", anim:{scale:0, opacity:0}}, // 後ろから
-    {id:"msg5", anim:{y:50, opacity:0}},   // 下から
-    {id:"imgB", anim:{opacity:0}}           // ぱっと表示
+    {id:"msg1", from:{y:-50, opacity:0}},   // 上から
+    {id:"msg2", from:{x:-100, opacity:0}},  // 左から
+    {id:"msg3", from:{x:100, opacity:0}},   // 右から
+    {id:"msg4", from:{scale:0, opacity:0}}, // 後ろから
+    {id:"imgA", from:{scale:0, opacity:0}}, // 後ろから
+    {id:"msg5", from:{y:50, opacity:0}},    // 下から
+    {id:"imgB", from:{opacity:0}}           // ぱっと表示
   ];
 
   let current = -1;
@@ -107,8 +107,8 @@
 
     gsap.fromTo(
       "#"+item.id,
-      item.anim,
-      {opacity:1, x:0, y:0, scale:1, duration:1, ease:"power2.out"}
+      item.from,           // 初期状態
+      {opacity:1, x:0, y:0, scale:1, duration:1, ease:"power2.out"} // 表示状態
     );
   }
 
