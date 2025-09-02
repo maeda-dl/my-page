@@ -41,35 +41,33 @@ html, body {
   white-space: nowrap;
 }
 
-/* 各文字サイズ・位置 */
+/* 各文字サイズ・位置を均等配置 */
 #msg1 { font-size: clamp(20px,5vw,60px); top:10%; }  /* はじめまして */
-#dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; opacity:0; top:22%; }
-#msg3 { font-size: clamp(20px,5vw,60px); top:28%; }
+#dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; opacity:0; top:30%; }
+#msg3 { font-size: clamp(20px,5vw,60px); top:50%; }
 
 /* 画像 */
 .image {
   position: absolute;
-　top:5%;
   left: 50%;
   transform: translateX(-50%);
   max-width: 80%;
   opacity: 0;
   transition: opacity 1s ease;
 }
-#imgA, #imgB { top:42%; } /* 上端揃え、同じ位置 */
+#imgA, #imgB { top:60%; } /* 上端揃え、同じ位置 */
 
 /* 前田です */
 #msgFinal {
   font-size: clamp(30px,8vw,80px);
-  background: rgba(0,0,0,0.3);
-  backdrop-filter: blur(6px);
+  background: rgba(255,255,255,0.6); /* 淡い白 */
   padding: 10px 20px;
   border-radius: 15px;
   opacity: 0;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top:70%; /* 画像Bより下 */
+  top:80%; /* 画像Bより下 */
   z-index: 10;
 }
 </style>
@@ -88,7 +86,7 @@ html, body {
 
 <script>
 // -----------------------------
-// 粒子エフェクト
+// 粒子エフェクト（グレー濃め）
 // -----------------------------
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
@@ -108,7 +106,7 @@ for (let i=0;i<100;i++){
 
 function drawParticles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  ctx.fillStyle = "rgba(120,120,120,0.8)"; // グレー濃め
   particles.forEach(p=>{
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
@@ -150,8 +148,6 @@ setTimeout(()=>{
   document.getElementById("imgB").style.opacity = 1;
   document.getElementById("msgFinal").style.opacity = 1;
 },8000);
-
 </script>
 </body>
 </html>
-
