@@ -17,7 +17,7 @@ html, body {
 .content{
   position:relative; z-index:1;
   display:flex; flex-direction:column; align-items:center;
-  width:90%; /* 左右5%ずつ余白 */
+  width:90%; /* 左右5%余白 */
   text-align:center;
 }
 
@@ -26,13 +26,13 @@ html, body {
   margin:0.2em 0;
   padding:5px 10px;
   border-radius:10px;
-  background:rgba(0,0,0,0.3);
   opacity:0; position:relative;
+  background:none; /* 背景削除 */
 }
 
 #dataLine{
   display:flex; justify-content:center; gap:0.5em;
-  font-size:clamp(18px,4vw,50px);
+  font-size:clamp(24px,6vw,70px); /* 文字を少し大きく */
   opacity:0;
 }
 
@@ -43,8 +43,8 @@ img{
 }
 
 #imgA, #imgB{
-  max-width:90vw; /* 画面に合わせて大きくなる */
-  position:relative; /* 位置は固定 */
+  max-width:90vw; 
+  position:relative; /* 上端揃え */
 }
 
 canvas{
@@ -102,7 +102,7 @@ const imgA = document.getElementById("imgA");
 gsap.set(imgA,{opacity:0, scale:0.9});
 tl.to(imgA,{opacity:1, scale:1, duration:1.5, ease:"power2.out"}, "+=0.5");
 
-// 画像Aを消して画像Bと前田です表示
+// 画像A消して画像Bと前田です表示（上端揃え）
 const imgB = document.getElementById("imgB");
 const msgFinal = document.getElementById("msg5");
 gsap.set([imgB,msgFinal],{opacity:0});
