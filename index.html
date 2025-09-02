@@ -87,38 +87,40 @@
   </div>
 
   <script>
-    // 粒子アニメーション
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+// 粒子アニメーション（文字タイプ：MAEDA）
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-    let particles = [];
-    for (let i = 0; i < 100; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 3 + 1,
-        dx: (Math.random() - 0.5) * 1.2,
-        dy: (Math.random() - 0.5) * 1.2
-      });
-    }
+const particleChars = "MAEDA";
+let particles = [];
 
-    function drawParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(128,128,128,0.9)";
-      particles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-        p.x += p.dx;
-        p.y += p.dy;
-        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-      });
-      requestAnimationFrame(drawParticles);
-    }
-    drawParticles();
+for (let i = 0; i < 100; i++) {
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2 + 1, // 粒子サイズに基づくフォント
+    dx: (Math.random() - 0.5) * 1.2,
+    dy: (Math.random() - 0.5) * 1.2,
+    char: particleChars[Math.floor(Math.random() * particleChars.length)]
+  });
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(80,80,80,0.8)"; // 文字の色と透明度
+  particles.forEach(p => {
+    ctx.font = `${p.r * 6}px sans-serif`; // サイズ調整
+    ctx.fillText(p.char, p.x, p.y);
+    p.x += p.dx;
+    p.y += p.dy;
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
 
     window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
@@ -162,4 +164,5 @@
   </script>
 </body>
 </html>
+
 
