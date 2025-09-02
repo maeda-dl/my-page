@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>アニメーション表示</title>
+  <title>社員紹介</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       font-family: sans-serif;
-      overflow-y: none; /* ← スクロール可能に */
       background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
       transition: background 1s ease;
     }
@@ -24,8 +23,6 @@
 
     .container {
       position: relative;
-      top:10%;
-      bottom:10%;
       width: 100%;
       min-height: 100vh;
       z-index: 2;
@@ -48,9 +45,14 @@
       font-size: clamp(24px, 6vw, 70px);
       font-weight: bold;
     }
+
     #name {
-      font-size: clamp(24px, 6vw, 70px);
+      font-size: clamp(24px, 6vw, 60px);
       font-weight: bold;
+      opacity: 0;
+      transition: opacity 1s ease;
+      z-index: 3;
+      margin: 1em 0;
     }
 
     .image {
@@ -59,26 +61,13 @@
       left: 50%;
       transform: translate(-50%, -50%);
       max-width: 80vw;
-      max-height: 40vh; /* スマホ対応：画像の高さを制限 */
+      max-height: 40vh;
       opacity: 0;
       transition: opacity 1s ease;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
       border-radius: 10px;
       z-index: 2;
     }
-
-#msgFinal {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: clamp(24px, 6vw, 60px);
-  padding: 10px 20px;
-  border-radius: 15px;
-  opacity: 0;
-  z-index: 3;
-}
-
-
   </style>
 </head>
 <body>
@@ -93,40 +82,40 @@
   </div>
 
   <script>
-// 粒子アニメーション（文字タイプ：MAEDA）
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    // 粒子アニメーション（文字タイプ：MAEDA）
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-const particleChars = "MAEDA";
-let particles = [];
+    const particleChars = "MAEDA";
+    let particles = [];
 
-for (let i = 0; i < 100; i++) {
-  particles.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 2 + 1, // 粒子サイズに基づくフォント
-    dx: (Math.random() - 0.5) * 1.2,
-    dy: (Math.random() - 0.5) * 1.2,
-    char: particleChars[Math.floor(Math.random() * particleChars.length)]
-  });
-}
+    for (let i = 0; i < 100; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2 + 1,
+        dx: (Math.random() - 0.5) * 1.2,
+        dy: (Math.random() - 0.5) * 1.2,
+        char: particleChars[Math.floor(Math.random() * particleChars.length)]
+      });
+    }
 
-function drawParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "rgba(80,80,80,0.8)"; // 文字の色と透明度
-  particles.forEach(p => {
-    ctx.font = `${p.r * 6}px sans-serif`; // サイズ調整
-    ctx.fillText(p.char, p.x, p.y);
-    p.x += p.dx;
-    p.y += p.dy;
-    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-  });
-  requestAnimationFrame(drawParticles);
-}
-drawParticles();
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(80,80,80,0.8)";
+      particles.forEach(p => {
+        ctx.font = `${p.r * 6}px sans-serif`;
+        ctx.fillText(p.char, p.x, p.y);
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
 
     window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
@@ -152,28 +141,16 @@ drawParticles();
     fadeIn(document.getElementById("dataLine"), 2000);
     fadeIn(document.getElementById("imgA"), 5000);
 
-    // 画像切り替えと「前田だよ」の表示
+    // 画像切り替えと名前表示（8秒後）
     setTimeout(() => {
       const imgA = document.getElementById("imgA");
       const imgB = document.getElementById("imgB");
-      const msgFinal = document.getElementById("msgFinal");
+      const name = document.getElementById("name");
 
       imgA.style.opacity = 0;
       imgB.style.opacity = 1;
-      msgFinal.style.opacity = 1;
-
-      // 画像Bの下に配置
-      const imgRect = imgB.getBoundingClientRect();
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      msgFinal.style.top = (imgRect.bottom + scrollTop + 20) + "px";
+      name.style.opacity = 1;
     }, 8000);
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
