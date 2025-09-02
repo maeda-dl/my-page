@@ -24,14 +24,14 @@ html, body {
 /* コンテナ */
 .container {
   position: relative;
-  width: 90%; /* 左右5%余白 */
+  width: 90%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 1em; /* 要素間の縦スペース */
-  margin-top: 10%; /* 全体上端からの余白 */
+  gap: 1em;
+  margin-top: 10%;
   z-index: 2;
   text-align: center;
 }
@@ -47,17 +47,29 @@ html, body {
 #dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; }
 #msg3 { font-size: clamp(20px,5vw,60px); }
 
+/* 画像ラッパー（上端位置固定） */
+.image-wrapper {
+  position: relative;
+  width: 80%;
+  height: auto;
+  min-height: 300px; /* 上端位置を固定 */
+}
+
 /* 画像 */
 .image {
-  max-width: 80%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 100%;
   opacity: 0;
-  transition: opacity 1s ease, transform 1s ease;
+  transition: opacity 1s ease;
 }
 
 /* 前田です */
 #msgFinal {
   font-size: clamp(30px,8vw,80px);
-  background: rgba(255,255,255,0.6); /* 淡い白 */
+  background: rgba(255,255,255,0.6);
   padding: 10px 20px;
   border-radius: 15px;
   opacity: 0;
@@ -72,8 +84,13 @@ html, body {
   <div id="msg1" class="message">はじめまして</div>
   <div id="dataLine" class="message">Data Line</div>
   <div id="msg3" class="message">の</div>
-  <img id="imgA" class="image" src="A.png">
-  <img id="imgB" class="image" src="B.png">
+
+  <!-- 画像ラッパーで上端固定 -->
+  <div class="image-wrapper">
+    <img id="imgA" class="image" src="A.png">
+    <img id="imgB" class="image" src="B.png">
+  </div>
+
   <div id="msgFinal">前田です</div>
 </div>
 
@@ -99,7 +116,7 @@ for (let i=0;i<100;i++){
 
 function drawParticles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = "rgba(255,255,255,0.6)"; // グレー濃め
+  ctx.fillStyle = "rgba(128,128,128,0.8)";
   particles.forEach(p=>{
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
@@ -149,7 +166,7 @@ fadeIn(document.getElementById("dataLine"), 2000);
 fadeIn(document.getElementById("msg3"), 3500);
 fadeIn(document.getElementById("imgA"), 5000);
 
-// 画像Aを消して画像Bと前田です表示
+// 画像Aを消して画像Bと前田です表示（上端揃え）
 setTimeout(()=>{
   document.getElementById("imgA").style.opacity = 0;
   document.getElementById("imgB").style.opacity = 1;
