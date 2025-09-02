@@ -1,144 +1,128 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>アニメーション表示</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      text-align: center;
-      background: #f8f8f8;
-      transition: background-color 3s ease;
-      overflow: hidden;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アニメーション表示</title>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
+        animation: bgColor 12s ease-in-out infinite alternate;
+        overflow: hidden;
+    }
+
+    /* 背景色の淡い変化 */
+    @keyframes bgColor {
+        0% { background: #f0f8ff; }
+        25% { background: #e6f7ff; }
+        50% { background: #f5f5dc; }
+        75% { background: #fffaf0; }
+        100% { background: #f0f8ff; }
+    }
+
+    /* 粒子用キャンバス */
+    #particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
     }
 
     .container {
-      width: 90%;
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 0 5%;
-      position: relative;
+        position: relative;
+        text-align: center;
+        height: 100%;
+        width: 90%;
+        margin: 0 auto;
+        z-index: 2;
     }
 
     .message {
-      opacity: 0;
-      font-size: 18px;
-      margin: 10px 0;
-      transition: opacity 1s ease, transform 1s ease;
-      transform: translateY(30px);
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 18px;
+        color: #333;
+        opacity: 0;
+        z-index: 10;
+        transition: opacity 1s ease, top 1s ease;
     }
 
-    #msg1 { font-size: 14px; } 
-    #msg2, #msg3 { font-size: 24px; font-weight: bold; }
-    #msg4 { font-size: 18px; }
-
-    img {
-      width: 100%;
-      max-width: 400px;
-      opacity: 0;
-      position: relative;
-      top: 0;
-      transition: opacity 1s ease;
+    .data-line {
+        font-size: 28px;
+        font-weight: bold;
     }
 
-    #msg5 {
-      font-size: 22px;
-      margin-top: 10px;
-      opacity: 0;
-      transition: opacity 1s ease;
+    .image {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 80%;
+        opacity: 0;
+        z-index: 5;
+        transition: opacity 1s ease;
     }
-
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-  </style>
+</style>
 </head>
 <body>
-  <canvas id="particles"></canvas>
-  <div class="container">
-    <div id="msg1" class="message">はじめまして</div>
-    <div id="msg2" class="message">Data</div>
-    <div id="msg3" class="message">Line</div>
-    <div id="msg4" class="message">の</div>
-    <img id="imgA" src="A.png" alt="画像A">
-    <img id="imgB" src="B.png" alt="画像B">
-    <div id="msg5">前田です。</div>
-  </div>
+<canvas id="particles"></canvas>
 
-  <script>
-    // メッセージ表示
-    const showMessage = (id, delay) => {
-      setTimeout(() => {
-        document.getElementById(id).style.opacity = 1;
-        document.getElementById(id).style.transform = "translateY(0)";
-      }, delay);
-    };
+<div class="container">
+    <div id="msg1" class="message" style="top: 20%;">はじめまして</div>
+    <div id="msg2" class="message data-line" style="top: 30%;">Data Line</div>
+    <div id="msg3" class="message" style="top: 38%;">の</div>
+    <img id="imgA" class="image" src="A.png" style="top: 45%;">
+    <img id="imgB" class="image" src="B.png" style="top: 45%;">
+    <div id="msg4" class="message" style="top: 75%;">前田です</div>
+</div>
 
-    showMessage("msg1", 500);
-    showMessage("msg2", 1000);
-    showMessage("msg3", 1500);
-    showMessage("msg4", 2000);
-
-    // 画像A → 画像B 切替
-    setTimeout(() => {
-      document.getElementById("imgA").style.opacity = 1;
-    }, 2500);
-
-    setTimeout(() => {
-      document.getElementById("imgA").style.opacity = 0;
-      setTimeout(() => {
-        document.getElementById("imgB").style.opacity = 1;
-        document.getElementById("msg5").style.opacity = 1;
-      }, 1000);
-    }, 5000);
-
-    // 背景色の淡い変化
-    const colors = ["#f8f8f8", "#e8f0ff", "#f0e8ff", "#e8fff5", "#fff5e8"];
-    let index = 0;
-    setInterval(() => {
-      index = (index + 1) % colors.length;
-      document.body.style.backgroundColor = colors[index];
-    }, 3000);
-
-    // 粒子アニメーション
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    let particles = [];
-
-    for (let i = 0; i < 80; i++) {
-      particles.push({
+<script>
+/* 粒子エフェクト */
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let particles = [];
+for (let i = 0; i < 80; i++) {
+    particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         r: Math.random() * 2 + 1,
         dx: (Math.random() - 0.5) * 0.5,
         dy: (Math.random() - 0.5) * 0.5
-      });
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
+    });
+}
+function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    particles.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(200,200,200,0.5)";
         ctx.fill();
         p.x += p.dx;
         p.y += p.dy;
         if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-      });
-      requestAnimationFrame(animate);
-    }
-    animate();
-  </script>
+    });
+    requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* テキストと画像の順番表示 */
+setTimeout(() => { document.getElementById("msg1").style.opacity = 1; }, 500);
+setTimeout(() => { document.getElementById("msg2").style.opacity = 1; }, 2000);
+setTimeout(() => { document.getElementById("msg3").style.opacity = 1; }, 3500);
+setTimeout(() => { document.getElementById("imgA").style.opacity = 1; }, 5000);
+setTimeout(() => { 
+    document.getElementById("imgA").style.opacity = 0; 
+}, 8000);
+setTimeout(() => { 
+    document.getElementById("imgB").style.opacity = 1; 
+    document.getElementById("msg4").style.opacity = 1;
+}, 9500);
+</script>
 </body>
 </html>
