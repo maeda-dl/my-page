@@ -8,14 +8,15 @@
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden;
     font-family: sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    overflow: hidden;
     background: linear-gradient(270deg, #ff5f6d, #ffc371, #24c6dc, #514a9d);
     background-size: 800% 800%;
     animation: gradientBG 20s ease infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     color: #fff;
   }
 
@@ -25,47 +26,65 @@
     100% { background-position: 0% 50%; }
   }
 
-  #messageBox {
-    position: absolute;
-    text-align: center;
+  .message {
     font-size: 2em;
-    padding: 20px 30px;
-    border-radius: 15px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border-radius: 10px;
     background: rgba(0,0,0,0.3);
-    animation: floatMessage 3s ease-in-out infinite alternate;
+    opacity: 0;
   }
 
-  @keyframes floatMessage {
-    0% { transform: translateY(0px); }
-    100% { transform: translateY(-20px); }
+  img {
+    max-width: 200px;
+    margin: 10px;
+    opacity: 0;
   }
 
-  canvas { position: absolute; top: 0; left: 0; z-index: 0; }
+  canvas { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    z-index: 0; 
+  }
+
+  .content {
+    position: relative;
+    z-index: 1; /* メッセージと画像を粒子の上に表示 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 </style>
 </head>
 <body>
 
-<div id="messageBox">ようこそ！</div>
 <canvas id="particleCanvas"></canvas>
 
+<div class="content">
+  <div id="msg1" class="message">はじめまして</div>
+  <div id="msg2" class="message">Data</div>
+  <div id="msg3" class="message">Line</div>
+  <div id="msg4" class="message">の</div>
+  <img id="imgA" src="画像AのURL" alt="画像A">
+  <div id="msg5" class="message">前田です。</div>
+  <img id="imgB" src="画像BのURL" alt="画像B">
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script>
   // --------------------------
-  // メッセージ切替
+  // アニメーション
   // --------------------------
-  const messages = [
-    "おはよう✨",
-    "こんにちは",
-    "こんばんは",
-    "おやすみ",
-    "前田"
+  const tl = gsap.timeline();
 
-  ];
-  const msgBox = document.getElementById('messageBox');
-  let index = 0;
-  setInterval(() => {
-    index = (index + 1) % messages.length;
-    msgBox.textContent = messages[index];
-  }, 3000);
+  tl.from("#msg1", {y:-100, opacity:0, duration:1})
+    .from("#msg2", {x:-200, opacity:0, duration:1})
+    .from("#msg3", {x:200, opacity:0, duration:1})
+    .from("#msg4", {scale:0, opacity:0, duration:1})
+    .from("#imgA", {scale:0, opacity:0, duration:1})
+    .from("#msg5", {y:100, opacity:0, duration:1})
+    .to("#imgB", {opacity:1, duration:0.5});
 
   // --------------------------
   // 粒子背景
@@ -73,6 +92,7 @@
   const canvas = document.getElementById('particleCanvas');
   const ctx = canvas.getContext('2d');
   let w, h;
+
   function resize() {
     w = canvas.width = window.innerWidth;
     h = canvas.height = window.innerHeight;
@@ -112,4 +132,3 @@
 
 </body>
 </html>
-
