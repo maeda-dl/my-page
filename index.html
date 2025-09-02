@@ -7,116 +7,138 @@
   <style>
     body {
       margin: 0;
-      height: 100vh;
-      background: linear-gradient(45deg, #f8f9fa, #e3f2fd);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      transition: background 3s ease;
-    }
-    .container {
+      padding: 0;
       text-align: center;
-      width: 90%;
-      max-width: 400px;
+      background: #f8f8f8;
+      transition: background-color 3s ease;
+      overflow: hidden;
     }
+
+    .container {
+      width: 90%;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 0 5%;
+      position: relative;
+    }
+
     .message {
       opacity: 0;
-      transform: translateY(50px);
-      transition: all 1s ease;
-      margin: 8px 0;
+      font-size: 18px;
+      margin: 10px 0;
+      transition: opacity 1s ease, transform 1s ease;
+      transform: translateY(30px);
     }
-    .message.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    #msg1 { font-size: 16px; }
-    #msg2, #msg3 { font-size: 22px; font-weight: bold; }
-    #msg4 { font-size: 16px; }
-    #msg5 { font-size: 18px; color: #333; opacity: 0; transition: opacity 1s ease; }
+
+    #msg1 { font-size: 14px; } 
+    #msg2, #msg3 { font-size: 24px; font-weight: bold; }
+    #msg4 { font-size: 18px; }
 
     img {
       width: 100%;
-      max-width: 350px;
+      max-width: 400px;
+      opacity: 0;
+      position: relative;
+      top: 0;
+      transition: opacity 1s ease;
+    }
+
+    #msg5 {
+      font-size: 22px;
+      margin-top: 10px;
       opacity: 0;
       transition: opacity 1s ease;
-      margin-top: 10px;
     }
-    canvas#particles {
+
+    canvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
+      z-index: -1;
     }
   </style>
 </head>
 <body>
-<canvas id="particles"></canvas>
-<div class="container">
-  <div id="msg1" class="message">はじめまして</div>
-  <div id="msg2" class="message">Data</div>
-  <div id="msg3" class="message">Line</div>
-  <div id="msg4" class="message">の</div>
-  <img id="imgA" src="A.png" alt="画像A">
-  <img id="imgB" src="B.png" alt="画像B">
-  <div id="msg5">前田です。</div>
-</div>
+  <canvas id="particles"></canvas>
+  <div class="container">
+    <div id="msg1" class="message">はじめまして</div>
+    <div id="msg2" class="message">Data</div>
+    <div id="msg3" class="message">Line</div>
+    <div id="msg4" class="message">の</div>
+    <img id="imgA" src="A.png" alt="画像A">
+    <img id="imgB" src="B.png" alt="画像B">
+    <div id="msg5">前田です。</div>
+  </div>
 
-<script>
-  const colors = ['#f8f9fa','#e3f2fd','#fce4ec','#e8f5e9','#fffde7'];
-  let colorIndex = 0;
-  setInterval(() => {
-    colorIndex = (colorIndex + 1) % colors.length;
-    document.body.style.background = colors[colorIndex];
-  }, 3000);
+  <script>
+    // メッセージ表示
+    const showMessage = (id, delay) => {
+      setTimeout(() => {
+        document.getElementById(id).style.opacity = 1;
+        document.getElementById(id).style.transform = "translateY(0)";
+      }, delay);
+    };
 
-  // テキスト＆画像アニメーション
-  const messages = ['msg1', 'msg2', 'msg3', 'msg4'];
-  messages.forEach((id, i) => {
-    setTimeout(() => document.getElementById(id).classList.add('show'), i * 800);
-  });
+    showMessage("msg1", 500);
+    showMessage("msg2", 1000);
+    showMessage("msg3", 1500);
+    showMessage("msg4", 2000);
 
-  // 画像A → 画像B
-  setTimeout(() => document.getElementById('imgA').style.opacity = 1, 4000);
-  setTimeout(() => {
-    document.getElementById('imgA').style.opacity = 0;
+    // 画像A → 画像B 切替
     setTimeout(() => {
-      document.getElementById('imgB').style.opacity = 1;
-      document.getElementById('msg5').style.opacity = 1;
-    }, 1000);
-  }, 7000);
+      document.getElementById("imgA").style.opacity = 1;
+    }, 2500);
 
-  // 粒子アニメーション
-  const canvas = document.getElementById('particles');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  let particles = Array.from({length: 80}, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 2,
-    d: Math.random() * 1
-  }));
-  function drawParticles(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "rgba(200,200,200,0.6)";
-    ctx.beginPath();
-    particles.forEach(p=>{
-      ctx.moveTo(p.x,p.y);
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2,true);
-    });
-    ctx.fill();
-    update();
-  }
-  function update(){
-    particles.forEach(p=>{
-      p.y += p.d;
-      if(p.y > canvas.height) p.y = 0;
-    });
-  }
-  setInterval(drawParticles,33);
-</script>
+    setTimeout(() => {
+      document.getElementById("imgA").style.opacity = 0;
+      setTimeout(() => {
+        document.getElementById("imgB").style.opacity = 1;
+        document.getElementById("msg5").style.opacity = 1;
+      }, 1000);
+    }, 5000);
+
+    // 背景色の淡い変化
+    const colors = ["#f8f8f8", "#e8f0ff", "#f0e8ff", "#e8fff5", "#fff5e8"];
+    let index = 0;
+    setInterval(() => {
+      index = (index + 1) % colors.length;
+      document.body.style.backgroundColor = colors[index];
+    }, 3000);
+
+    // 粒子アニメーション
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+
+    for (let i = 0; i < 80; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2 + 1,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5
+      });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(200,200,200,0.5)";
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
 </body>
 </html>
