@@ -39,8 +39,8 @@ html, body {
 }
 
 #msg1 { font-size: clamp(20px,5vw,60px); top:10%; }  /* はじめまして */
-#dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; opacity:0; top:20%; }
-#msg3 { font-size: clamp(20px,5vw,60px); top:28%; }
+#dataLine { position: relative;font-size: clamp(24px,6vw,70px); font-weight:bold; opacity:0; }
+#msg3 { position: relative;font-size: clamp(20px,5vw,60px); }
 
 .image {
   position: absolute;
@@ -146,3 +146,4 @@ window.addEventListener("resize", () => {
 </script>
 </body>
 </html>
+
