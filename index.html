@@ -24,56 +24,47 @@ html, body {
 /* コンテナ */
 .container {
   position: relative;
-  width: 90%;
+  width: 90%; /* 左右5%余白 */
   margin: 0 auto;
+  z-index: 2;
+  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  gap: 1em;
-  margin-top: 10%;
-  z-index: 2;
-  text-align: center;
 }
 
-/* 共通文字 */
+/* 文字共通 */
 .message {
   opacity: 0;
-  transition: opacity 1s ease, transform 1s ease;
+  margin: 0.5em 0;
+  white-space: nowrap;
 }
 
-/* 個別サイズ */
-#msg1 { font-size: clamp(20px,5vw,60px); }
+/* 文字サイズ */
+#msg1 { font-size: clamp(20px,5vw,60px); }  /* はじめまして */
 #dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; }
 #msg3 { font-size: clamp(20px,5vw,60px); }
-
-/* 画像ラッパー（上端位置固定） */
-.image-wrapper {
-  position: relative;
-  width: 80%;
-  height: auto;
-  min-height: 300px; /* 上端位置を固定 */
-}
 
 /* 画像 */
 .image {
   position: absolute;
-  top: 0;
   left: 50%;
   transform: translateX(-50%);
-  max-width: 100%;
+  max-width: 80%;
   opacity: 0;
   transition: opacity 1s ease;
 }
+#imgA, #imgB { top: 42%; } /* 上端揃え、同じ位置 */
 
 /* 前田です */
 #msgFinal {
   font-size: clamp(30px,8vw,80px);
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.6); /* 淡い白 */
   padding: 10px 20px;
   border-radius: 15px;
   opacity: 0;
-  transition: opacity 1s ease, transform 1s ease;
+  margin-top: 1em;
+  z-index: 10;
 }
 </style>
 </head>
@@ -84,13 +75,8 @@ html, body {
   <div id="msg1" class="message">はじめまして</div>
   <div id="dataLine" class="message">Data Line</div>
   <div id="msg3" class="message">の</div>
-
-  <!-- 画像ラッパーで上端固定 -->
-  <div class="image-wrapper">
-    <img id="imgA" class="image" src="A.png">
-    <img id="imgB" class="image" src="B.png">
-  </div>
-
+  <img id="imgA" class="image" src="A.png">
+  <img id="imgB" class="image" src="B.png">
   <div id="msgFinal">前田です</div>
 </div>
 
@@ -116,7 +102,7 @@ for (let i=0;i<100;i++){
 
 function drawParticles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = "rgba(128,128,128,0.8)";
+  ctx.fillStyle = "rgba(128,128,128,0.9)"; // グレー濃め
   particles.forEach(p=>{
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
@@ -145,22 +131,13 @@ setInterval(()=>{
 },3000);
 
 // -----------------------------
-// アニメーション順序
+// 文字と画像の順番にアニメーション
 // -----------------------------
-function fadeIn(el, delay=0){
-  setTimeout(()=>{
-    el.style.opacity = 1;
-    el.style.transform = "translateY(0)";
-  }, delay);
+function fadeIn(el, delay){
+  setTimeout(()=>{ el.style.opacity = 1; }, delay);
 }
 
-// 下から少しスライドする初期値
-["msg1","dataLine","msg3","imgA","imgB","msgFinal"].forEach(id=>{
-  const el = document.getElementById(id);
-  el.style.transform = "translateY(20px)";
-});
-
-// フェードイン順
+// 文字の順番
 fadeIn(document.getElementById("msg1"), 500);
 fadeIn(document.getElementById("dataLine"), 2000);
 fadeIn(document.getElementById("msg3"), 3500);
@@ -172,7 +149,6 @@ setTimeout(()=>{
   document.getElementById("imgB").style.opacity = 1;
   document.getElementById("msgFinal").style.opacity = 1;
 },8000);
-
 </script>
 </body>
 </html>
