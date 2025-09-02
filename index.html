@@ -38,11 +38,9 @@ html, body {
   transition: opacity 1s ease, top 1s ease;
 }
 
-.data-line {
-  font-size: clamp(24px,6vw,70px);
-  font-weight: bold;
-  opacity: 0;
-}
+#msg1 { font-size: clamp(20px,5vw,60px); top:10%; }  /* はじめまして */
+#dataLine { font-size: clamp(24px,6vw,70px); font-weight:bold; opacity:0; top:20%; }
+#msg3 { font-size: clamp(20px,5vw,60px); top:28%; }
 
 .image {
   position: absolute;
@@ -55,7 +53,7 @@ html, body {
 }
 
 #imgA, #imgB {
-  top: 45%; /* 上端揃え */
+  top: 38%; /* 上端揃え、同じ位置 */
 }
 
 #msgFinal {
@@ -68,6 +66,7 @@ html, body {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  top: 70%; /* 画像Bより下に表示 */
   z-index: 10;
 }
 </style>
@@ -76,9 +75,9 @@ html, body {
 <canvas id="particles"></canvas>
 
 <div class="container">
-  <div id="msg1" class="message" style="top:10%;">はじめまして</div>
-  <div id="dataLine" class="data-line" ;">Data Line</div>
-  <div id="msg3" class="message" ;">の</div>
+  <div id="msg1" class="message">はじめまして</div>
+  <div id="dataLine">Data Line</div>
+  <div id="msg3" class="message">の</div>
   <img id="imgA" class="image" src="A.png">
   <img id="imgB" class="image" src="B.png">
   <div id="msgFinal">前田です</div>
@@ -92,19 +91,19 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let particles = [];
-for (let i = 0; i < 80; i++) {
+for (let i = 0; i < 100; i++) {
   particles.push({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
-    r: Math.random() * 2 + 1,
-    dx: (Math.random() - 0.5) * 0.5,
-    dy: (Math.random() - 0.5) * 0.5
+    r: Math.random() * 3 + 1,
+    dx: (Math.random() - 0.5) * 1.2,
+    dy: (Math.random() - 0.5) * 1.2
   });
 }
 
 function drawParticles() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "rgba(255,255,255,0.9)"; // 色を濃く
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
   particles.forEach(p => {
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -147,4 +146,3 @@ window.addEventListener("resize", () => {
 </script>
 </body>
 </html>
-
