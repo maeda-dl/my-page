@@ -9,7 +9,7 @@ html, body {
   margin:0; padding:0; height:100%;
   font-family:sans-serif;
   overflow:hidden;
-  display:flex; justify-content:center; align-items:center;
+  display:flex; justify-content:center; align-items:flex-start;
   color:#fff;
   transition: background 1s ease;
 }
@@ -17,14 +17,12 @@ html, body {
 .content{
   position:relative; z-index:1;
   display:flex; flex-direction:column; align-items:center;
-  justify-content:center;
   width:90%; /* 左右5%ずつ余白 */
   text-align:center;
-  max-width:600px;
 }
 
 .message{
-  font-size:clamp(20px,5vw,60px); /* 画面幅に応じて文字サイズ調整 */
+  font-size:clamp(20px,5vw,60px);
   margin:0.2em 0;
   padding:5px 10px;
   border-radius:10px;
@@ -40,15 +38,13 @@ html, body {
 
 img{
   opacity:0;
-  width:100%;
   height:auto;
-  max-height:40vh;
-  object-fit:contain;
   margin:10px 0;
 }
 
-#imgA,#imgB{
-  max-width:100%;
+#imgA, #imgB{
+  max-width:90vw; /* 画面に合わせて大きくなる */
+  position:relative; /* 位置は固定 */
 }
 
 canvas{
@@ -71,9 +67,7 @@ canvas{
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script>
-// --------------------------
 // 背景色を3秒ごとに変更
-// --------------------------
 const bgColors = [
   "linear-gradient(270deg, #ff5f6d, #ffc371)",
   "linear-gradient(270deg, #24c6dc, #514a9d)",
@@ -81,7 +75,6 @@ const bgColors = [
   "linear-gradient(270deg, #a18cd1, #fbc2eb)"
 ];
 let colorIndex = 0;
-
 function changeBackground(){
   document.body.style.background = bgColors[colorIndex];
   colorIndex = (colorIndex + 1) % bgColors.length;
@@ -89,9 +82,7 @@ function changeBackground(){
 changeBackground();
 setInterval(changeBackground, 3000);
 
-// --------------------------
 // アニメーション
-// --------------------------
 const tl = gsap.timeline();
 
 // はじめまして
@@ -118,9 +109,7 @@ gsap.set([imgB,msgFinal],{opacity:0});
 tl.to(imgA,{opacity:0,duration:0.5}, "+=1");
 tl.to([imgB,msgFinal],{opacity:1,duration:0.5}, "-=0.2");
 
-// --------------------------
 // 粒子背景
-// --------------------------
 const canvas=document.getElementById("particleCanvas");
 const ctx=canvas.getContext("2d");
 let w,h;
