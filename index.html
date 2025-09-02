@@ -3,86 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>アニメーションページ</title>
+<title>アニメーション表示</title>
 <style>
   body {
     margin: 0;
-    padding: 0 5%;
-    background: #fff;
-    text-align: center;
-    font-family: Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    background-color: #fdfdfd;
+    transition: background-color 3s ease;
   }
-  #title {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 24px;
-    margin: 0;
-  }
-  #dataLine {
-    margin-top: 60px;
-    font-size: 28px;
-    font-weight: bold;
-    transition: color 1s ease;
-  }
-  .image-container {
-    position: relative;
-    width: 100%;
-    margin-top: 40px;
-  }
-  .image-container img {
-    position: absolute;
+  #particleCanvas {
+    position: fixed;
     top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  .message {
+    position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    max-width: 500px;
-    opacity: 0;
-    display: none;
+    font-size: 18px;
+    color: #333;
+    z-index: 2;
+    text-align: center;
+    white-space: nowrap;
+  }
+  #msg1 {
+    top: 100%;
+    animation: slideUp 2s ease-out forwards;
+  }
+  #msg2, #msg3, #msg4 {
+    font-size: 24px;
+    top: 20%;
+  }
+  img {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90%;
+    height: auto;
+    z-index: 1;
+  }
+  @keyframes slideUp {
+    to { top: 10px; }
   }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
 
-<h1 id="title">はじめまして</h1>
-<div id="dataLine">Data Line</div>
+<canvas id="particleCanvas"></canvas>
 
-<div class="image-container">
-  <img id="imgA" src="A.png" alt="Image A">
-  <img id="imgB" src="B.png" alt="Image B">
-</div>
+<div id="msg1" class="message">はじめまして</div>
+<div id="msg2" class="message">Data</div>
+<div id="msg3" class="message">Line</div>
+<div id="msg4" class="message">の</div>
+
+<img id="imgA" src="A.png" alt="A">
+<img id="imgB" src="B.png" alt="B" style="display:none;">
 
 <script>
-  window.addEventListener('load', () => {
-    const title = document.getElementById('title');
-    const dataLine = document.getElementById('dataLine');
-    const imgA = document.getElementById('imgA');
-    const imgB = document.getElementById('imgB');
+  // 背景色の淡い変化
+  const colors = ["#fdfdfd", "#f5f8ff", "#fef8f5", "#f8fef5"];
+  let index = 0;
+  setInterval(() => {
+    index = (index + 1) % colors.length;
+    document.body.style.backgroundColor = colors[index];
+  }, 3000);
 
-    // GSAPタイムライン
-    const tl = gsap.timeline();
+  // 画像切替
+  setTimeout(() => {
+    document.getElementById("imgA").style.display = "none";
+    document.getElementById("imgB").style.display = "block";
+  }, 4000);
 
-    // タイトルを下から移動させる
-    tl.to(title, { top: 10, duration: 1, ease: "power2.out" })
+  // 粒子アニメーション
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let w, h;
 
-      // 画像Aを表示
-      .set(imgA, { display: "block" })
-      .to(imgA, { opacity: 1, duration: 1 }, "+=0.5")
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
 
-      // 3秒後に画像Aを消して画像Bを表示
-      .to(imgA, { opacity: 0, duration: 1, delay: 3, onComplete: () => {
-          imgA.style.display = "none";
-          imgB.style.display = "block";
-      }})
-      .to(imgB, { opacity: 1, duration: 1 }, ">");
+  function createParticles() {
+    particles = [];
+    for (let i = 0; i < 80; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 2 + 1,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5
+      });
+    }
+  }
+  createParticles();
 
-    // Data Line の色を3秒ごとに変更
-    setInterval(() => {
-      dataLine.style.color = `hsl(${Math.floor(Math.random()*360)}, 70%, 50%)`;
-    }, 3000);
-  });
+  function drawParticles() {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(150,150,150,0.5)";
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      p.x += p.dx;
+      p.y += p.dy;
+      if (p.x < 0 || p.x > w) p.dx *= -1;
+      if (p.y < 0 || p.y > h) p.dy *= -1;
+    });
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
 </script>
+
 </body>
 </html>
