@@ -114,7 +114,7 @@ html, body {
   transition:transform 1.5s ease-out;
 }
 .fortune {
-  min-width: 140px;
+  min-width: 130px;
   height: 60px; /* ルーレット枠に合わせて高さを確保 */
   line-height: 60px; /* 縦中央揃え */
   text-align: center;
@@ -124,7 +124,9 @@ html, body {
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   color: #0f1b4c;
   font-size: 20px;
-  display: inline-block; /* flex → inline-block に変更してline-heightで中央揃え */
+  display: flex;              /* flexで中央揃え */
+  align-items: center;        /* 垂直中央 */
+  justify-content: center;    /* 横中央 */
 }
 .fortune.selected {
   transform: scale(1.1);
@@ -362,6 +364,7 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
