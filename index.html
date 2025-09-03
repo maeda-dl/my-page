@@ -25,17 +25,7 @@ html, body {
 #name { font-size:clamp(22px,6vw,40px); }
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
-.image {
-  display: none;       /* opacityではなく displayで切り替え */
-  width:100%;
-  height:auto;
-  position:absolute;
-  top:0; left:0;
-  box-shadow:0 0 20px rgba(0,0,0,0.2);
-  border-radius:10px;
-  z-index:1;
-}
-
+.image { display:block; width:100%; height:auto; position:absolute; top:0; left:0; opacity:0; transition:opacity 1s ease; box-shadow:0 0 20px rgba(0,0,0,0.2); border-radius:10px; z-index:1; }
 
 /* おみくじボタン */
 #omikujiBtn {
@@ -70,8 +60,7 @@ html, body {
   font-size: 16px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(145deg, #001f4d, #003366);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+  background: #4e9af1;
   color: #fff;
   cursor: pointer;
   display: none;
@@ -137,9 +126,8 @@ html, body {
   left: 20px;     /* 10px → 20px にして左余白を増やす */
   font-size: 16px;
   background: rgba(255,255,255,0.7);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-  padding: 8px 12px;
-  border-radius: 12px;
+  padding: 5px 10px;
+  border-radius: 8px;
   max-width: 200px;
   z-index: 99999;
 }
@@ -256,18 +244,6 @@ btn.addEventListener("click",()=>{
   // 中央カードを強調
   allFortunes[stopIndex].classList.add('selected');
 
-// 画像AとBを交互に切り替え
-const images = [document.getElementById("imgA"), document.getElementById("imgB")];
-let currentIndex = 1; // 最初はimgBを表示した後
-images[currentIndex].style.display = "block"; // 初期表示
-setInterval(() => {
-  const nextIndex = (currentIndex + 1) % images.length;
-  images[currentIndex].style.display = "none";
-  images[nextIndex].style.display = "block";
-  currentIndex = nextIndex;
-}, 2000);
-
-  
   setTimeout(()=>{rouletteInner.style.transform=`translateX(${offset}px)`;},50);
 
   setTimeout(()=>{
@@ -280,7 +256,7 @@ setInterval(() => {
       resultDisplay.style.display="none";
       btn.style.display="inline-block";
       history.textContent = selected;
-      
+
       // 選択カードの強調解除
       allFortunes[stopIndex].classList.remove('selected');
     },3000);
@@ -289,10 +265,6 @@ setInterval(() => {
 </script>
 </body>
 </html>
-
-
-
-
 
 
 
