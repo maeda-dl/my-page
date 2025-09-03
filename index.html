@@ -278,24 +278,26 @@ btn.addEventListener("click", () => {
   const selected = fortunes[Math.floor(Math.random() * fortunes.length)];
   const allFortunes = rouletteInner.querySelectorAll(".fortune");
   let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.indexOf(selected);
-
   allFortunes[stopIndex].classList.add("selected");
 
-  // アニメーション用の設定
+  // アニメーション用設定
   let duration = 4000; // 回転総時間4秒
   let start = null;
   const startX = 0;
   const endX = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
 
+  // easing: easeOutCubic（最後ゆっくり止まる）
+  function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
   function animate(time) {
     if (!start) start = time;
     let elapsed = time - start;
     let progress = elapsed / duration;
-
-    // easing: easeInOutQuad（最初ゆっくり→加速→最後ゆっくり）
     if (progress > 1) progress = 1;
-    let eased = progress < 0.5 ? 2*progress*progress : -1 + (4 - 2*progress)*progress;
 
+    let eased = easeOutCubic(progress);
     let currentX = startX + (endX - startX) * eased;
     rouletteInner.style.transform = `translateX(${currentX}px)`;
 
@@ -321,7 +323,9 @@ btn.addEventListener("click", () => {
 
   requestAnimationFrame(animate);
 });
+
 </script>
 </body>
 </html>
+
 
