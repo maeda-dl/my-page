@@ -385,18 +385,17 @@ btn.addEventListener("click",()=>{
     resultDisplay.style.display = "block";
 
     setTimeout(()=>{
-      // 結果を消してボタンを再表示
-      resultDisplay.style.display = "none";
-      btn.style.display = "inline-block";
+  resultDisplay.style.display = "none";
+  btn.style.display = "inline-block";
 
-      history.textContent = `${selected}（${fortuneCounts[selected]}回目 / ${totalCount}回中）`;
-      history.style.display = "block";
-      allFortunes[stopIndex].classList.remove("selected");
+  history.textContent = `${selected}（${fortuneCounts[selected]}回目 / ${totalCount}回中）`;
+  history.style.display = "block";
 
-      // 🎯 次の準備としてルーレット中身をリセット
-      rouletteInner.innerHTML = "";
-      rouletteInner.style.transform = "translateX(0)";
-    },3000);
+  // 🎯 先に非表示にしてからリセット
+  roulette.style.display="none";
+  rouletteInner.innerHTML = "";
+  rouletteInner.style.transform = "translateX(0)";
+},3000);
   }
 }
 
@@ -405,6 +404,7 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
 
