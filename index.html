@@ -28,7 +28,8 @@ html, body {
 .image {
   display: block;                         /* インライン要素ではなくブロック要素として表示する */
   width: 100%;                            /* 横幅を親要素いっぱいに広げる */
-  height: auto;                           /* 縦幅は画像の縦横比を維持して自動調整 */
+  height: 100%;   /* 親の高さに合わせる */
+  object-fit: contain;  /* 縦横比を維持 */
   position: absolute;                     /* 親要素を基準に絶対配置する */
   top: 0; left: 0;                        /* 親要素の左上に固定配置する */
   opacity: 0;                             /* 初期状態では透明（非表示に近い状態） */
@@ -300,6 +301,7 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
 
