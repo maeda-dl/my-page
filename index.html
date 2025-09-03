@@ -35,42 +35,32 @@ html, body {
   border-radius:10px;
 }
 
-/* おみくじボタン（雲風） */
+/* おみくじボタン */
 #omikujiBtn {
     position: fixed;
     bottom: 20%;
     left: 0;
     right: 0;
     margin: 0 auto;
-    padding: 15px 30px;
+    width: max-content;
+    padding: 12px 25px;
     font-size: 22px;
     font-weight: bold;
     border: none;
     border-radius: 50px;
-    background: #fefefe; /* 白っぽい背景 */
-    color: #333;
+    background: linear-gradient(145deg, #1a2a6c, #0f1b4c);
+    color: #fff;
     cursor: pointer;
-    z-index: 4;
+    z-index:4;
+    animation: float 3s ease-in-out infinite;
     display: none;
     white-space: nowrap;
     text-align: center;
-    box-shadow:
-        0 4px 6px rgba(0,0,0,0.1),
-        0 10px 15px rgba(0,0,0,0.05),
-        0 20px 25px rgba(0,0,0,0.03);
-    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-/* ホバーで少し浮かせる */
-#omikujiBtn:hover {
-    transform: translateY(-5px);
-    box-shadow:
-        0 6px 8px rgba(0,0,0,0.1),
-        0 12px 18px rgba(0,0,0,0.08),
-        0 24px 30px rgba(0,0,0,0.05);
-}
-
-/* 確率詳細ボタン */
+/* 右下の確率詳細ボタン */
 #probBtn {
   position: fixed;
   bottom: 20px;
@@ -87,6 +77,7 @@ html, body {
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
+/* 左下の履歴 */
 #history {
   position: fixed;
   bottom: 20px;
@@ -100,45 +91,35 @@ html, body {
   box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
+/* ルーレットと結果表示は既存のまま */
 #roulette {
-  position: fixed; 
-  bottom: 30%; 
-  left: 50%; 
-  transform: translateX(-50%);
-  width: 90%; 
-  max-width: 600px; 
-  height: 60px;
-  display: none; 
-  z-index: 99998;
-  border-radius: 30px;
-  overflow: hidden;
-  background: linear-gradient(90deg, #1a2a6c, #0f1b4c);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-  border: 2px solid #0f1b4c;
+  position:fixed; bottom:30%; left:50%; transform:translateX(-50%);
+  width:90%; max-width:600px; height:60px;
+  display:none; z-index:99998;
+  border-radius:30px;
+  overflow:hidden;
+  background: linear-gradient(90deg, #fff4e6, #ffe6f0);
+  box-shadow:0 8px 15px rgba(0,0,0,0.2);
+  border: 2px solid #ffd700;
 }
 #rouletteInner {
   display:flex; white-space:nowrap; font-size:28px; font-weight:bold;
   transition:transform 1.5s ease-out;
 }
 .fortune {
-  min-width: 150px; 
-  text-align: center; 
-  padding: 10px;
-  background: linear-gradient(to top, #0f1b4c, #1a2a6c);
+  min-width:150px; text-align:center; padding:10px;
+  background: linear-gradient(to top, #fffae6, #ffe6f0);
   margin: 0 5px;
   border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  color: #ffffff;
-  font-size: 20px;
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  color:#333; font-size:20px;
+  display:flex; align-items:center; justify-content:center;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 .fortune.selected {
   transform: scale(1.2);
-  box-shadow: 0 8px 15px rgba(255, 215, 0, 0.8);
-  color: #ffd700;
+  box-shadow: 0 8px 15px rgba(255,215,0,0.8);
+  color:#ff4500;
 }
 
 #resultDisplay {
@@ -158,6 +139,7 @@ html, body {
 @keyframes blink { 50% { opacity:0; } }
 @keyframes pop { 0% { transform:translate(-50%,-50%) scale(0.8); } 50% { transform:translate(-50%,-50%) scale(1.2); } 100% { transform:translate(-50%,-50%) scale(1); } }
 
+/* 確率ポップアップ */
 #probPopup {
   position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.85);
   color:#fff; font-size:16px; padding:15px; display:none; z-index:99997; text-align:center;
@@ -203,33 +185,12 @@ const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
 const particleChars="MAEDA";
 let particles=[];
-for(let i=0;i<100;i++){
-  particles.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    r:Math.random()*2+1,
-    dx:(Math.random()-0.5)*1.2,
-    dy:(Math.random()-0.5)*1.2,
-    char:particleChars[Math.floor(Math.random()*particleChars.length)]
-  });
-}
-function drawParticles(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="rgba(80,80,80,0.8)";
-  particles.forEach(p=>{
-    ctx.font=`${p.r*6}px sans-serif`;
-    ctx.fillText(p.char,p.x,p.y);
-    p.x+=p.dx;
-    p.y+=p.dy;
-    if(p.x<0||p.x>canvas.width)p.dx*=-1;
-    if(p.y<0||p.y>canvas.height)p.dy*=-1;
-  });
-  requestAnimationFrame(drawParticles);
-}
+for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*1.2,dy:(Math.random()-0.5)*1.2,char:particleChars[Math.floor(Math.random()*particleChars.length)]});}
+function drawParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle="rgba(80,80,80,0.8)";particles.forEach(p=>{ctx.font=`${p.r*6}px sans-serif`;ctx.fillText(p.char,p.x,p.y);p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>canvas.width)p.dx*=-1;if(p.y<0||p.y>canvas.height)p.dy*=-1});requestAnimationFrame(drawParticles);}
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
 
-// 背景色変化
+// 背景色変化（白ベース）
 const bgColors=["#ffffff","#f5f5f5","#fffaf0","#f0f8ff"];
 let colorIndex=0;
 setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.background=bgColors[colorIndex];},3000);
@@ -245,12 +206,14 @@ setTimeout(()=>{
   const imgB = document.getElementById("imgB");
   const name = document.getElementById("name");
 
+  // 最初は A を表示
   imgA.style.zIndex = 2;
   imgB.style.zIndex = 1;
   imgA.style.opacity = 1;
   imgB.style.opacity = 0;
   name.style.opacity = 1;
 
+  // 画像A/Bを2秒ごとに切替（透けない）
   let showA = true;
   setInterval(()=>{
     showA = !showA;
@@ -267,6 +230,7 @@ setTimeout(()=>{
     }
   },2000);
 
+  // ボタン表示
   document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
@@ -277,7 +241,7 @@ const probPopup=document.getElementById("probPopup");
 probBtn.addEventListener("click",()=>{probPopup.style.display="block";});
 probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
 
-// おみくじ機能
+// おみくじ機能（省略せずそのまま）
 const fortunes=["大吉 🎉","中吉 😀","小吉 🙂","吉 😊","末吉 😌","凶 😱","大凶 💀"];
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
@@ -285,57 +249,46 @@ const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
 
-btn.addEventListener("click", () => {
-  btn.style.display = "none";
-  roulette.style.display = "block";
-  rouletteInner.innerHTML = "";
+btn.addEventListener("click",()=>{
+  btn.style.display="none";
+  roulette.style.display="block";
+  rouletteInner.innerHTML="";
 
-  rouletteInner.style.transition = 'none';
-  rouletteInner.style.transform = 'translateX(0)';
-  rouletteInner.offsetHeight; // リフロー
+  rouletteInner.style.transition='none';
+  rouletteInner.style.transform='translateX(0)';
+  rouletteInner.offsetHeight;
+  rouletteInner.style.transition='transform 1.5s ease-out';
 
-  for (let i = 0; i < 20; i++) {
-    fortunes.forEach(f => {
-      const div = document.createElement("div");
-      div.className = "fortune";
-      div.textContent = f;
+  for(let i=0;i<20;i++){
+    fortunes.forEach(f=>{
+      const div=document.createElement("div");
+      div.className="fortune"; div.textContent=f;
       rouletteInner.appendChild(div);
     });
   }
 
-  const selected = fortunes[Math.floor(Math.random() * fortunes.length)];
-  const allFortunes = rouletteInner.querySelectorAll(".fortune");
-  let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.indexOf(selected);
-  const offset = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
+  const selected=fortunes[Math.floor(Math.random()*fortunes.length)];
+  const allFortunes=rouletteInner.querySelectorAll(".fortune");
+  let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.indexOf(selected);
+  const offset=-allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
 
   allFortunes[stopIndex].classList.add('selected');
 
-  // 2段階アニメーションでじわっと止める
-  const initialDuration = 1200;
-  const finalDuration = 800;
-  const interimOffset = offset + 50; // 最後に少し戻る分
-
-  rouletteInner.style.transition = `transform ${initialDuration}ms cubic-bezier(0.25,0.1,0.25,1)`;
-  rouletteInner.style.transform = `translateX(${interimOffset}px)`;
+  setTimeout(()=>{rouletteInner.style.transform=`translateX(${offset}px)`;},50);
 
   setTimeout(()=>{
-    rouletteInner.style.transition = `transform ${finalDuration}ms ease-out`;
-    rouletteInner.style.transform = `translateX(${offset}px)`;
+    roulette.style.display="none";
+    resultDisplay.textContent=selected;
+    resultDisplay.style.display="block";
+    resultDisplay.style.opacity = "1";
 
     setTimeout(()=>{
-      roulette.style.display = "none";
-      resultDisplay.textContent = selected;
-      resultDisplay.style.display = "block";
-      resultDisplay.style.opacity = "1";
-
-      setTimeout(()=>{
-        resultDisplay.style.display = "none";
-        btn.style.display = "inline-block";
-        history.textContent = selected;
-        allFortunes[stopIndex].classList.remove('selected');
-      }, 3000);
-    }, finalDuration + 500);
-  }, initialDuration);
+      resultDisplay.style.display="none";
+      btn.style.display="inline-block";
+      history.textContent = selected;
+      allFortunes[stopIndex].classList.remove('selected');
+    },3000);
+  },1600);
 });
 </script>
 </body>
