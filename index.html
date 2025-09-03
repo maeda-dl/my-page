@@ -244,6 +244,16 @@ btn.addEventListener("click",()=>{
   // 中央カードを強調
   allFortunes[stopIndex].classList.add('selected');
 
+  // 画像AとBを交互に切り替え
+const images = [document.getElementById("imgA"), document.getElementById("imgB")];
+let currentIndex = 1; // 最初はimgBを表示した後
+setInterval(() => {
+  const nextIndex = (currentIndex + 1) % images.length;
+  images[currentIndex].style.opacity = 0;
+  images[nextIndex].style.opacity = 1;
+  currentIndex = nextIndex;
+}, 2000); // 5秒ごとに切り替え
+  
   setTimeout(()=>{rouletteInner.style.transform=`translateX(${offset}px)`;},50);
 
   setTimeout(()=>{
@@ -257,16 +267,6 @@ btn.addEventListener("click",()=>{
       btn.style.display="inline-block";
       history.textContent = selected;
       
-// 画像AとBを交互に切り替え
-const images = [document.getElementById("imgA"), document.getElementById("imgB")];
-let currentIndex = 1; // 最初はimgBを表示した後
-setInterval(() => {
-  const nextIndex = (currentIndex + 1) % images.length;
-  images[currentIndex].style.opacity = 0;
-  images[nextIndex].style.opacity = 1;
-  currentIndex = nextIndex;
-}, 2000); // 5秒ごとに切り替え
-
       // 選択カードの強調解除
       allFortunes[stopIndex].classList.remove('selected');
     },3000);
@@ -275,6 +275,7 @@ setInterval(() => {
 </script>
 </body>
 </html>
+
 
 
 
