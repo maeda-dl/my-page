@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>社員紹介＋おみくじ</title>
 <style>
 html, body {
@@ -27,33 +27,18 @@ html, body {
 
 /* おみくじボタン */
 #omikujiBtn {
-  position: fixed;
-  bottom: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 30px; /* 幅を少し広めにして文字が折り返さない */
-  font-size: 22px;
-  font-weight: bold;
-  border: none;
-  border-radius: 50px;
-  background: #ff6b6b;
-  color: #fff;
-  cursor: pointer;
-  z-index: 3;
-  animation: float 3s ease-in-out infinite;
-  white-space: nowrap; /* 文字折り返しを防ぐ */
-  text-align: center;
+  position:fixed; bottom:20%; left:50%; transform:translateX(-50%);
+  padding:12px 25px; font-size:22px; font-weight:bold; border:none; border-radius:50px;
+  background:#ff6b6b; color:#fff; cursor:pointer; z-index:3;
+  animation: float 3s ease-in-out infinite; display:none; white-space:nowrap;
 }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
 /* 確率詳細ボタン */
 #probBtn {
   position:fixed; bottom:10px; right:10px;
-  padding:12px 20px; font-size:18px; font-weight:bold;
-  border:none; border-radius:30px;
-  background: linear-gradient(45deg,#fdd835,#ff6f00);
-  color:#fff; cursor:pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  display:none; z-index:4;
+  padding:10px 15px; font-size:16px; border:none; border-radius:8px;
+  background:#4e9af1; color:#fff; cursor:pointer; z-index:4;
 }
 
 /* ルーレット */
@@ -69,7 +54,7 @@ html, body {
 }
 @keyframes blink { 50% { opacity:0; } }
 
-/* 左下履歴表示 */
+/* 左下表示 */
 #history {
   position:fixed; bottom:10px; left:10px;
   font-size:16px; background:rgba(255,255,255,0.7);
@@ -78,11 +63,9 @@ html, body {
 
 /* 確率ポップアップ */
 #probPopup {
-  position:fixed; bottom:0; left:0; width:100%;
-  background: url('https://i.imgur.com/0F9Z6oO.png') repeat; /* 和紙柄背景 */
-  color:#000; font-size:16px; padding:20px; display:none; z-index:9998;
-  text-align:center; cursor:pointer;
-  box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
+  position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.85);
+  color:#fff; font-size:16px; padding:15px; display:none; z-index:9998; text-align:center;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -137,5 +120,69 @@ setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.b
 
 // フェードイン
 function fadeIn(el,delay){setTimeout(()=>{el.style.opacity=1;},delay);}
-fadeIn(do
+fadeIn(document.getElementById("msg1"),500);
+fadeIn(document.getElementById("dataLine"),2000);
+fadeIn(document.getElementById("imgA"),5000);
+setTimeout(()=>{document.getElementById("imgA").style.opacity=0;document.getElementById("imgB").style.opacity=1;document.getElementById("name").style.opacity=1;},8000);
 
+// ボタン表示
+const btn=document.getElementById("omikujiBtn");
+setTimeout(()=>{btn.style.display="inline-block";},10000);
+
+// 確率ポップアップ
+const probBtn=document.getElementById("probBtn");
+const probPopup=document.getElementById("probPopup");
+probBtn.addEventListener("click",()=>{probPopup.style.display="block";});
+probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
+
+// おみくじ機能
+const fortunes=["大吉 🎉","中吉 😀","小吉 🙂","吉 😊","末吉 😌","凶 😱","大凶 💀"];
+const roulette=document.getElementById("roulette");
+const rouletteInner=document.getElementById("rouletteInner");
+const resultDisplay=document.getElementById("resultDisplay");
+const history=document.getElementById("history");
+
+btn.addEventListener("click",()=>{
+  btn.style.display="none";
+  roulette.style.display="block";
+  rouletteInner.innerHTML="";
+
+  // transformリセット
+  rouletteInner.style.transition='none';
+  rouletteInner.style.transform='translateX(0)';
+  rouletteInner.offsetHeight;
+  rouletteInner.style.transition='transform 1.5s ease-out';
+
+  // ルーレット要素
+  for(let i=0;i<20;i++){
+    fortunes.forEach(f=>{
+      const div=document.createElement("div");
+      div.className="fortune"; div.textContent=f;
+      rouletteInner.appendChild(div);
+    });
+  }
+
+  // ランダム結果
+  const selected=fortunes[Math.floor(Math.random()*fortunes.length)];
+  const allFortunes=rouletteInner.querySelectorAll(".fortune");
+  let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.indexOf(selected);
+  const offset=-allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
+
+  setTimeout(()=>{rouletteInner.style.transform=`translateX(${offset}px)`;},50);
+
+  // 停止後処理
+  setTimeout(()=>{
+    roulette.style.display="none";
+    resultDisplay.textContent=selected;
+    resultDisplay.style.display="block";
+
+    setTimeout(()=>{
+      resultDisplay.style.display="none";
+      btn.style.display="inline-block";
+      history.textContent = selected;
+    },3000);
+  },1600);
+});
+</script>
+</body>
+</html>
