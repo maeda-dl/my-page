@@ -75,9 +75,15 @@ html, body {
 
 /* 左下表示 */
 #history {
-  position:fixed; bottom:10px; left:10px;
-  font-size:16px; background:rgba(255,255,255,0.7);
-  padding:5px 10px; border-radius:8px; max-width:200px;
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  font-size: 16px;
+  background: rgba(255,255,255,0.7);
+  padding: 5px 10px;
+  border-radius: 8px;
+  max-width: 200px;
+  z-index: 99999; /* 最前面に */
 }
 
 /* 確率ポップアップ */
@@ -207,3 +213,4 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
