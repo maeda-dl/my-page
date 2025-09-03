@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>社員紹介</title>
+  <title>社員紹介＋おみくじ</title>
   <style>
     html, body {
       margin: 0;
@@ -12,13 +12,13 @@
       font-family: sans-serif;
       background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
       transition: background 1s ease;
+      overflow-x: hidden;
     }
 
     #particles {
       position: fixed;
       top: 0; left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       z-index: 1;
     }
 
@@ -41,38 +41,96 @@
       text-align: center;
     }
 
-    #msg1 {
-      font-size: clamp(20px, 5vw, 40px);
+    #msg1 { font-size: clamp(20px, 5vw, 40px); }
+    #dataLine { font-size: clamp(22px, 6vw, 45px); }
+    #name { font-size: clamp(22px, 6vw, 40px); }
+
+    .image-wrapper {
+      margin-top: 1em;
+      position: relative;
+      width: 90%;
+      max-width: 400px;
+    }
+    .image {
+      display: block;
+      width: 100%;
+      height: auto;
+      position: absolute;
+      top: 0; left: 0;
+      opacity: 0;
+      transition: opacity 1s ease;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      border-radius: 10px;
     }
 
-    #dataLine {
-      font-size: clamp(22px, 6vw, 45px);
+    /* === おみくじボタン === */
+    #omikujiBtn {
+      margin-top: 20px;
+      padding: 15px 30px;
+      font-size: 22px;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      background: #ff6b6b;
+      color: #fff;
+      cursor: pointer;
+      z-index: 3;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
-    #name {
-      font-size: clamp(22px, 6vw, 40px);
+    /* === ルーレット表示 === */
+    #roulette {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 20px;
+      height: 50px;
+      display: none;
+    }
+    #rouletteInner {
+      display: flex;
+      white-space: nowrap;
+      font-size: 28px;
+      font-weight: bold;
+      transition: transform 3s ease-out;
+    }
+    .fortune {
+      min-width: 150px;
+      text-align: center;
+      padding: 10px;
     }
 
-.image-wrapper {
-  margin-top: 1em;
-  position: relative;  /* ← 画像を重ねるために relative に */
-  width: 90%;          /* 幅を統一 */
-  max-width: 400px;    /* 必要なら上限サイズ */
-}
+    /* === 結果表示 === */
+    #resultDisplay {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 50px;
+      font-weight: bold;
+      text-align: center;
+      color: #ff0000;
+      display: none;
+      animation: blink 0.5s step-start infinite;
+      z-index: 5;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
 
-.image {
-  display: block;
-  width: 100%;        /* ← 横幅を揃える */
-  height: auto;
-  position: absolute; /* ← wrapper 内で重ねる */
-  top: 0;
-  left: 0;
-  opacity: 0;
-  transition: opacity 1s ease;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
-  border-radius: 10px;
-}
-
+    /* === 履歴表示 === */
+    #history {
+      position: fixed;
+      bottom: 10px; left: 10px;
+      font-size: 16px;
+      background: rgba(255,255,255,0.7);
+      padding: 5px 10px;
+      border-radius: 8px;
+      max-width: 200px;
+    }
   </style>
 </head>
 <body>
@@ -87,7 +145,20 @@
       <img id="imgA" class="image" src="A.png" alt="画像A" />
       <img id="imgB" class="image" src="B.png" alt="画像B" />
     </div>
+
+    <!-- おみくじボタン -->
+    <button id="omikujiBtn">おみくじを引く 🎲</button>
+
+    <!-- ルーレット -->
+    <div id="roulette">
+      <div id="rouletteInner"></div>
+    </div>
   </div>
+
+  <!-- 結果表示 -->
+  <div id="resultDisplay"></div>
+  <!-- 履歴 -->
+  <div id="history"></div>
 
   <script>
     // 粒子アニメーション
@@ -95,10 +166,8 @@
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
     const particleChars = "MAEDA";
     let particles = [];
-
     for (let i = 0; i < 100; i++) {
       particles.push({
         x: Math.random() * canvas.width,
@@ -109,22 +178,19 @@
         char: particleChars[Math.floor(Math.random() * particleChars.length)]
       });
     }
-
     function drawParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "rgba(80,80,80,0.8)";
       particles.forEach(p => {
         ctx.font = `${p.r * 6}px sans-serif`;
         ctx.fillText(p.char, p.x, p.y);
-        p.x += p.dx;
-        p.y += p.dy;
+        p.x += p.dx; p.y += p.dy;
         if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
       });
       requestAnimationFrame(drawParticles);
     }
     drawParticles();
-
     window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -138,28 +204,70 @@
       document.body.style.background = bgColors[colorIndex];
     }, 3000);
 
-    // フェードイン処理
+    // フェードイン
     function fadeIn(el, delay) {
-      setTimeout(() => {
-        el.style.opacity = 1;
-      }, delay);
+      setTimeout(() => { el.style.opacity = 1; }, delay);
     }
-
     fadeIn(document.getElementById("msg1"), 500);
     fadeIn(document.getElementById("dataLine"), 2000);
     fadeIn(document.getElementById("imgA"), 5000);
-
-    // 画像切り替えと名前表示（8秒後）
     setTimeout(() => {
-      const imgA = document.getElementById("imgA");
-      const imgB = document.getElementById("imgB");
-      const name = document.getElementById("name");
-
-      imgA.style.opacity = 0;
-      imgB.style.opacity = 1;
-      name.style.opacity = 1;
+      document.getElementById("imgA").style.opacity = 0;
+      document.getElementById("imgB").style.opacity = 1;
+      document.getElementById("name").style.opacity = 1;
     }, 8000);
+
+    // === おみくじ機能 ===
+    const fortunes = ["大吉 🎉", "中吉 😀", "小吉 🙂", "吉 😊", "末吉 😌", "凶 😱", "大凶 💀"];
+    const btn = document.getElementById("omikujiBtn");
+    const roulette = document.getElementById("roulette");
+    const rouletteInner = document.getElementById("rouletteInner");
+    const resultDisplay = document.getElementById("resultDisplay");
+    const history = document.getElementById("history");
+
+    btn.addEventListener("click", () => {
+      btn.style.display = "none";
+      roulette.style.display = "block";
+      rouletteInner.innerHTML = "";
+
+      // ルーレット要素を横並びで作成
+      for (let i = 0; i < 20; i++) {
+        fortunes.forEach(f => {
+          const div = document.createElement("div");
+          div.className = "fortune";
+          div.textContent = f;
+          rouletteInner.appendChild(div);
+        });
+      }
+
+      // ランダムで結果を選ぶ
+      const selected = fortunes[Math.floor(Math.random() * fortunes.length)];
+      const allFortunes = rouletteInner.querySelectorAll(".fortune");
+      let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.indexOf(selected);
+
+      const offset = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
+      setTimeout(() => {
+        rouletteInner.style.transform = `translateX(${offset}px)`;
+      }, 100);
+
+      // 停止後の処理
+      setTimeout(() => {
+        roulette.style.display = "none";
+        resultDisplay.textContent = selected;
+        resultDisplay.style.display = "block";
+
+        // 3秒点滅
+        setTimeout(() => {
+          resultDisplay.style.display = "none";
+          btn.style.display = "inline-block";
+
+          // 履歴に追加
+          const p = document.createElement("div");
+          p.textContent = selected;
+          history.appendChild(p);
+        }, 3000);
+      }, 3500);
+    });
   </script>
 </body>
 </html>
-
