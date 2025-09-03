@@ -198,12 +198,12 @@ setTimeout(()=>{
   document.getElementById("name").style.opacity = 1;
 
   // 画像A/Bを2秒ごとに切替
-  let showA = false;
-  setInterval(()=>{
-    showA = !showA;
-    document.getElementById("imgA").style.opacity = showA ? 1 : 0;
-    document.getElementById("imgB").style.opacity = showA ? 0 : 1;
-  },2000);
+let showA = false;
+setInterval(()=>{
+  showA = !showA;
+  document.getElementById("imgA").style.display = showA ? "block" : "none";
+  document.getElementById("imgB").style.display = showA ? "none" : "block";
+},2000);
 
   // おみくじボタンと確率詳細ボタンを同時表示
   document.getElementById("omikujiBtn").style.display="inline-block";
@@ -268,3 +268,4 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
