@@ -108,19 +108,20 @@
       padding: 10px;
     }
 
-    /* === 結果表示 === */
-    #resultDisplay {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 50px;
-      font-weight: bold;
-      text-align: center;
-      color: #ff0000;
-      display: none;
-      animation: blink 0.5s step-start infinite;
-      z-index: 5;
-    }
+/* 結果表示を最前面に */
+#resultDisplay {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 50px;
+  font-weight: bold;
+  text-align: center;
+  color: #ff0000;
+  display: none;
+  animation: blink 0.5s step-start infinite;
+  z-index: 9999; /* 最前面に配置 */
+}
+
     @keyframes blink {
       50% { opacity: 0; }
     }
@@ -151,7 +152,7 @@
     </div>
 
     <!-- おみくじボタン -->
-    <button id="omikujiBtn">おみくじを引く 🎲</button>
+    <button id="omikujiBtn">おみくじを引く ✨</button>
 
     <!-- ルーレット -->
     <div id="roulette">
@@ -275,4 +276,5 @@
   </script>
 </body>
 </html>
+
 
