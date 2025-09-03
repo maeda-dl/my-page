@@ -38,7 +38,7 @@ html, body {
 /* 雲のようなおみくじボタン */
 #omikujiBtn {
     position: fixed;
-    bottom: 20%;
+    bottom: 50px; /* 画面下から50px上に配置 */
     left: 50%;
     transform: translateX(-50%);
     padding: 20px 40px;
@@ -47,17 +47,23 @@ html, body {
     border: none;
     background: #ffffff;
     cursor: pointer;
-    z-index: 4;
+    z-index: 9999;
     display: none;
     color: #1a2a6c;
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
     border-radius: 50px;
-    position: relative;
-    overflow: visible;
     white-space: nowrap;
 }
+
 #omikujiBtn:hover {
     transform: translateY(-5px);
+}
+@media screen and (max-height: 600px) {
+  #omikujiBtn {
+      bottom: 20px; /* 高さの低い画面はもっと上に */
+      padding: 15px 30px;
+      font-size: 18px;
+  }
 }
 /* 雲パーツ */
 .cloud-part {
@@ -277,6 +283,7 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
