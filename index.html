@@ -391,10 +391,7 @@ btn.addEventListener("click",()=>{
   history.textContent = `${selected}（${fortuneCounts[selected]}回目 / ${totalCount}回中）`;
   history.style.display = "block";
 
-  // 🎯 先に非表示にしてからリセット
-  roulette.style.display="none";
 
-  rouletteInner.style.transform = "translateX(0)";
 },3000);
   }
 }
@@ -404,6 +401,7 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
 
