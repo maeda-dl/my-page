@@ -366,38 +366,44 @@ btn.addEventListener("click",()=>{
   function easeOutQuart(t){ return 1-Math.pow(1-t,4); }
 
   function animate(time){
-    if(!start) start=time;
-    let elapsed = time-start;
-    let progress = elapsed/duration;
-    if(progress>1) progress=1;
-    const eased = easeOutQuart(progress);
-    const currentX = startX + (endX-startX)*eased;
-    rouletteInner.style.transform=`translateX(${currentX}px)`;
+  if(!start) start=time;
+  let elapsed = time-start;
+  let progress = elapsed/duration;
+  if(progress>1) progress=1;
+  const eased = easeOutQuart(progress);
+  const currentX = startX + (endX-startX)*eased;
+  rouletteInner.style.transform=`translateX(${currentX}px)`;
 
-    if(progress<1) requestAnimationFrame(animate);
-    else{
-      setTimeout(()=>{
-        roulette.style.display="none";
-        resultDisplay.textContent = selected;
-        resultDisplay.style.display = "block";
+  if(progress<1){
+    requestAnimationFrame(animate);
+  } else {
+    // アニメーション終了 → 枠を消す
+    roulette.style.display="none";
+    resultDisplay.textContent = selected;
+    resultDisplay.style.display = "block";
 
-        setTimeout(()=>{
-          resultDisplay.style.display = "none";
-          btn.style.display = "inline-block";
+    setTimeout(()=>{
+      // 結果を消してボタンを再表示
+      resultDisplay.style.display = "none";
+      btn.style.display = "inline-block";
 
-          history.textContent = `${selected}（${fortuneCounts[selected]}回目 / ${totalCount}回中）`;
-          history.style.display = "block";
-          allFortunes[stopIndex].classList.remove("selected");
-        },3000);
-      },2000);
-    }
+      history.textContent = `${selected}（${fortuneCounts[selected]}回目 / ${totalCount}回中）`;
+      history.style.display = "block";
+      allFortunes[stopIndex].classList.remove("selected");
+
+      // 🎯 次の準備としてルーレット中身をリセット
+      rouletteInner.innerHTML = "";
+      rouletteInner.style.transform = "translateX(0)";
+    },3000);
   }
+}
 
   requestAnimationFrame(animate);
 });
 </script>
 </body>
 </html>
+
 
 
 
