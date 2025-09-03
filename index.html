@@ -206,12 +206,15 @@ setTimeout(()=>{
   const imgB = document.getElementById("imgB");
   const name = document.getElementById("name");
 
-  imgA.style.opacity = 0;
-  imgB.style.opacity = 1;
+  // 最初は A を表示
+  imgA.style.zIndex = 2;
+  imgB.style.zIndex = 1;
+  imgA.style.opacity = 1;
+  imgB.style.opacity = 0;
   name.style.opacity = 1;
 
   // 画像A/Bを2秒ごとに切替（透けない）
-  let showA = false;
+  let showA = true;
   setInterval(()=>{
     showA = !showA;
     if(showA){
@@ -290,3 +293,4 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
