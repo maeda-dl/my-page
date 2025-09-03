@@ -256,6 +256,16 @@ btn.addEventListener("click",()=>{
       resultDisplay.style.display="none";
       btn.style.display="inline-block";
       history.textContent = selected;
+      
+// 画像AとBを交互に切り替え
+const images = [document.getElementById("imgA"), document.getElementById("imgB")];
+let currentIndex = 1; // 最初はimgBを表示した後
+setInterval(() => {
+  const nextIndex = (currentIndex + 1) % images.length;
+  images[currentIndex].style.opacity = 0;
+  images[nextIndex].style.opacity = 1;
+  currentIndex = nextIndex;
+}, 2000); // 5秒ごとに切り替え
 
       // 選択カードの強調解除
       allFortunes[stopIndex].classList.remove('selected');
@@ -265,5 +275,6 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
