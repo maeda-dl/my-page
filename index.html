@@ -99,7 +99,8 @@ html, body {
   transform: translateX(-50%);
   width: 90%;
   max-width: 600px;
-  height: 60px;
+  height: 80px;
+　padding-top: 5px; /* 上余白を追加 */
   display: none;
   z-index: 99998;
   border-radius: 30px;
@@ -114,18 +115,16 @@ html, body {
 }
 .fortune {
   min-width: 150px;
+  height: 70px; /* ルーレット枠に合わせて高さを確保 */
+  line-height: 70px; /* 縦中央揃え */
   text-align: center;
-  padding: 10px;
-  background: #ffffff; /* 白背景 */
+  background: #ffffff;
   margin: 0 5px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  color: #0f1b4c; /* ネイビー文字 */
+  color: #0f1b4c;
   font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s, box-shadow 0.3s;
+  display: inline-block; /* flex → inline-block に変更してline-heightで中央揃え */
 }
 .fortune.selected {
   transform: scale(1.2);
@@ -363,6 +362,7 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
