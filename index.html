@@ -93,27 +93,38 @@ html, body {
 
 /* ルーレットと結果表示は既存のまま */
 #roulette {
-  position:fixed; bottom:30%; left:50%; transform:translateX(-50%);
-  width:90%; max-width:600px; height:60px;
-  display:none; z-index:99998;
-  border-radius:30px;
-  overflow:hidden;
-  background: linear-gradient(90deg, #fff4e6, #ffe6f0);
-  box-shadow:0 8px 15px rgba(0,0,0,0.2);
-  border: 2px solid #ffd700;
+  position: fixed;
+  bottom: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 600px;
+  height: 60px;
+  display: none;
+  z-index: 99998;
+  border-radius: 30px;
+  overflow: hidden;
+  background: #fefefe; /* 白っぽい背景 */
+  border: 3px solid #0f1b4c; /* ネイビーの枠 */
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
 }
 #rouletteInner {
   display:flex; white-space:nowrap; font-size:28px; font-weight:bold;
   transition:transform 1.5s ease-out;
 }
 .fortune {
-  min-width:150px; text-align:center; padding:10px;
-  background: linear-gradient(to top, #fffae6, #ffe6f0);
+  min-width: 150px;
+  text-align: center;
+  padding: 10px;
+  background: #ffffff; /* 白背景 */
   margin: 0 5px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  color:#333; font-size:20px;
-  display:flex; align-items:center; justify-content:center;
+  color: #0f1b4c; /* ネイビー文字 */
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 .fortune.selected {
@@ -249,47 +260,68 @@ const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
 
-btn.addEventListener("click",()=>{
-  btn.style.display="none";
-  roulette.style.display="block";
-  rouletteInner.innerHTML="";
+btn.addEventListener("click", () => {
+  btn.style.display = "none";
+  roulette.style.display = "block";
+  rouletteInner.innerHTML = "";
 
-  rouletteInner.style.transition='none';
-  rouletteInner.style.transform='translateX(0)';
-  rouletteInner.offsetHeight;
-  rouletteInner.style.transition='transform 1.5s ease-out';
-
-  for(let i=0;i<20;i++){
-    fortunes.forEach(f=>{
-      const div=document.createElement("div");
-      div.className="fortune"; div.textContent=f;
+  // ルーレット作成
+  for (let i = 0; i < 20; i++) {
+    fortunes.forEach(f => {
+      const div = document.createElement("div");
+      div.className = "fortune";
+      div.textContent = f;
       rouletteInner.appendChild(div);
     });
   }
 
-  const selected=fortunes[Math.floor(Math.random()*fortunes.length)];
-  const allFortunes=rouletteInner.querySelectorAll(".fortune");
-  let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.indexOf(selected);
-  const offset=-allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
+  const selected = fortunes[Math.floor(Math.random() * fortunes.length)];
+  const allFortunes = rouletteInner.querySelectorAll(".fortune");
+  let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.indexOf(selected);
 
-  allFortunes[stopIndex].classList.add('selected');
+  allFortunes[stopIndex].classList.add("selected");
 
-  setTimeout(()=>{rouletteInner.style.transform=`translateX(${offset}px)`;},50);
+  // アニメーション用の設定
+  let duration = 4000; // 回転総時間4秒
+  let start = null;
+  const startX = 0;
+  const endX = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
 
-  setTimeout(()=>{
-    roulette.style.display="none";
-    resultDisplay.textContent=selected;
-    resultDisplay.style.display="block";
-    resultDisplay.style.opacity = "1";
+  function animate(time) {
+    if (!start) start = time;
+    let elapsed = time - start;
+    let progress = elapsed / duration;
 
-    setTimeout(()=>{
-      resultDisplay.style.display="none";
-      btn.style.display="inline-block";
-      history.textContent = selected;
-      allFortunes[stopIndex].classList.remove('selected');
-    },3000);
-  },1600);
+    // easing: easeInOutQuad（最初ゆっくり→加速→最後ゆっくり）
+    if (progress > 1) progress = 1;
+    let eased = progress < 0.5 ? 2*progress*progress : -1 + (4 - 2*progress)*progress;
+
+    let currentX = startX + (endX - startX) * eased;
+    rouletteInner.style.transform = `translateX(${currentX}px)`;
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      // 結果表示
+      setTimeout(() => {
+        roulette.style.display = "none";
+        resultDisplay.textContent = selected;
+        resultDisplay.style.display = "block";
+        resultDisplay.style.opacity = "1";
+
+        setTimeout(() => {
+          resultDisplay.style.display = "none";
+          btn.style.display = "inline-block";
+          history.textContent = selected;
+          allFortunes[stopIndex].classList.remove("selected");
+        }, 3000);
+      }, 500);
+    }
+  }
+
+  requestAnimationFrame(animate);
 });
 </script>
 </body>
 </html>
+
