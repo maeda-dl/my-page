@@ -43,7 +43,7 @@ html, body {
     background: #ff6b6b;
     color: #fff;
     cursor: pointer;
-    z-index: 3;
+    z-index:4; /* ルーレットより下、結果より上 */
     animation: float 3s ease-in-out infinite;
     display: none;
     white-space: nowrap;
@@ -55,12 +55,13 @@ html, body {
 #probBtn {
   position:fixed; bottom:10px; right:10px;
   padding:10px 15px; font-size:16px; border:none; border-radius:8px;
-  background:#4e9af1; color:#fff; cursor:pointer; z-index:4;
+  background:#4e9af1; color:#fff; cursor:pointer;
   display:none;
+  z-index:4; /* おみくじボタンと同じレベル */
 }
 
 /* ルーレット */
-#roulette { position:relative; width:100%; overflow:hidden; margin-top:20px; height:50px; display:none; }
+#roulette { position:fixed; bottom:30%; left:50%; transform:translateX(-50%); width:90%; max-width:600px; overflow:hidden; margin-top:20px; height:50px; display:none; z-index:99998; }
 #rouletteInner { display:flex; white-space:nowrap; font-size:28px; font-weight:bold; transition:transform 1.5s ease-out; }
 .fortune { min-width:150px; text-align:center; padding:10px; }
 
@@ -82,7 +83,7 @@ html, body {
 /* 確率ポップアップ */
 #probPopup {
   position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.85);
-  color:#fff; font-size:16px; padding:15px; display:none; z-index:9998; text-align:center;
+  color:#fff; font-size:16px; padding:15px; display:none; z-index:99997; text-align:center;
   cursor:pointer;
 }
 </style>
@@ -99,15 +100,14 @@ html, body {
     <img id="imgA" class="image" src="A.png" alt="画像A" />
     <img id="imgB" class="image" src="B.png" alt="画像B" />
   </div>
-
-  <button id="omikujiBtn">おみくじを引く ✨</button>
-  <div id="roulette"><div id="rouletteInner"></div></div>
 </div>
 
-<!-- 結果表示は container の外に置く -->
+<!-- 最前面表示用 -->
+<div id="roulette"><div id="rouletteInner"></div></div>
 <div id="resultDisplay"></div>
 <div id="history"></div>
 
+<button id="omikujiBtn">おみくじを引く ✨</button>
 <button id="probBtn">確率詳細</button>
 <div id="probPopup">
   大吉は1%<br>
@@ -143,17 +143,14 @@ fadeIn(document.getElementById("msg1"),500);
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 setTimeout(()=>{
-  document.getElementById("imgA").style.opacity=0;
-  document.getElementById("imgB").style.opacity=1;
-  document.getElementById("name").style.opacity=1;
+  document.getElementById("imgA").style.opacity = 0;
+  document.getElementById("imgB").style.opacity = 1;
+  document.getElementById("name").style.opacity = 1;
 
-  // 確率詳細ボタンを同時表示
+  // おみくじボタンと確率詳細ボタンを同時表示
+  document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
-
-// おみくじボタン表示
-const btn=document.getElementById("omikujiBtn");
-setTimeout(()=>{btn.style.display="inline-block";},10000);
 
 // 確率ポップアップ
 const probBtn=document.getElementById("probBtn");
@@ -167,6 +164,7 @@ const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
+const btn=document.getElementById("omikujiBtn");
 
 btn.addEventListener("click",()=>{
   btn.style.display="none";
