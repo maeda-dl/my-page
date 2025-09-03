@@ -138,9 +138,11 @@ html, body {
   white-space:nowrap; 
   font-size:28px; 
   font-weight:bold;
-  transition: transform 1.5s ease-out;
+  /* transition: transform 1.5s ease-out; ←削除 */
+will-change: transform;
 }
-.fortune {
+
+.fortune {？
   min-width: 130px;
   height: 60px;
   margin: 0 5px;
@@ -341,7 +343,7 @@ btn.addEventListener("click",()=>{
   rouletteInner.style.transform = "translateX(0)";
 
   // 新しいルーレットを作成
-  for(let i=0;i<20;i++){
+  for(let i=0;i<10;i++){
     fortunes.forEach(f=>{
       const div=document.createElement("div");
       div.className="fortune";
@@ -403,6 +405,7 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
 
