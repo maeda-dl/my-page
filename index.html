@@ -1,190 +1,258 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Lottery with Star</title>
-  <style>
-    body {
-      margin: 0;
-      background: #111;
-      color: white;
-      overflow: hidden;
-      font-family: sans-serif;
-      text-align: center;
-    }
+<!DOCTYPE html>    <html lang="ja">    
+<head>    
+  <meta charset="UTF-8" />    
+  <meta name="viewport" content="width=device-width, initial-scale=1" />    
+  <title>社員紹介＋くじ引き</title>    
+  <style>    
+    html, body {    
+      margin: 0;    
+      padding: 0;    
+      height: 100%;    
+      font-family: sans-serif;    
+      background: linear-gradient(120deg, #f0f8ff, #e6f7ff);    
+      transition: background 1s ease;    
+      overflow: hidden;    
+    }    #particles {    
+  position: absolute;    
+  width: 100%;    
+  height: 100%;    
+  z-index: 1;    
+}    
 
-    #particles {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 1;
-    }
+.container {    
+  position: relative;    
+  width: 100%;    
+  height: 100vh;    
+  z-index: 2;    
+}    
 
-    #drawBtn {
-      position: absolute;
-      bottom: 60px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 24px;
-      padding: 12px 30px;
-      background: transparent;
-      border: 2px solid white;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
-      opacity: 0.8;
-      transition: all 0.3s ease;
-      z-index: 3;
-    }
-    #drawBtn:hover {
-      opacity: 1;
-      transform: translate(-50%, -3px) scale(1.05);
-    }
+.text-area {    
+  position: absolute;    
+  top: 10vh;    
+  width: 100%;    
+  text-align: center;    
+}    
 
-    #points {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      font-size: 20px;
-      z-index: 3;
-    }
+.message, #name {    
+  opacity: 0;    
+  margin: 0.5em 0;    
+  white-space: nowrap;    
+  font-weight: bold;    
+  transition: opacity 1s ease;    
+}    
 
-    #lotteryInfo {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      font-size: 14px;
-      opacity: 0.7;
-      z-index: 3;
-    }
+#msg1 {    
+  font-size: clamp(20px, 5vw, 60px);    
+}    
 
-    #result {
-      position: absolute;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 60px;
-      font-weight: bold;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-      text-shadow: 0 0 20px rgba(255,255,255,0.7);
-      z-index: 4;
-    }
-    #result.win { color: #ff4040; }
-    #result.lose { color: #ccc; }
+#dataLine {    
+  font-size: clamp(24px, 6vw, 70px);    
+}    
 
-    #pickedChar {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.1);
-      font-size: 80px;
-      opacity: 0;
-      z-index: 4;
-      transition: all 0.8s ease;
-    }
-  </style>
-</head>
-<body>
-  <canvas id="particles"></canvas>
-  <button id="drawBtn">Draw</button>
-  <div id="points">Points: 0</div>
-  <div id="lotteryInfo">Total: 0<br>Last: -</div>
-  <div id="pickedChar"></div>
-  <div id="result"></div>
+#name {    
+  font-size: clamp(24px, 6vw, 60px);    
+  z-index: 3;    
+}    
 
-  <script>
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+.image-wrapper {    
+  position: absolute;    
+  top: 50%;    
+  left: 50%;    
+  transform: translate(-50%, -50%);    
+  z-index: 2;    
+}    
 
-    // 粒子文字セット（⭐️を1個含める）
-    const particleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let particles = [];
-    let hasStar = false;
+.image {    
+  position: absolute;    
+  top: 0;    
+  left: 0;    
+  transform: translate(-50%, -50%);    
+  max-width: 80vw;    
+  max-height: 40vh;    
+  opacity: 0;    
+  transition: opacity 1s ease;    
+  box-shadow: 0 0 30px rgba(0,0,0,0.3);    
+  border-radius: 10px;    
+}    
 
-    for (let i = 0; i < 80; i++) {
-      let char;
-      if (!hasStar) {
-        char = "⭐️"; // 最初の1回だけ必ず入れる
-        hasStar = true;
-      } else {
-        char = particleChars[Math.floor(Math.random() * particleChars.length)];
-      }
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 1.5,
-        dy: (Math.random() - 0.5) * 1.5,
-        char: char
-      });
-    }
+#lotteryBtn {    
+  position: absolute;    
+  bottom: 80px;    
+  right: 20px;    
+  z-index: 3;    
+  padding: 10px 20px;    
+  font-size: 18px;    
+  border: none;    
+  border-radius: 8px;    
+  background: #0366d6;    
+  color: white;    
+  cursor: pointer;    
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);    
+}    
 
-    function drawParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(200,200,200,0.8)";
-      particles.forEach(p => {
-        ctx.font = `${p.r * 8}px sans-serif`;
-        ctx.fillText(p.char, p.x, p.y);
-        p.x += p.dx;
-        p.y += p.dy;
-        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-      });
-      requestAnimationFrame(drawParticles);
-    }
-    drawParticles();
+#lotteryInfo {    
+  position: absolute;    
+  bottom: 40px;    
+  right: 20px;    
+  font-size: 14px;    
+  background: rgba(255,255,255,0.8);    
+  padding: 6px 10px;    
+  border-radius: 6px;    
+  z-index: 3;    
+}    
 
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
+#points {    
+  position: absolute;    
+  bottom: 20px;    
+  left: 20px;    
+  font-size: 20px;    
+  font-weight: bold;    
+  background: rgba(255,255,255,0.7);    
+  padding: 8px 12px;    
+  border-radius: 8px;    
+  z-index: 3;    
+}    
 
-    // Lottery logic
-    let points = 0;
-    let count = 0;
-    const btn = document.getElementById("drawBtn");
-    const pickedChar = document.getElementById("pickedChar");
-    const result = document.getElementById("result");
-    const pointsEl = document.getElementById("points");
-    const infoEl = document.getElementById("lotteryInfo");
+#congrats, #fail {    
+  position: absolute;    
+  top: 50%;    
+  left: 50%;    
+  transform: translate(-50%,-50%);    
+  font-size: clamp(32px, 8vw, 80px);    
+  font-weight: bold;    
+  opacity: 0;    
+  z-index: 4;    
+  transition: opacity 0.8s ease;    
+  text-shadow: 0 0 20px white;    
+}    
 
-    function updateInfo() {
-      const now = new Date();
-      const dateStr = now.toLocaleString("ja-JP");
-      infoEl.innerHTML = `Total: ${count}<br>Last: ${dateStr}`;
-    }
+#congrats { color: red; }    
+#fail { color: #333; }
 
-    function showResult(text, type) {
-      result.textContent = text;
-      result.className = type;
-      result.style.opacity = 1;
-      setTimeout(() => { result.style.opacity = 0; }, 2000);
-    }
+  </style>    
+</head>    
+<body>    
+  <canvas id="particles"></canvas>      <div class="container">    
+    <div class="text-area">    
+      <div id="msg1" class="message">はじめまして</div>    
+      <div id="dataLine" class="message">Data Line</div>    
+      <div id="name">前田だよ</div>    
+    </div>    <div class="image-wrapper">    
+  <img id="imgA" class="image" src="A.png" alt="画像A" />    
+  <img id="imgB" class="image" src="B.png" alt="画像B" />    
+</div>
 
-    btn.addEventListener("click", () => {
-      count++;
-      // 粒子からランダムに1つ選ぶ
-      const chosen = particles[Math.floor(Math.random() * particles.length)];
-      pickedChar.textContent = chosen.char;
-      pickedChar.style.opacity = 1;
-      pickedChar.style.transform = "translate(-50%, -50%) scale(1.5)";
-      
-      setTimeout(() => {
-        pickedChar.style.opacity = 0;
-        pickedChar.style.transform = "translate(-50%, -50%) scale(0.1)";
-        if (chosen.char === "⭐️") {
-          points += 10;
-          pointsEl.textContent = `Points: ${points}`;
-          showResult("🎉 Congratulations! 🎉", "win");
-        } else {
-          showResult("Try Again...", "lose");
-        }
-        updateInfo();
-      }, 1500);
-    });
-  </script>
-</body>
-</html>
+  </div>    <button id="lotteryBtn">抽選！</button>
+
+  <div id="lotteryInfo">合計回数: 0<br>最終: -</div>    
+  <div id="points">ポイント: 0</div>    
+  <div id="congrats">🎉おめでとう！🎉</div>    
+  <div id="fail">残念…</div>      <script>    
+    // 粒子アニメーション    
+    const canvas = document.getElementById("particles");    
+    const ctx = canvas.getContext("2d");    
+    canvas.width = window.innerWidth;    
+    canvas.height = window.innerHeight;    
+    
+    const particleChars = "MAEDA";    
+    const specialWord = "当たり"; // 当たりは1セット    
+    let particles = [];    
+    
+    for (let i = 0; i < 120; i++) {    
+      particles.push({    
+        x: Math.random() * canvas.width,    
+        y: Math.random() * canvas.height,    
+        r: Math.random() * 2 + 1,    
+        dx: (Math.random() - 0.5) * 1.2,    
+        dy: (Math.random() - 0.5) * 1.2,    
+        char: Math.random() < 0.05 ? specialWord : // 5%で「当たり」    
+              particleChars[Math.floor(Math.random() * particleChars.length)]    
+      });    
+    }    
+    
+    function drawParticles() {    
+      ctx.clearRect(0, 0, canvas.width, canvas.height);    
+      ctx.fillStyle = "rgba(80,80,80,0.8)";    
+      particles.forEach(p => {    
+        ctx.font = `${p.r * 6}px sans-serif`;    
+        ctx.fillText(p.char, p.x, p.y);    
+        p.x += p.dx;    
+        p.y += p.dy;    
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;    
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;    
+      });    
+      requestAnimationFrame(drawParticles);    
+    }    
+    drawParticles();    
+    
+    window.addEventListener("resize", () => {    
+      canvas.width = window.innerWidth;    
+      canvas.height = window.innerHeight;    
+    });    
+    
+    // 背景色の変化    
+    const bgColors = ["#f0f8ff", "#e6f7ff", "#f5f5dc", "#fffaf0"];    
+    let colorIndex = 0;    
+    setInterval(() => {    
+      colorIndex = (colorIndex + 1) % bgColors.length;    
+      document.body.style.background = bgColors[colorIndex];    
+    }, 3000);    
+    
+    // フェードイン処理    
+    function fadeIn(el, delay) {    
+      setTimeout(() => {    
+        el.style.opacity = 1;    
+      }, delay);    
+    }    
+    
+    fadeIn(document.getElementById("msg1"), 500);    
+    fadeIn(document.getElementById("dataLine"), 2000);    
+    fadeIn(document.getElementById("imgA"), 5000);    
+    
+    // 画像切り替えと名前表示（8秒後）    
+    setTimeout(() => {    
+      const imgA = document.getElementById("imgA");    
+      const imgB = document.getElementById("imgB");    
+      const name = document.getElementById("name");    
+    
+      imgA.style.opacity = 0;    
+      imgB.style.opacity = 1;    
+      name.style.opacity = 1;    
+    }, 8000);    
+    
+    // --- くじ引き機能 ---    
+    let points = 0;    
+    let count = 0;    
+    const btn = document.getElementById("lotteryBtn");    
+    const congrats = document.getElementById("congrats");    
+    const fail = document.getElementById("fail");    
+    const pointsEl = document.getElementById("points");    
+    const infoEl = document.getElementById("lotteryInfo");    
+    
+    function showMessage(el) {    
+      el.style.opacity = 1;    
+      setTimeout(() => { el.style.opacity = 0; }, 2000);    
+    }    
+    
+    function updateInfo() {    
+      const now = new Date();    
+      const dateStr = now.toLocaleString("ja-JP");    
+      infoEl.innerHTML = `合計回数: ${count}<br>最終: ${dateStr}`;    
+    }    
+    
+    btn.addEventListener("click", () => {    
+      count++;    
+      // ランダムで粒子を拾う    
+      const pick = particles[Math.floor(Math.random() * particles.length)];    
+      if (pick.char === specialWord) {    
+        points += 10; // 固定加算    
+        pointsEl.textContent = `ポイント: ${points}`;    
+        showMessage(congrats);    
+      } else {    
+        showMessage(fail);    
+      }    
+      updateInfo();    
+    });    
+  </script>   
+</body>    
+</html>  
