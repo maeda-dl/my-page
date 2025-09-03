@@ -26,18 +26,14 @@ html, body {
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
 .image {
-  display: block;                         /* インライン要素ではなくブロック要素として表示する */
-  width: 100%;                            /* 横幅を親要素いっぱいに広げる */
-  height: 100%;   /* 親の高さに合わせる */
-  object-fit: contain;  /* 縦横比を維持 */
-  position: absolute;                     /* 親要素を基準に絶対配置する */
-  top: 0; left: 0;                        /* 親要素の左上に固定配置する */
-  opacity: 0;                             /* 初期状態では透明（非表示に近い状態） */
-/*  transition: opacity 0.8s ease;           opacity の変化を 0.8 秒かけて滑らかにする */
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);   /* 周囲にぼかし影を付ける */
-  border-radius: 10px;                    /* 角を 10px 丸める */
+  display:block;
+  width:100%; height:auto;
+  position:absolute; top:0; left:0;
+  opacity:0;
+  transition:opacity 0.8s ease;
+  box-shadow:0 0 20px rgba(0,0,0,0.2);
+  border-radius:10px;
 }
-
 
 /* おみくじボタン */
 #omikujiBtn {
@@ -201,50 +197,43 @@ setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.b
 
 // フェードイン
 function fadeIn(el,delay){setTimeout(()=>{el.style.opacity=1;},delay);}
-fadeIn(document.getElementById("msg1"), 500);
-fadeIn(document.getElementById("dataLine"), 2000);
+fadeIn(document.getElementById("msg1"),500);
+fadeIn(document.getElementById("dataLine"),2000);
+fadeIn(document.getElementById("imgA"),5000);
 
-setTimeout(() => {
+setTimeout(()=>{
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
   const name = document.getElementById("name");
 
-  // 名前を先に表示
-  fadeIn(name, 0);
+  // 最初は A を表示
+  imgA.style.zIndex = 2;
+  imgB.style.zIndex = 1;
+  imgA.style.opacity = 1;
+  imgB.style.opacity = 0;
+  name.style.opacity = 1;
 
-  // 0.5秒後に画像Aを表示
-  setTimeout(() => {
-    imgA.style.zIndex = 2;
-    imgB.style.zIndex = 1;
-    fadeIn(imgA, 0);
+  // 画像A/Bを2秒ごとに切替（透けない）
+  let showA = true;
+  setInterval(()=>{
+    showA = !showA;
+    if(showA){
+      imgA.style.zIndex = 2;
+      imgB.style.zIndex = 1;
+      imgA.style.opacity = 1;
+      imgB.style.opacity = 0;
+    } else {
+      imgB.style.zIndex = 2;
+      imgA.style.zIndex = 1;
+      imgB.style.opacity = 1;
+      imgA.style.opacity = 0;
+    }
+  },2000);
 
-    // 画像切替を開始
-    let showA = true;
-    setInterval(() => {
-      showA = !showA;
-      if (showA) {
-        imgA.style.zIndex = 2;
-        imgB.style.zIndex = 1;
-        imgA.style.opacity = 1;
-        imgB.style.opacity = 0;
-      } else {
-        imgB.style.zIndex = 2;
-        imgA.style.zIndex = 1;
-        imgB.style.opacity = 1;
-        imgA.style.opacity = 0;
-      }
-    }, 2000);
-
-    // 画像表示後にボタンを出す（0.5秒後）
-    setTimeout(() => {
-      document.getElementById("omikujiBtn").style.display = "inline-block";
-      document.getElementById("probBtn").style.display = "inline-block";
-    }, 500);
-
-  }, 500);
-
-}, 2500); // dataLine フェードイン完了後
-
+  // ボタン表示
+  document.getElementById("omikujiBtn").style.display="inline-block";
+  document.getElementById("probBtn").style.display="inline-block";
+},8000);
 
 // 確率ポップアップ
 const probBtn=document.getElementById("probBtn");
@@ -304,11 +293,3 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
