@@ -255,13 +255,13 @@ probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
 // おみくじ機能（省略せずそのまま）
 // おみくじの確率を反映した配列
 const fortunes = [
-  { name: "大吉 🎉", probability: 0.01 },
-  { name: "中吉 😀", probability: 0.05 },
-  { name: "小吉 🙂", probability: 0.20 },
-  { name: "吉 😊", probability: 0.40 },
-  { name: "末吉 😌", probability: 0.20 },
-  { name: "凶 😱", probability: 0.10 },
-  { name: "大凶 💀", probability: 0.005 }
+  { name: "大吉 🎉", probability: 0.05 },
+  { name: "中吉 😀", probability: 0.1 },
+  { name: "小吉 🙂", probability: 0.2 },
+  { name: "吉 😊", probability: 0.4 },
+  { name: "末吉 😌", probability: 0.2 },
+  { name: "凶 😱", probability: 0.04 },
+  { name: "大凶 💀", probability: 0.01 }
 ];
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
@@ -344,6 +344,7 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
