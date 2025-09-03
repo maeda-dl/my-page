@@ -93,33 +93,46 @@ html, body {
 
 /* ルーレットと結果表示は既存のまま */
 #roulette {
-  position:fixed; bottom:30%; left:50%; transform:translateX(-50%);
-  width:90%; max-width:600px; height:60px;
-  display:none; z-index:99998;
-  border-radius:30px;
-  overflow:hidden;
-  background: linear-gradient(90deg, #fff4e6, #ffe6f0);
-  box-shadow:0 8px 15px rgba(0,0,0,0.2);
-  border: 2px solid #ffd700;
+  position: fixed; 
+  bottom: 30%; 
+  left: 50%; 
+  transform: translateX(-50%);
+  width: 90%; 
+  max-width: 600px; 
+  height: 60px;
+  display: none; 
+  z-index: 99998;
+  border-radius: 30px;
+  overflow: hidden;
+  background: linear-gradient(90deg, #1a2a6c, #0f1b4c); /* ネイビーグラデ */
+  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+  border: 2px solid #0f1b4c; /* 濃いネイビーの枠線 */
 }
 #rouletteInner {
   display:flex; white-space:nowrap; font-size:28px; font-weight:bold;
   transition:transform 1.5s ease-out;
 }
+/* ルーレット内のアイテム */
 .fortune {
-  min-width:150px; text-align:center; padding:10px;
-  background: linear-gradient(to top, #fffae6, #ffe6f0);
+  min-width: 150px; 
+  text-align: center; 
+  padding: 10px;
+  background: linear-gradient(to top, #0f1b4c, #1a2a6c); /* ネイビー系グラデ */
   margin: 0 5px;
   border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  color:#333; font-size:20px;
-  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  color: #ffffff; /* 白文字 */
+  font-size: 20px;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
   transition: transform 0.3s, box-shadow 0.3s;
 }
+/* 選択中のアイテム */
 .fortune.selected {
   transform: scale(1.2);
-  box-shadow: 0 8px 15px rgba(255,215,0,0.8);
-  color:#ff4500;
+  box-shadow: 0 8px 15px rgba(255, 215, 0, 0.8); /* ゴールドっぽく強調 */
+  color: #ffd700; /* ゴールド文字 */
 }
 
 #resultDisplay {
@@ -302,4 +315,5 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
