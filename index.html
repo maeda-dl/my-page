@@ -208,14 +208,16 @@ setTimeout(()=>{
   const imgB = document.getElementById("imgB");
   const name = document.getElementById("name");
 
-  // 最初は A を表示（ここで初めて出す）
+  // 画像Aをフェードイン
   imgA.style.zIndex = 2;
   imgB.style.zIndex = 1;
-  imgA.style.opacity = 1;  // ←ここでフェードインでもOK
+  fadeIn(imgA, 0);   // ← ここでふわっと表示（今まで通りの演出）
   imgB.style.opacity = 0;
+
+  // 名前を同時に表示
   name.style.opacity = 1;
 
-  // 画像A/Bを2秒ごとに切替（透けない）
+  // A/B切替
   let showA = true;
   setInterval(()=>{
     showA = !showA;
@@ -231,6 +233,12 @@ setTimeout(()=>{
       imgA.style.opacity = 0;
     }
   },2000);
+
+  // ボタン表示
+  document.getElementById("omikujiBtn").style.display="inline-block";
+  document.getElementById("probBtn").style.display="inline-block";
+},8000);
+
 
   // ボタン表示
   document.getElementById("omikujiBtn").style.display="inline-block";
@@ -296,6 +304,7 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
 
