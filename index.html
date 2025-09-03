@@ -322,7 +322,9 @@ btn.addEventListener("click", () => {
 let duration = 5000; // 3000 → 5000 に変更（ゆっくり回る）
 let start = null;
 const startX = 0;
-const endX = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
+const blockWidth = allFortunes[stopIndex].offsetWidth; // 選ばれたブロック幅
+const endX = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - blockWidth / 2);
+
 
 function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
 
@@ -363,6 +365,7 @@ function animate(time) {
 </script>
 </body>
 </html>
+
 
 
 
