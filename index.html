@@ -174,10 +174,12 @@ fadeIn(document.getElementById("msg1"),500);
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
-setTimeout(()=>{
+setTimeout(() => {
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
   const name = document.getElementById("name");
+  const omikujiBtn = document.getElementById("omikujiBtn");
+  const probBtn = document.getElementById("probBtn");
 
   imgA.style.zIndex = 2;
   imgB.style.zIndex = 1;
@@ -186,9 +188,9 @@ setTimeout(()=>{
   name.style.opacity = 1;
 
   let showA = true;
-  setInterval(()=>{
+  setInterval(() => {
     showA = !showA;
-    if(showA){
+    if (showA) {
       imgA.style.zIndex = 2;
       imgB.style.zIndex = 1;
       imgA.style.opacity = 1;
@@ -199,11 +201,12 @@ setTimeout(()=>{
       imgB.style.opacity = 1;
       imgA.style.opacity = 0;
     }
-  },2000);
+  }, 2000);
 
-  document.getElementById("omikujiBtn").style.display="inline-block";
-  document.getElementById("probBtn").style.display="inline-block";
-},8000);
+  // ボタンを表示（必ずdisplayを直接設定）
+  omikujiBtn.style.display = "block"; // ← inline-block より block に変更
+  probBtn.style.display = "block";
+}, 8000);
 
 // 確率ポップアップ
 const probBtn=document.getElementById("probBtn");
@@ -274,5 +277,6 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
