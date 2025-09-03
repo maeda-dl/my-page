@@ -280,15 +280,15 @@ btn.addEventListener("click", () => {
   let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.indexOf(selected);
   allFortunes[stopIndex].classList.add("selected");
 
-  // アニメーション用設定
+  // アニメーション設定
   let duration = 4000; // 回転総時間4秒
   let start = null;
   const startX = 0;
   const endX = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
 
-  // easing: easeOutCubic（最後ゆっくり止まる）
-  function easeOutCubic(t) {
-    return 1 - Math.pow(1 - t, 3);
+  // easing: easeOutQuart（最後は滑らかに減速）
+  function easeOutQuart(t) {
+    return 1 - Math.pow(1 - t, 4);
   }
 
   function animate(time) {
@@ -297,14 +297,14 @@ btn.addEventListener("click", () => {
     let progress = elapsed / duration;
     if (progress > 1) progress = 1;
 
-    let eased = easeOutCubic(progress);
+    let eased = easeOutQuart(progress);
     let currentX = startX + (endX - startX) * eased;
     rouletteInner.style.transform = `translateX(${currentX}px)`;
 
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
-      // 結果表示
+      // 完全停止後、少し待って結果表示
       setTimeout(() => {
         roulette.style.display = "none";
         resultDisplay.textContent = selected;
@@ -317,7 +317,7 @@ btn.addEventListener("click", () => {
           history.textContent = selected;
           allFortunes[stopIndex].classList.remove("selected");
         }, 3000);
-      }, 500);
+      }, 500); // 完全停止から0.5秒後に結果
     }
   }
 
@@ -327,5 +327,6 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
