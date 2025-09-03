@@ -27,10 +27,22 @@ html, body {
 
 /* おみくじボタン */
 #omikujiBtn {
-  position:fixed; bottom:20%; left:50%; transform:translateX(-50%);
-  padding:12px 25px; font-size:22px; font-weight:bold; border:none; border-radius:50px;
-  background:#ff6b6b; color:#fff; cursor:pointer; z-index:3;
-  animation: float 3s ease-in-out infinite; display:none; white-space:nowrap;
+  position: fixed;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 30px; /* 幅を少し広めにして文字が折り返さない */
+  font-size: 22px;
+  font-weight: bold;
+  border: none;
+  border-radius: 50px;
+  background: #ff6b6b;
+  color: #fff;
+  cursor: pointer;
+  z-index: 3;
+  animation: float 3s ease-in-out infinite;
+  white-space: nowrap; /* 文字折り返しを防ぐ */
+  text-align: center;
 }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
@@ -126,3 +138,4 @@ setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.b
 // フェードイン
 function fadeIn(el,delay){setTimeout(()=>{el.style.opacity=1;},delay);}
 fadeIn(do
+
