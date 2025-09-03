@@ -8,8 +8,8 @@
 html, body {
   margin:0; padding:0; min-height:100%;
   font-family:sans-serif;
-  background: linear-gradient(120deg,#f0f8ff,#e6f7ff);
-  transition:background 1s ease;
+  background: #ffffff;
+  transition: background 1s ease;
   overflow-x:hidden;
 }
 #particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
@@ -25,7 +25,7 @@ html, body {
 #name { font-size:clamp(22px,6vw,40px); }
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
-.image { display:block; width:100%; height:auto; position:absolute; top:0; left:0; opacity:0; transition:opacity 1s ease; box-shadow:0 0 20px rgba(0,0,0,0.2); border-radius:10px; z-index:1; }
+.image { display:block; width:100%; height:auto; position:absolute; top:0; left:0; opacity:0; transition:opacity 0.5s ease; box-shadow:0 0 20px rgba(0,0,0,0.2); border-radius:10px; z-index:1; }
 
 /* おみくじボタン */
 #omikujiBtn {
@@ -40,7 +40,7 @@ html, body {
     font-weight: bold;
     border: none;
     border-radius: 50px;
-    background: #ff6b6b;
+    background: linear-gradient(145deg, #1a2a6c, #0f1b4c);
     color: #fff;
     cursor: pointer;
     z-index:4;
@@ -48,26 +48,42 @@ html, body {
     display: none;
     white-space: nowrap;
     text-align: center;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
 /* 右下の確率詳細ボタン */
 #probBtn {
   position: fixed;
-  bottom: 20px;   /* 10px → 20px にして下余白を増やす */
-  right: 20px;    /* 10px → 20px にして右余白を増やす */
+  bottom: 20px;
+  right: 20px;
   padding: 10px 15px;
   font-size: 16px;
   border: none;
   border-radius: 8px;
-  background: #4e9af1;
+  background: linear-gradient(145deg, #0f1b4c, #1a2a6c);
   color: #fff;
   cursor: pointer;
   display: none;
   z-index: 4;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-/* ルーレット */
+/* 左下の履歴 */
+#history {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  font-size: 16px;
+  background: #ffffff;
+  padding: 5px 10px;
+  border-radius: 8px;
+  max-width: 200px;
+  z-index: 99999;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+/* ルーレットと結果表示は既存のまま */
 #roulette {
   position:fixed; bottom:30%; left:50%; transform:translateX(-50%);
   width:90%; max-width:600px; height:60px;
@@ -98,7 +114,6 @@ html, body {
   color:#ff4500;
 }
 
-/* 結果表示を最前面に */
 #resultDisplay {
   position:fixed;
   top:50%;
@@ -109,28 +124,12 @@ html, body {
   text-align:center;
   display:none;
   z-index:99999;
-
-  /* 絵文字用は通常カラーにする */
-  color: #ff4500; /* 文字色 */
+  color: #ff4500;
   text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-
   animation: blink 0.5s step-start infinite, pop 0.5s ease forwards;
 }
 @keyframes blink { 50% { opacity:0; } }
 @keyframes pop { 0% { transform:translate(-50%,-50%) scale(0.8); } 50% { transform:translate(-50%,-50%) scale(1.2); } 100% { transform:translate(-50%,-50%) scale(1); } }
-
-/* 左下の履歴 */
-#history {
-  position: fixed;
-  bottom: 20px;   /* 10px → 20px にして下余白を増やす */
-  left: 20px;     /* 10px → 20px にして左余白を増やす */
-  font-size: 16px;
-  background: rgba(255,255,255,0.7);
-  padding: 5px 10px;
-  border-radius: 8px;
-  max-width: 200px;
-  z-index: 99999;
-}
 
 /* 確率ポップアップ */
 #probPopup {
@@ -154,7 +153,6 @@ html, body {
   </div>
 </div>
 
-<!-- 最前面表示用 -->
 <div id="roulette"><div id="rouletteInner"></div></div>
 <div id="resultDisplay"></div>
 <div id="history"></div>
@@ -184,8 +182,8 @@ function drawParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillS
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
 
-// 背景色変化
-const bgColors=["#f0f8ff","#e6f7ff","#f5f5dc","#fffaf0"];
+// 背景色変化（白ベース）
+const bgColors=["#ffffff","#f5f5f5","#fffaf0","#f0f8ff"];
 let colorIndex=0;
 setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.background=bgColors[colorIndex];},3000);
 
@@ -198,6 +196,14 @@ setTimeout(()=>{
   document.getElementById("imgA").style.opacity = 0;
   document.getElementById("imgB").style.opacity = 1;
   document.getElementById("name").style.opacity = 1;
+
+  // 画像A/Bを2秒ごとに切替
+  let showA = false;
+  setInterval(()=>{
+    showA = !showA;
+    document.getElementById("imgA").style.opacity = showA ? 1 : 0;
+    document.getElementById("imgB").style.opacity = showA ? 0 : 1;
+  },2000);
 
   // おみくじボタンと確率詳細ボタンを同時表示
   document.getElementById("omikujiBtn").style.display="inline-block";
@@ -241,7 +247,6 @@ btn.addEventListener("click",()=>{
   let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.indexOf(selected);
   const offset=-allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
 
-  // 中央カードを強調
   allFortunes[stopIndex].classList.add('selected');
 
   setTimeout(()=>{rouletteInner.style.transform=`translateX(${offset}px)`;},50);
@@ -256,8 +261,6 @@ btn.addEventListener("click",()=>{
       resultDisplay.style.display="none";
       btn.style.display="inline-block";
       history.textContent = selected;
-
-      // 選択カードの強調解除
       allFortunes[stopIndex].classList.remove('selected');
     },3000);
   },1600);
@@ -265,6 +268,3 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
-
-
-
