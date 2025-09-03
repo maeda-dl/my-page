@@ -105,9 +105,11 @@ html, body {
   transform: translateX(-50%);
   width: 90%;
   max-width: 300px;
-  height: 80px;
+  height: 70px;
 　padding-top: 5px; /* 上余白を追加 */
-  display: none;
+  display: flex;
+  align-items: center; /* これで中のブロックを垂直中央 */
+  justify-content: center; /* 中央寄せ */
   z-index: 99998;
   border-radius: 30px;
   overflow: hidden;
@@ -122,6 +124,7 @@ html, body {
 .fortune {
   min-width: 130px;
   height: 60px;        /* 高さは枠に合わせる */
+　line-height: 60px;     /* 文字縦中央 */
   margin: 0 5px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -202,6 +205,8 @@ html, body {
 </div>
 
 <script>
+let totalCount = 0; // ルーレットを回した総数
+
 // 粒子アニメーション
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
@@ -308,7 +313,10 @@ btn.addEventListener("click", () => {
   btn.style.display = "none";
   roulette.style.display = "block";
   rouletteInner.innerHTML = "";
-
+  totalCount++; // 総回数を1増やす
+  const selected = pickFortune();
+  fortuneCounts[selected]++;
+  
   // ルーレット作成
   for (let i = 0; i < 20; i++) {
     fortunes.forEach(f => {
@@ -360,8 +368,8 @@ function animate(time) {
         resultDisplay.style.display = "none";
         btn.style.display = "inline-block";
 
-        history.textContent = `${selected}（${fortuneCounts[selected]}回目）`;
-        history.style.display = "block";  // ←ここで表示
+ history.textContent = `${selected}（${fortuneCounts[selected]}回目 / ${totalCount}回中）`;
+  history.style.display = "block";
         allFortunes[stopIndex].classList.remove("selected");
       }, 3000);
     }, 2000);
@@ -376,24 +384,3 @@ function animate(time) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
