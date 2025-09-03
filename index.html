@@ -201,47 +201,50 @@ setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.b
 
 // フェードイン
 function fadeIn(el,delay){setTimeout(()=>{el.style.opacity=1;},delay);}
-fadeIn(document.getElementById("msg1"),500);
-fadeIn(document.getElementById("dataLine"),2000);
+fadeIn(document.getElementById("msg1"), 500);
+fadeIn(document.getElementById("dataLine"), 2000);
 
-
-// 画像Aを Data Line の後にふわっと表示
 setTimeout(() => {
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
   const name = document.getElementById("name");
 
-  // 最初のフェードイン
-  imgA.style.zIndex = 2;
-  imgB.style.zIndex = 1;
-  fadeIn(imgA, 0); // すぐフェードイン
-  imgB.style.opacity = 0;
+  // 名前を先に表示
+  fadeIn(name, 0);
 
-  // 名前も同時に表示
-  name.style.opacity = 1;
+  // 0.5秒後に画像Aを表示
+  setTimeout(() => {
+    imgA.style.zIndex = 2;
+    imgB.style.zIndex = 1;
+    fadeIn(imgA, 0);
 
-  // A/B切替
-  let showA = true;
-  setInterval(() => {
-    showA = !showA;
-    if (showA) {
-      imgA.style.zIndex = 2;
-      imgB.style.zIndex = 1;
-      imgA.style.opacity = 1;
-      imgB.style.opacity = 0;
-    } else {
-      imgB.style.zIndex = 2;
-      imgA.style.zIndex = 1;
-      imgB.style.opacity = 1;
-      imgA.style.opacity = 0;
-    }
-  }, 2000);
+    // 画像切替を開始
+    let showA = true;
+    setInterval(() => {
+      showA = !showA;
+      if (showA) {
+        imgA.style.zIndex = 2;
+        imgB.style.zIndex = 1;
+        imgA.style.opacity = 1;
+        imgB.style.opacity = 0;
+      } else {
+        imgB.style.zIndex = 2;
+        imgA.style.zIndex = 1;
+        imgB.style.opacity = 1;
+        imgA.style.opacity = 0;
+      }
+    }, 2000);
 
-  // ボタン表示
-  document.getElementById("omikujiBtn").style.display = "inline-block";
-  document.getElementById("probBtn").style.display = "inline-block";
+    // 画像表示後にボタンを出す（0.5秒後）
+    setTimeout(() => {
+      document.getElementById("omikujiBtn").style.display = "inline-block";
+      document.getElementById("probBtn").style.display = "inline-block";
+    }, 500);
 
-}, 3000); // ← ここを Data Line のフェードイン完了タイミングに合わせる
+  }, 500);
+
+}, 2500); // dataLine フェードイン完了後
+
 
 // 確率ポップアップ
 const probBtn=document.getElementById("probBtn");
@@ -301,6 +304,7 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
 
