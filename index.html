@@ -52,11 +52,12 @@ html, body {
 }
 
 /* おみくじボタン */
+/* おみくじボタン */
 #omikujiBtn {
   position: fixed;
   bottom: 20%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 0); /* ← 中央基準に修正 */
   width: max-content;
   padding: 12px 25px;
   font-size: 22px;
@@ -66,15 +67,19 @@ html, body {
   background: linear-gradient(145deg, #1a2a6c, #0f1b4c);
   color: #fff;
   cursor: pointer;
-  z-index:4;
+  z-index: 4;
   animation: float 3s ease-in-out infinite;
   display: none;
   white-space: nowrap;
   text-align: center;
   box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
-@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
+@keyframes float {
+  0%, 100% { transform: translate(-50%, 0) translateY(0); }
+  50% { transform: translate(-50%, 0) translateY(-10px); }
+}
+  
 /* 確率詳細ボタン */
 #probBtn {
   position: fixed;
@@ -119,7 +124,7 @@ html, body {
   width: 90%;
   max-width: 300px;
   height: 70px;
-  display: flex;
+  display: none;   /* ← 最初は非表示に修正 */
   align-items: center;
   justify-content: center;
   z-index: 99998;
@@ -391,3 +396,4 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
