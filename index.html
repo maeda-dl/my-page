@@ -25,7 +25,15 @@ html, body {
 #name { font-size:clamp(22px,6vw,40px); }
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
-.image { display:block; width:100%; height:auto; position:absolute; top:0; left:0; opacity:0; transition:opacity 0.5s ease; box-shadow:0 0 20px rgba(0,0,0,0.2); border-radius:10px; z-index:1; }
+.image {
+  display:block;
+  width:100%; height:auto;
+  position:absolute; top:0; left:0;
+  opacity:0;
+  transition:opacity 0.8s ease;
+  box-shadow:0 0 20px rgba(0,0,0,0.2);
+  border-radius:10px;
+}
 
 /* おみくじボタン */
 #omikujiBtn {
@@ -192,20 +200,34 @@ function fadeIn(el,delay){setTimeout(()=>{el.style.opacity=1;},delay);}
 fadeIn(document.getElementById("msg1"),500);
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
+
 setTimeout(()=>{
-  document.getElementById("imgA").style.opacity = 0;
-  document.getElementById("imgB").style.opacity = 1;
-  document.getElementById("name").style.opacity = 1;
+  const imgA = document.getElementById("imgA");
+  const imgB = document.getElementById("imgB");
+  const name = document.getElementById("name");
 
-  // 画像A/Bを2秒ごとに切替
-let showA = false;
-setInterval(()=>{
-  showA = !showA;
-  document.getElementById("imgA").style.display = showA ? "block" : "none";
-  document.getElementById("imgB").style.display = showA ? "none" : "block";
-},2000);
+  imgA.style.opacity = 0;
+  imgB.style.opacity = 1;
+  name.style.opacity = 1;
 
-  // おみくじボタンと確率詳細ボタンを同時表示
+  // 画像A/Bを2秒ごとに切替（透けない）
+  let showA = false;
+  setInterval(()=>{
+    showA = !showA;
+    if(showA){
+      imgA.style.zIndex = 2;
+      imgB.style.zIndex = 1;
+      imgA.style.opacity = 1;
+      imgB.style.opacity = 0;
+    } else {
+      imgB.style.zIndex = 2;
+      imgA.style.zIndex = 1;
+      imgB.style.opacity = 1;
+      imgA.style.opacity = 0;
+    }
+  },2000);
+
+  // ボタン表示
   document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
@@ -216,7 +238,7 @@ const probPopup=document.getElementById("probPopup");
 probBtn.addEventListener("click",()=>{probPopup.style.display="block";});
 probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
 
-// おみくじ機能
+// おみくじ機能（省略せずそのまま）
 const fortunes=["大吉 🎉","中吉 😀","小吉 🙂","吉 😊","末吉 😌","凶 😱","大凶 💀"];
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
@@ -268,4 +290,3 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
-
