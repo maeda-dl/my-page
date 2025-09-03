@@ -253,13 +253,34 @@ probBtn.addEventListener("click",()=>{probPopup.style.display="block";});
 probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
 
 // おみくじ機能（省略せずそのまま）
-const fortunes=["大吉 🎉","中吉 😀","小吉 🙂","吉 😊","末吉 😌","凶 😱","大凶 💀"];
+// おみくじの確率を反映した配列
+const fortunes = [
+  { name: "大吉 🎉", probability: 0.01 },
+  { name: "中吉 😀", probability: 0.05 },
+  { name: "小吉 🙂", probability: 0.20 },
+  { name: "吉 😊", probability: 0.40 },
+  { name: "末吉 😌", probability: 0.20 },
+  { name: "凶 😱", probability: 0.10 },
+  { name: "大凶 💀", probability: 0.005 }
+];
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
 
+// 確率に従っておみくじを選ぶ関数
+function pickFortune() {
+  const rand = Math.random();
+  let sum = 0;
+  for (let f of fortunes) {
+    sum += f.probability;
+    if (rand <= sum) return f.name;
+  }
+  return fortunes[fortunes.length - 1].name; // 念のため最後の項目
+}
+
+// おみくじボタンクリック
 btn.addEventListener("click", () => {
   btn.style.display = "none";
   roulette.style.display = "block";
@@ -270,10 +291,15 @@ btn.addEventListener("click", () => {
     fortunes.forEach(f => {
       const div = document.createElement("div");
       div.className = "fortune";
-      div.textContent = f;
+      div.textContent = f.name;
       rouletteInner.appendChild(div);
     });
   }
+
+  const selected = pickFortune(); // ←確率に従って選ぶ
+  const allFortunes = rouletteInner.querySelectorAll(".fortune");
+  let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.map(f=>f.name).indexOf(selected);
+  allFortunes[stopIndex].classList.add("selected");
 
   const selected = fortunes[Math.floor(Math.random() * fortunes.length)];
   const allFortunes = rouletteInner.querySelectorAll(".fortune");
@@ -327,6 +353,7 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
