@@ -8,21 +8,34 @@
 html, body {
   margin:0; 
   padding:0; 
-  min-height:100%;
+  height:100%;
   font-family:sans-serif;
   background: #ffffff;
   transition: background 1s ease;
-  overflow-x: hidden;  /* 横スクロール防止 */
+  overflow-x: hidden;
   overflow-y: hidden;  /* 縦スクロール防止 */
 }
 #particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 
 .container {
-  position:relative; display:flex; flex-direction:column;
-  align-items:center; justify-content:flex-start;
-  min-height:100vh; padding:2em 1em; z-index:2;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  height:100%;
+  padding:1em;
+  box-sizing: border-box;
+  z-index:2;
 }
-.message, #name { opacity:0; margin:0.5em 0; font-weight:bold; transition:opacity 1s ease; text-align:center; }
+
+.message, #name {
+  opacity:0;
+  margin:0.5em 0;
+  font-weight:bold;
+  transition:opacity 1s ease;
+  text-align:center;
+}
 #msg1 { font-size:clamp(20px,5vw,40px); }
 #dataLine { font-size:clamp(22px,6vw,45px); }
 #name { font-size:clamp(22px,6vw,40px); }
@@ -40,30 +53,29 @@ html, body {
 
 /* おみくじボタン */
 #omikujiBtn {
-    position: fixed;
-    bottom: 20%;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    width: max-content;
-    padding: 12px 25px;
-    font-size: 22px;
-    font-weight: bold;
-    border: none;
-    border-radius: 50px;
-    background: linear-gradient(145deg, #1a2a6c, #0f1b4c);
-    color: #fff;
-    cursor: pointer;
-    z-index:4;
-    animation: float 3s ease-in-out infinite;
-    display: none;
-    white-space: nowrap;
-    text-align: center;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  position: fixed;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  padding: 12px 25px;
+  font-size: 22px;
+  font-weight: bold;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(145deg, #1a2a6c, #0f1b4c);
+  color: #fff;
+  cursor: pointer;
+  z-index:4;
+  animation: float 3s ease-in-out infinite;
+  display: none;
+  white-space: nowrap;
+  text-align: center;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-/* 右下の確率詳細ボタン */
+/* 確率詳細ボタン */
 #probBtn {
   position: fixed;
   bottom: 20px;
@@ -81,14 +93,13 @@ html, body {
 }
 
 /* 左下の履歴 */
-/* 初期状態で非表示 */
 #history {
-  display: none;  /* ←追加 */
+  display: none; 
   position: fixed;
   bottom: 20px;
   left: 20px;
   font-size: 16px;
-  background: rgba(255, 255, 255, 0.85);
+  background: #ffffff; /* 半透明→白 */
   color: #0f1b4c;
   padding: 5px 10px;
   border-radius: 8px;
@@ -99,8 +110,7 @@ html, body {
   word-break: break-word;
 }
 
-
-/* ルーレットと結果表示は既存のまま */
+/* ルーレット */
 #roulette {
   position: fixed;
   bottom: 30%;
@@ -109,45 +119,44 @@ html, body {
   width: 90%;
   max-width: 300px;
   height: 70px;
-　padding-top: 5px; /* 上余白を追加 */
   display: flex;
-  align-items: center; /* これで中のブロックを垂直中央 */
-  justify-content: center; /* 中央寄せ */
+  align-items: center;
+  justify-content: center;
   z-index: 99998;
   border-radius: 30px;
   overflow: hidden;
-  background: #fefefe; /* 白っぽい背景 */
-  border: 3px solid #0f1b4c; /* ネイビーの枠 */
+  background: #fefefe;
+  border: 3px solid #0f1b4c;
   box-shadow: 0 8px 15px rgba(0,0,0,0.2);
 }
 #rouletteInner {
-  display:flex; white-space:nowrap; font-size:28px; font-weight:bold;
-  transition:transform 1.5s ease-out;
+  display:flex; 
+  white-space:nowrap; 
+  font-size:28px; 
+  font-weight:bold;
+  transition: transform 1.5s ease-out;
 }
 .fortune {
   min-width: 130px;
-  height: 60px;        /* 高さは枠に合わせる */
-　line-height: 60px;     /* 文字縦中央 */
+  height: 60px;
   margin: 0 5px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   color: #0f1b4c;
   font-size: 20px;
-
-  display: flex;              /* flex で中央揃え */
-  align-items: center;        /* 垂直中央 */
-  justify-content: center;    /* 横中央 */
-
-  text-align: center;         /* 文字中央 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   background: #ffffff;
 }
-
 .fortune.selected {
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   color:#0f1b4c;
 }
 
+/* 結果表示 */
 #resultDisplay {
   position: fixed;
   top: 50%;
@@ -160,11 +169,10 @@ html, body {
   z-index: 99999;
   color: #ff4500;
   text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-  background: transparent; /* 透明にする */
-  padding: 0;              /* 余白も消す */
+  background: transparent;
+  padding: 0;
   animation: blink 0.5s step-start infinite, pop 0.5s ease forwards;
 }
-
 @keyframes blink { 50% { opacity:0; } }
 @keyframes pop { 0% { transform:translate(-50%,-50%) scale(0.8); } 50% { transform:translate(-50%,-50%) scale(1.2); } 100% { transform:translate(-50%,-50%) scale(1); } }
 
@@ -208,7 +216,7 @@ html, body {
 </div>
 
 <script>
-let totalCount = 0; // ルーレットを回した総数
+let totalCount = 0;
 
 // 粒子アニメーション
 const canvas=document.getElementById("particles");
@@ -216,12 +224,32 @@ const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
 const particleChars="MAEDA";
 let particles=[];
-for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*1.2,dy:(Math.random()-0.5)*1.2,char:particleChars[Math.floor(Math.random()*particleChars.length)]});}
-function drawParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle="rgba(80,80,80,0.8)";particles.forEach(p=>{ctx.font=`${p.r*6}px sans-serif`;ctx.fillText(p.char,p.x,p.y);p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>canvas.width)p.dx*=-1;if(p.y<0||p.y>canvas.height)p.dy*=-1});requestAnimationFrame(drawParticles);}
+for(let i=0;i<100;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*2+1,
+    dx:(Math.random()-0.5)*1.2,
+    dy:(Math.random()-0.5)*1.2,
+    char:particleChars[Math.floor(Math.random()*particleChars.length)]
+  });
+}
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="rgba(80,80,80,0.8)";
+  particles.forEach(p=>{
+    ctx.font=`${p.r*6}px sans-serif`;
+    ctx.fillText(p.char,p.x,p.y);
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width)p.dx*=-1;
+    if(p.y<0||p.y>canvas.height)p.dy*=-1;
+  });
+  requestAnimationFrame(drawParticles);
+}
 drawParticles();
-window.addEventListener("resize",()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
-// 背景色変化（白ベース）
+// 背景色変化
 const bgColors=["#ffffff","#f5f5f5","#fffaf0","#f0f8ff"];
 let colorIndex=0;
 setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.background=bgColors[colorIndex];},3000);
@@ -237,14 +265,12 @@ setTimeout(()=>{
   const imgB = document.getElementById("imgB");
   const name = document.getElementById("name");
 
-  // 最初は A を表示
   imgA.style.zIndex = 2;
   imgB.style.zIndex = 1;
   imgA.style.opacity = 1;
   imgB.style.opacity = 0;
   name.style.opacity = 1;
 
-  // 画像A/Bを2秒ごとに切替（透けない）
   let showA = true;
   setInterval(()=>{
     showA = !showA;
@@ -261,7 +287,6 @@ setTimeout(()=>{
     }
   },2000);
 
-  // ボタン表示
   document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
@@ -272,8 +297,7 @@ const probPopup=document.getElementById("probPopup");
 probBtn.addEventListener("click",()=>{probPopup.style.display="block";});
 probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
 
-// おみくじ機能（省略せずそのまま）
-// おみくじの確率を反映した配列
+// おみくじ
 const fortunes = [
   { name: "大吉 🎉", probability: 0.05 },
   { name: "中吉 😀", probability: 0.1 },
@@ -283,15 +307,9 @@ const fortunes = [
   { name: "凶 😱", probability: 0.04 },
   { name: "大凶 💀", probability: 0.01 }
 ];
-// 結果カウント用オブジェクト
 const fortuneCounts = {
-  "大吉 🎉": 0,
-  "中吉 😀": 0,
-  "小吉 🙂": 0,
-  "吉 😊": 0,
-  "末吉 😌": 0,
-  "凶 😱": 0,
-  "大凶 💀": 0
+  "大吉 🎉":0, "中吉 😀":0, "小吉 🙂":0,
+  "吉 😊":0, "末吉 😌":0, "凶 😱":0, "大凶 💀":0
 };
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
@@ -299,92 +317,77 @@ const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
 
-
-// 確率に従っておみくじを選ぶ関数
-function pickFortune() {
+function pickFortune(){
   const rand = Math.random();
   let sum = 0;
-  for (let f of fortunes) {
+  for(let f of fortunes){
     sum += f.probability;
-    if (rand <= sum) return f.name;
+    if(rand<=sum) return f.name;
   }
-  return fortunes[fortunes.length - 1].name; // 念のため最後の項目
+  return fortunes[fortunes.length-1].name;
 }
 
-// おみくじボタンクリック
-btn.addEventListener("click", () => {
+btn.addEventListener("click",()=>{
   btn.style.display = "none";
-  roulette.style.display = "block";
+  roulette.style.display = "flex";
   rouletteInner.innerHTML = "";
-  totalCount++; // 総回数を1増やす
-  const selected = pickFortune();
-  fortuneCounts[selected]++;
-  
+  totalCount++;
+
   // ルーレット作成
-  for (let i = 0; i < 20; i++) {
-    fortunes.forEach(f => {
-      const div = document.createElement("div");
-      div.className = "fortune";
-      div.textContent = f.name;
+  for(let i=0;i<20;i++){
+    fortunes.forEach(f=>{
+      const div=document.createElement("div");
+      div.className="fortune";
+      div.textContent=f.name;
       rouletteInner.appendChild(div);
     });
   }
 
-  // 確率に従って選ぶ
   const selected = pickFortune();
-
-  // カウントを増やす
   fortuneCounts[selected]++;
 
   const allFortunes = rouletteInner.querySelectorAll(".fortune");
-  const stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.map(f=>f.name).indexOf(selected);
+  const stopIndex = Math.floor(allFortunes.length*0.8) + fortunes.map(f=>f.name).indexOf(selected);
   allFortunes[stopIndex].classList.add("selected");
 
-  // アニメーション
-let duration = 5000; // 3000 → 5000 に変更（ゆっくり回る）
-let start = null;
-const startX = 0;
-const blockWidth = allFortunes[stopIndex].offsetWidth; // 選ばれたブロック幅
-const endX = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - blockWidth / 2);
+  let duration = 5000;
+  let start = null;
+  const startX = 0;
+  const blockWidth = allFortunes[stopIndex].offsetWidth;
+  const endX = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - blockWidth/2);
 
+  function easeOutQuart(t){ return 1-Math.pow(1-t,4); }
 
-function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+  function animate(time){
+    if(!start) start=time;
+    let elapsed = time-start;
+    let progress = elapsed/duration;
+    if(progress>1) progress=1;
+    const eased = easeOutQuart(progress);
+    const currentX = startX + (endX-startX)*eased;
+    rouletteInner.style.transform=`translateX(${currentX}px)`;
 
-function animate(time) {
-  if (!start) start = time;
-  let elapsed = time - start;
-  let progress = elapsed / duration;
-  if (progress > 1) progress = 1;
+    if(progress<1) requestAnimationFrame(animate);
+    else{
+      setTimeout(()=>{
+        roulette.style.display="none";
+        resultDisplay.textContent = selected;
+        resultDisplay.style.display = "block";
 
-  const eased = easeOutQuart(progress);
-  const currentX = startX + (endX - startX) * eased;
-  rouletteInner.style.transform = `translateX(${currentX}px)`;
+        setTimeout(()=>{
+          resultDisplay.style.display = "none";
+          btn.style.display = "inline-block";
 
-  if (progress < 1) requestAnimationFrame(animate);
-  else {
-    setTimeout(() => {
-      roulette.style.display = "none";
-      resultDisplay.textContent = selected;
-      resultDisplay.style.display = "block";
-
-      setTimeout(() => {
-        resultDisplay.style.display = "none";
-        btn.style.display = "inline-block";
-
- history.textContent = `${selected}（${fortuneCounts[selected]}回目 / ${totalCount}回中）`;
-  history.style.display = "block";
-        allFortunes[stopIndex].classList.remove("selected");
-      }, 3000);
-    }, 2000);
+          history.textContent = `${selected}（${fortuneCounts[selected]}回目 / ${totalCount}回中）`;
+          history.style.display = "block";
+          allFortunes[stopIndex].classList.remove("selected");
+        },3000);
+      },2000);
+    }
   }
-}
 
   requestAnimationFrame(animate);
 });
-
-
-
 </script>
 </body>
 </html>
-
