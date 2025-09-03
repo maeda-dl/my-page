@@ -24,14 +24,21 @@ html, body {
 #dataLine { font-size:clamp(22px,6vw,45px); }
 #name { font-size:clamp(22px,6vw,40px); }
 
-.image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; height:300px; }
+.image-wrapper { 
+  margin-top:1em; 
+  position:relative; 
+  width:90%; max-width:400px; 
+  height:300px;
+  background:#fff; /* ここで背景を白に固定 */
+}
 .image {
   display:block;
-  width:100%; height:100%;
   position:absolute; top:0; left:0;
+  width:100%; height:100%;
+  object-fit:cover; /* 縦横比を維持していっぱいに表示 */
   opacity:0;
-  transition:opacity 0.8s ease;
-  box-shadow:0 0 20px rgba(0,0,0,0.2);
+  transition: opacity 0.5s ease;
+  z-index:1;
   border-radius:10px;
 }
 
@@ -308,4 +315,5 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
