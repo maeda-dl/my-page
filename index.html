@@ -60,7 +60,6 @@ html, body {
 }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-/* 右下の確率詳細ボタン */
 #probBtn {
   position: fixed;
   bottom: 20px;
@@ -77,7 +76,6 @@ html, body {
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-/* 左下の履歴 */
 #history {
   position: fixed;
   bottom: 20px;
@@ -91,7 +89,6 @@ html, body {
   box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
-/* ルーレットと結果表示は既存のまま */
 #roulette {
   position: fixed; 
   bottom: 30%; 
@@ -104,35 +101,33 @@ html, body {
   z-index: 99998;
   border-radius: 30px;
   overflow: hidden;
-  background: linear-gradient(90deg, #1a2a6c, #0f1b4c); /* ネイビーグラデ */
+  background: linear-gradient(90deg, #1a2a6c, #0f1b4c);
   box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-  border: 2px solid #0f1b4c; /* 濃いネイビーの枠線 */
+  border: 2px solid #0f1b4c;
 }
 #rouletteInner {
   display:flex; white-space:nowrap; font-size:28px; font-weight:bold;
   transition:transform 1.5s ease-out;
 }
-/* ルーレット内のアイテム */
 .fortune {
   min-width: 150px; 
   text-align: center; 
   padding: 10px;
-  background: linear-gradient(to top, #0f1b4c, #1a2a6c); /* ネイビー系グラデ */
+  background: linear-gradient(to top, #0f1b4c, #1a2a6c);
   margin: 0 5px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  color: #ffffff; /* 白文字 */
+  color: #ffffff;
   font-size: 20px;
   display: flex; 
   align-items: center; 
   justify-content: center;
   transition: transform 0.3s, box-shadow 0.3s;
 }
-/* 選択中のアイテム */
 .fortune.selected {
   transform: scale(1.2);
-  box-shadow: 0 8px 15px rgba(255, 215, 0, 0.8); /* ゴールドっぽく強調 */
-  color: #ffd700; /* ゴールド文字 */
+  box-shadow: 0 8px 15px rgba(255, 215, 0, 0.8);
+  color: #ffd700;
 }
 
 #resultDisplay {
@@ -152,7 +147,6 @@ html, body {
 @keyframes blink { 50% { opacity:0; } }
 @keyframes pop { 0% { transform:translate(-50%,-50%) scale(0.8); } 50% { transform:translate(-50%,-50%) scale(1.2); } 100% { transform:translate(-50%,-50%) scale(1); } }
 
-/* 確率ポップアップ */
 #probPopup {
   position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.85);
   color:#fff; font-size:16px; padding:15px; display:none; z-index:99997; text-align:center;
@@ -198,12 +192,33 @@ const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
 const particleChars="MAEDA";
 let particles=[];
-for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*1.2,dy:(Math.random()-0.5)*1.2,char:particleChars[Math.floor(Math.random()*particleChars.length)]});}
-function drawParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle="rgba(80,80,80,0.8)";particles.forEach(p=>{ctx.font=`${p.r*6}px sans-serif`;ctx.fillText(p.char,p.x,p.y);p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>canvas.width)p.dx*=-1;if(p.y<0||p.y>canvas.height)p.dy*=-1});requestAnimationFrame(drawParticles);}
+for(let i=0;i<100;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*2+1,
+    dx:(Math.random()-0.5)*1.2,
+    dy:(Math.random()-0.5)*1.2,
+    char:particleChars[Math.floor(Math.random()*particleChars.length)]
+  });
+}
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="rgba(80,80,80,0.8)";
+  particles.forEach(p=>{
+    ctx.font=`${p.r*6}px sans-serif`;
+    ctx.fillText(p.char,p.x,p.y);
+    p.x+=p.dx;
+    p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width)p.dx*=-1;
+    if(p.y<0||p.y>canvas.height)p.dy*=-1;
+  });
+  requestAnimationFrame(drawParticles);
+}
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
 
-// 背景色変化（白ベース）
+// 背景色変化
 const bgColors=["#ffffff","#f5f5f5","#fffaf0","#f0f8ff"];
 let colorIndex=0;
 setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.background=bgColors[colorIndex];},3000);
@@ -219,14 +234,12 @@ setTimeout(()=>{
   const imgB = document.getElementById("imgB");
   const name = document.getElementById("name");
 
-  // 最初は A を表示
   imgA.style.zIndex = 2;
   imgB.style.zIndex = 1;
   imgA.style.opacity = 1;
   imgB.style.opacity = 0;
   name.style.opacity = 1;
 
-  // 画像A/Bを2秒ごとに切替（透けない）
   let showA = true;
   setInterval(()=>{
     showA = !showA;
@@ -243,7 +256,6 @@ setTimeout(()=>{
     }
   },2000);
 
-  // ボタン表示
   document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
@@ -254,7 +266,7 @@ const probPopup=document.getElementById("probPopup");
 probBtn.addEventListener("click",()=>{probPopup.style.display="block";});
 probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
 
-// おみくじ機能（省略せずそのまま）
+// おみくじ機能
 const fortunes=["大吉 🎉","中吉 😀","小吉 🙂","吉 😊","末吉 😌","凶 😱","大凶 💀"];
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
@@ -267,12 +279,10 @@ btn.addEventListener("click", () => {
   roulette.style.display = "block";
   rouletteInner.innerHTML = "";
 
-  // 初期位置リセット
   rouletteInner.style.transition = 'none';
   rouletteInner.style.transform = 'translateX(0)';
-  rouletteInner.offsetHeight; // 強制リフロー
+  rouletteInner.offsetHeight; // リフロー
 
-  // ルーレット作成
   for (let i = 0; i < 20; i++) {
     fortunes.forEach(f => {
       const div = document.createElement("div");
@@ -289,40 +299,33 @@ btn.addEventListener("click", () => {
 
   allFortunes[stopIndex].classList.add('selected');
 
-// ゆっくり止まるアニメーション（改良版）
-const initialDuration = 1200; // 最初は早めに移動
-const finalDuration = 800;    // 最後はじわっとゆっくり
+  // 2段階アニメーションでじわっと止める
+  const initialDuration = 1200;
+  const finalDuration = 800;
+  const interimOffset = offset + 50; // 最後に少し戻る分
 
-// 初期移動（80%まで）
-const interimOffset = offset + 50; // 最後に少し戻る分の余白
-rouletteInner.style.transition = `transform ${initialDuration}ms cubic-bezier(0.25, 0.1, 0.25, 1)`; 
-rouletteInner.style.transform = `translateX(${interimOffset}px)`;
+  rouletteInner.style.transition = `transform ${initialDuration}ms cubic-bezier(0.25,0.1,0.25,1)`;
+  rouletteInner.style.transform = `translateX(${interimOffset}px)`;
 
-// 初期移動完了後に最後のゆっくり停止
-setTimeout(() => {
-  rouletteInner.style.transition = `transform ${finalDuration}ms ease-out`; 
-  rouletteInner.style.transform = `translateX(${offset}px)`; // 最終位置へ
+  setTimeout(()=>{
+    rouletteInner.style.transition = `transform ${finalDuration}ms ease-out`;
+    rouletteInner.style.transform = `translateX(${offset}px)`;
 
-  // 停止0.5秒後に結果表示
-  setTimeout(() => {
-    roulette.style.display = "none";
-    resultDisplay.textContent = selected;
-    resultDisplay.style.display = "block";
-    resultDisplay.style.opacity = "1";
+    setTimeout(()=>{
+      roulette.style.display = "none";
+      resultDisplay.textContent = selected;
+      resultDisplay.style.display = "block";
+      resultDisplay.style.opacity = "1";
 
-    setTimeout(() => {
-      resultDisplay.style.display = "none";
-      btn.style.display = "inline-block";
-      history.textContent = selected;
-      allFortunes[stopIndex].classList.remove('selected');
-    }, 3000);
-  }, finalDuration + 500); // 最後のゆっくり移動完了後0.5秒待つ
-}, initialDuration);
-
-
+      setTimeout(()=>{
+        resultDisplay.style.display = "none";
+        btn.style.display = "inline-block";
+        history.textContent = selected;
+        allFortunes[stopIndex].classList.remove('selected');
+      }, 3000);
+    }, finalDuration + 500);
+  }, initialDuration);
+});
 </script>
 </body>
 </html>
-
-
-
