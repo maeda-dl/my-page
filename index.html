@@ -43,7 +43,7 @@ html, body {
     background: #ff6b6b;
     color: #fff;
     cursor: pointer;
-    z-index:4; /* ルーレットより下、結果より上 */
+    z-index:4;
     animation: float 3s ease-in-out infinite;
     display: none;
     white-space: nowrap;
@@ -57,21 +57,54 @@ html, body {
   padding:10px 15px; font-size:16px; border:none; border-radius:8px;
   background:#4e9af1; color:#fff; cursor:pointer;
   display:none;
-  z-index:4; /* おみくじボタンと同じレベル */
+  z-index:4;
 }
 
 /* ルーレット */
-#roulette { position:fixed; bottom:30%; left:50%; transform:translateX(-50%); width:90%; max-width:600px; overflow:hidden; margin-top:20px; height:50px; display:none; z-index:99998; }
-#rouletteInner { display:flex; white-space:nowrap; font-size:28px; font-weight:bold; transition:transform 1.5s ease-out; }
-.fortune { min-width:150px; text-align:center; padding:10px; }
+#roulette {
+  position:fixed; bottom:30%; left:50%; transform:translateX(-50%);
+  width:90%; max-width:600px; height:60px;
+  display:none; z-index:99998;
+  border-radius:30px;
+  overflow:hidden;
+  background: linear-gradient(90deg, #fff4e6, #ffe6f0);
+  box-shadow:0 8px 15px rgba(0,0,0,0.2);
+  border: 2px solid #ffd700;
+}
+#rouletteInner {
+  display:flex; white-space:nowrap; font-size:28px; font-weight:bold;
+  transition:transform 1.5s ease-out;
+}
+.fortune {
+  min-width:150px; text-align:center; padding:10px;
+  background: linear-gradient(to top, #fffae6, #ffe6f0);
+  margin: 0 5px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  color:#333; font-size:20px;
+  display:flex; align-items:center; justify-content:center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.fortune.selected {
+  transform: scale(1.2);
+  box-shadow: 0 8px 15px rgba(255,215,0,0.8);
+  color:#ff4500;
+}
 
 /* 結果表示を最前面に */
 #resultDisplay {
   position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-  font-size:50px; font-weight:bold; text-align:center; color:#ff0000;
-  display:none; animation: blink 0.5s step-start infinite; z-index:99999;
+  font-size:60px; font-weight:bold; text-align:center;
+  display:none;
+  z-index:99999;
+  background: linear-gradient(45deg, #ff6b6b, #ffde59);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  animation: blink 0.5s step-start infinite, pop 0.5s ease forwards;
 }
 @keyframes blink { 50% { opacity:0; } }
+@keyframes pop { 0% { transform:translate(-50%,-50%) scale(0.8); } 50% { transform:translate(-50%,-50%) scale(1.2); } 100% { transform:translate(-50%,-50%) scale(1); } }
 
 /* 左下表示 */
 #history {
@@ -83,7 +116,7 @@ html, body {
   padding: 5px 10px;
   border-radius: 8px;
   max-width: 200px;
-  z-index: 99998; /* 最前面に */
+  z-index: 99999;
 }
 
 /* 確率ポップアップ */
@@ -195,6 +228,9 @@ btn.addEventListener("click",()=>{
   let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.indexOf(selected);
   const offset=-allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
 
+  // 中央カードを強調
+  allFortunes[stopIndex].classList.add('selected');
+
   setTimeout(()=>{rouletteInner.style.transform=`translateX(${offset}px)`;},50);
 
   setTimeout(()=>{
@@ -207,11 +243,12 @@ btn.addEventListener("click",()=>{
       resultDisplay.style.display="none";
       btn.style.display="inline-block";
       history.textContent = selected;
+
+      // 選択カードの強調解除
+      allFortunes[stopIndex].classList.remove('selected');
     },3000);
   },1600);
 });
 </script>
 </body>
 </html>
-
-
