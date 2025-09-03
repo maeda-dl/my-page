@@ -53,22 +53,26 @@
       font-size: clamp(22px, 6vw, 40px);
     }
 
-    .image-wrapper {
-      margin-top: 1em;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-    }
+.image-wrapper {
+  margin-top: 1em;
+  position: relative;  /* ← 画像を重ねるために relative に */
+  width: 90%;          /* 幅を統一 */
+  max-width: 400px;    /* 必要なら上限サイズ */
+}
 
-    .image {
-      max-width: 90%;
-      height: auto;
-      opacity: 0;
-      transition: opacity 1s ease;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      border-radius: 10px;
-    }
+.image {
+  display: block;
+  width: 100%;        /* ← 横幅を揃える */
+  height: auto;
+  position: absolute; /* ← wrapper 内で重ねる */
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
   </style>
 </head>
 <body>
@@ -158,3 +162,4 @@
   </script>
 </body>
 </html>
+
