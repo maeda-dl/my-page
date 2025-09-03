@@ -36,9 +36,14 @@ html, body {
 
 /* 確率詳細ボタン */
 #probBtn {
-  position:fixed; bottom:10px; right:10px;
-  padding:10px 15px; font-size:16px; border:none; border-radius:8px;
-  background:#4e9af1; color:#fff; cursor:pointer; z-index:4;
+  position:fixed; bottom:15%; left:50%; transform:translateX(-50%);
+  padding:10px 20px; font-size:16px; border:none; border-radius:8px;
+  background:#fff; /* 白和紙風 */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  cursor:pointer; z-index:3;
+  display:none;
+  font-weight:bold;
+  font-family: "Yu Mincho","serif";
 }
 
 /* ルーレット */
@@ -63,9 +68,9 @@ html, body {
 
 /* 確率ポップアップ */
 #probPopup {
-  position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.85);
-  color:#fff; font-size:16px; padding:15px; display:none; z-index:9998; text-align:center;
-  cursor:pointer;
+  position:fixed; bottom:0; left:0; width:100%; background:rgba(255,250,240,0.95);
+  color:#000; font-size:16px; padding:15px; display:none; z-index:9998; text-align:center;
+  cursor:pointer; font-family:"Yu Mincho","serif";
 }
 </style>
 </head>
@@ -83,13 +88,12 @@ html, body {
   </div>
 
   <button id="omikujiBtn">おみくじを引く ✨</button>
+  <button id="probBtn">確率詳細</button>
   <div id="roulette"><div id="rouletteInner"></div></div>
 </div>
 
 <div id="resultDisplay"></div>
 <div id="history"></div>
-
-<button id="probBtn">確率詳細</button>
 <div id="probPopup">
   大吉は1%<br>
   中吉は5%<br>
@@ -127,10 +131,10 @@ setTimeout(()=>{document.getElementById("imgA").style.opacity=0;document.getElem
 
 // ボタン表示
 const btn=document.getElementById("omikujiBtn");
-setTimeout(()=>{btn.style.display="inline-block";},10000);
+const probBtn=document.getElementById("probBtn");
+setTimeout(()=>{btn.style.display="inline-block"; probBtn.style.display="inline-block";},10000);
 
 // 確率ポップアップ
-const probBtn=document.getElementById("probBtn");
 const probPopup=document.getElementById("probPopup");
 probBtn.addEventListener("click",()=>{probPopup.style.display="block";});
 probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
