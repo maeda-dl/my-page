@@ -26,12 +26,17 @@ html, body {
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
 .image {
-  display:block;
-  width:100%; height:auto;
-  position:absolute; top:0; left:0;
-  box-shadow:0 0 20px rgba(0,0,0,0.2);
-  border-radius:10px;
+  display: block;                         /* インライン要素ではなくブロック要素として表示する */
+  width: 100%;                            /* 横幅を親要素いっぱいに広げる */
+  height: auto;                           /* 縦幅は画像の縦横比を維持して自動調整 */
+  position: absolute;                     /* 親要素を基準に絶対配置する */
+  top: 0; left: 0;                        /* 親要素の左上に固定配置する */
+  opacity: 0;                             /* 初期状態では透明（非表示に近い状態） */
+/*  transition: opacity 0.8s ease;           opacity の変化を 0.8 秒かけて滑らかにする */
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);   /* 周囲にぼかし影を付ける */
+  border-radius: 10px;                    /* 角を 10px 丸める */
 }
+
 
 /* おみくじボタン */
 #omikujiBtn {
@@ -291,5 +296,6 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
