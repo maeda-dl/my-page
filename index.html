@@ -307,12 +307,14 @@ btn.addEventListener("click", () => {
       div.textContent = f.name;
       rouletteInner.appendChild(div);
     });
-// おみくじボタンクリック内の最後に追加
-fortuneCounts[selected]++; // 出た結果をカウント
   }
 
   // 確率に従って選ぶ
   const selected = pickFortune();
+
+  // カウントを増やす
+  fortuneCounts[selected]++;
+
   const allFortunes = rouletteInner.querySelectorAll(".fortune");
   const stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.map(f=>f.name).indexOf(selected);
   allFortunes[stopIndex].classList.add("selected");
@@ -345,7 +347,10 @@ fortuneCounts[selected]++; // 出た結果をカウント
         setTimeout(() => {
           resultDisplay.style.display = "none";
           btn.style.display = "inline-block";
-          history.textContent = selected;
+
+          // 履歴とカウント表示
+          history.textContent = `${selected}（${fortuneCounts[selected]}回目）`;
+
           allFortunes[stopIndex].classList.remove("selected");
         }, 3000);
       }, 2000);
@@ -356,9 +361,11 @@ fortuneCounts[selected]++; // 出た結果をカウント
 });
 
 
+
 </script>
 </body>
 </html>
+
 
 
 
