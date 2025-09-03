@@ -319,42 +319,41 @@ btn.addEventListener("click", () => {
   allFortunes[stopIndex].classList.add("selected");
 
   // アニメーション
-  let duration = 3000;
-  let start = null;
-  const startX = 0;
-  const endX = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
+let duration = 5000; // 3000 → 5000 に変更（ゆっくり回る）
+let start = null;
+const startX = 0;
+const endX = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
 
-  function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
 
-  function animate(time) {
-    if (!start) start = time;
-    let elapsed = time - start;
-    let progress = elapsed / duration;
-    if (progress > 1) progress = 1;
+function animate(time) {
+  if (!start) start = time;
+  let elapsed = time - start;
+  let progress = elapsed / duration;
+  if (progress > 1) progress = 1;
 
-    const eased = easeOutQuart(progress);
-    const currentX = startX + (endX - startX) * eased;
-    rouletteInner.style.transform = `translateX(${currentX}px)`;
+  const eased = easeOutQuart(progress);
+  const currentX = startX + (endX - startX) * eased;
+  rouletteInner.style.transform = `translateX(${currentX}px)`;
 
-    if (progress < 1) requestAnimationFrame(animate);
-    else {
+  if (progress < 1) requestAnimationFrame(animate);
+  else {
+    setTimeout(() => {
+      roulette.style.display = "none";
+      resultDisplay.textContent = selected;
+      resultDisplay.style.display = "block";
+
       setTimeout(() => {
-        roulette.style.display = "none";
-        resultDisplay.textContent = selected;
-        resultDisplay.style.display = "block";
+        resultDisplay.style.display = "none";
+        btn.style.display = "inline-block";
 
-        setTimeout(() => {
-          resultDisplay.style.display = "none";
-          btn.style.display = "inline-block";
+        history.textContent = `${selected}（${fortuneCounts[selected]}回目）`;
 
-          // 履歴とカウント表示
-          history.textContent = `${selected}（${fortuneCounts[selected]}回目）`;
-
-          allFortunes[stopIndex].classList.remove("selected");
-        }, 3000);
-      }, 2000);
-    }
+        allFortunes[stopIndex].classList.remove("selected");
+      }, 3000);
+    }, 2000);
   }
+}
 
   requestAnimationFrame(animate);
 });
@@ -364,6 +363,7 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
