@@ -296,26 +296,19 @@ btn.addEventListener("click", () => {
     });
   }
 
-  const selected = pickFortune(); // ←確率に従って選ぶ
+  // 確率に従って選ぶ
+  const selected = pickFortune();
   const allFortunes = rouletteInner.querySelectorAll(".fortune");
-  let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.map(f=>f.name).indexOf(selected);
+  const stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.map(f=>f.name).indexOf(selected);
   allFortunes[stopIndex].classList.add("selected");
 
-  const selected = fortunes[Math.floor(Math.random() * fortunes.length)];
-  const allFortunes = rouletteInner.querySelectorAll(".fortune");
-  let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.indexOf(selected);
-  allFortunes[stopIndex].classList.add("selected");
-
-  // アニメーション設定
-  let duration = 4000; // 回転総時間4秒
+  // アニメーション
+  let duration = 4000;
   let start = null;
   const startX = 0;
   const endX = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
 
-  // easing: easeOutQuart（最後は滑らかに減速）
-  function easeOutQuart(t) {
-    return 1 - Math.pow(1 - t, 4);
-  }
+  function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
 
   function animate(time) {
     if (!start) start = time;
@@ -323,19 +316,16 @@ btn.addEventListener("click", () => {
     let progress = elapsed / duration;
     if (progress > 1) progress = 1;
 
-    let eased = easeOutQuart(progress);
-    let currentX = startX + (endX - startX) * eased;
+    const eased = easeOutQuart(progress);
+    const currentX = startX + (endX - startX) * eased;
     rouletteInner.style.transform = `translateX(${currentX}px)`;
 
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      // 完全停止後、少し待って結果表示
+    if (progress < 1) requestAnimationFrame(animate);
+    else {
       setTimeout(() => {
         roulette.style.display = "none";
         resultDisplay.textContent = selected;
         resultDisplay.style.display = "block";
-        resultDisplay.style.opacity = "1";
 
         setTimeout(() => {
           resultDisplay.style.display = "none";
@@ -343,16 +333,18 @@ btn.addEventListener("click", () => {
           history.textContent = selected;
           allFortunes[stopIndex].classList.remove("selected");
         }, 3000);
-      }, 2000); // 完全停止から0.5秒後に結果
+      }, 2000);
     }
   }
 
   requestAnimationFrame(animate);
 });
 
+
 </script>
 </body>
 </html>
+
 
 
 
