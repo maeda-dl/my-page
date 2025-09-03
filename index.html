@@ -289,31 +289,40 @@ btn.addEventListener("click", () => {
 
   allFortunes[stopIndex].classList.add('selected');
 
-  // ゆっくり止まるアニメーション
-  let duration = 2000; // 2秒で減速
-  rouletteInner.style.transition = `transform ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1)`; 
-  rouletteInner.style.transform = `translateX(${offset}px)`;
+// ゆっくり止まるアニメーション（改良版）
+const initialDuration = 1200; // 最初は早めに移動
+const finalDuration = 800;    // 最後はじわっとゆっくり
+
+// 初期移動（80%まで）
+const interimOffset = offset + 50; // 最後に少し戻る分の余白
+rouletteInner.style.transition = `transform ${initialDuration}ms cubic-bezier(0.25, 0.1, 0.25, 1)`; 
+rouletteInner.style.transform = `translateX(${interimOffset}px)`;
+
+// 初期移動完了後に最後のゆっくり停止
+setTimeout(() => {
+  rouletteInner.style.transition = `transform ${finalDuration}ms ease-out`; 
+  rouletteInner.style.transform = `translateX(${offset}px)`; // 最終位置へ
 
   // 停止0.5秒後に結果表示
   setTimeout(() => {
-    setTimeout(() => {
-      roulette.style.display = "none";
-      resultDisplay.textContent = selected;
-      resultDisplay.style.display = "block";
-      resultDisplay.style.opacity = "1";
+    roulette.style.display = "none";
+    resultDisplay.textContent = selected;
+    resultDisplay.style.display = "block";
+    resultDisplay.style.opacity = "1";
 
-      setTimeout(() => {
-        resultDisplay.style.display = "none";
-        btn.style.display = "inline-block";
-        history.textContent = selected;
-        allFortunes[stopIndex].classList.remove('selected');
-      }, 3000);
-    }, 500); // ←ここで0.5秒停止
-  }, duration);
-});
+    setTimeout(() => {
+      resultDisplay.style.display = "none";
+      btn.style.display = "inline-block";
+      history.textContent = selected;
+      allFortunes[stopIndex].classList.remove('selected');
+    }, 3000);
+  }, finalDuration + 500); // 最後のゆっくり移動完了後0.5秒待つ
+}, initialDuration);
+
 
 </script>
 </body>
 </html>
+
 
 
