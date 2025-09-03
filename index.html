@@ -6,22 +6,17 @@
 <title>社員紹介＋おみくじ</title>
 <style>
 html, body {
-  margin: 0; padding: 0; min-height: 100%;
-  font-family: sans-serif;
-  background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
-  transition: background 1s ease;
-  overflow-x: hidden;
+  margin:0; padding:0; min-height:100%;
+  font-family:sans-serif;
+  background: linear-gradient(120deg,#f0f8ff,#e6f7ff);
+  transition:background 1s ease;
+  overflow-x:hidden;
 }
-#particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
+#particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 .container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  padding: 2em 1em;
-  z-index: 2;
+  position:relative; display:flex; flex-direction:column;
+  align-items:center; justify-content:flex-start;
+  min-height:100vh; padding:2em 1em; z-index:2;
 }
 .message, #name { opacity:0; margin:0.5em 0; font-weight:bold; transition:opacity 1s ease; text-align:center; }
 #msg1 { font-size:clamp(20px,5vw,40px); }
@@ -32,22 +27,21 @@ html, body {
 
 /* おみくじボタン */
 #omikujiBtn {
-  position: fixed; bottom:20%; left:50%; transform:translateX(-50%);
-  padding:15px 30px; font-size:22px; font-weight:bold; border:none; border-radius:50px;
+  position:fixed; bottom:20%; left:50%; transform:translateX(-50%);
+  padding:12px 25px; font-size:22px; font-weight:bold; border:none; border-radius:50px;
   background:#ff6b6b; color:#fff; cursor:pointer; z-index:3;
-  animation: float 3s ease-in-out infinite;
-  display:none; /* 初期非表示 */
+  animation: float 3s ease-in-out infinite; display:none; white-space:nowrap;
 }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
 /* ルーレット */
-#roulette { position: relative; width: 100%; overflow: hidden; margin-top:20px; height:50px; display:none; }
-#rouletteInner { display:flex; white-space:nowrap; font-size:28px; font-weight:bold; transition: transform 3s ease-out; }
+#roulette { position:relative; width:100%; overflow:hidden; margin-top:20px; height:50px; display:none; }
+#rouletteInner { display:flex; white-space:nowrap; font-size:28px; font-weight:bold; transition:transform 1.5s ease-out; }
 .fortune { min-width:150px; text-align:center; padding:10px; }
 
 /* 結果表示を最前面に */
 #resultDisplay {
-  position: fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
   font-size:50px; font-weight:bold; text-align:center; color:#ff0000;
   display:none; animation: blink 0.5s step-start infinite; z-index:9999;
 }
@@ -55,7 +49,7 @@ html, body {
 
 /* 左下表示 */
 #history {
-  position: fixed; bottom:10px; left:10px;
+  position:fixed; bottom:10px; left:10px;
   font-size:16px; background:rgba(255,255,255,0.7);
   padding:5px 10px; border-radius:8px; max-width:200px;
 }
@@ -74,16 +68,11 @@ html, body {
     <img id="imgB" class="image" src="B.png" alt="画像B" />
   </div>
 
-  <!-- おみくじボタン -->
   <button id="omikujiBtn">おみくじを引く ✨</button>
-
-  <!-- ルーレット -->
   <div id="roulette"><div id="rouletteInner"></div></div>
 </div>
 
-<!-- 結果表示 -->
 <div id="resultDisplay"></div>
-<!-- 左下履歴 -->
 <div id="history"></div>
 
 <script>
@@ -110,7 +99,7 @@ fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 setTimeout(()=>{document.getElementById("imgA").style.opacity=0;document.getElementById("imgB").style.opacity=1;document.getElementById("name").style.opacity=1;},8000);
 
-// 前田だよ表示1秒後にボタン表示
+// ボタン表示
 const btn=document.getElementById("omikujiBtn");
 setTimeout(()=>{btn.style.display="inline-block";},10000);
 
@@ -126,7 +115,13 @@ btn.addEventListener("click",()=>{
   roulette.style.display="block";
   rouletteInner.innerHTML="";
 
-  // ルーレット要素を横並びで作成
+  // transformリセット
+  rouletteInner.style.transition='none';
+  rouletteInner.style.transform='translateX(0)';
+  rouletteInner.offsetHeight; // 再描画
+  rouletteInner.style.transition='transform 1.5s ease-out'; // 高速化
+
+  // ルーレット要素
   for(let i=0;i<20;i++){
     fortunes.forEach(f=>{
       const div=document.createElement("div");
@@ -135,13 +130,13 @@ btn.addEventListener("click",()=>{
     });
   }
 
-  // ランダムで結果を選ぶ
+  // ランダム結果
   const selected=fortunes[Math.floor(Math.random()*fortunes.length)];
   const allFortunes=rouletteInner.querySelectorAll(".fortune");
   let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.indexOf(selected);
   const offset=-allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
 
-  setTimeout(()=>{rouletteInner.style.transform=`translateX(${offset}px)`;},100);
+  setTimeout(()=>{rouletteInner.style.transform=`translateX(${offset}px)`;},50);
 
   // 停止後処理
   setTimeout(()=>{
@@ -152,10 +147,9 @@ btn.addEventListener("click",()=>{
     setTimeout(()=>{
       resultDisplay.style.display="none";
       btn.style.display="inline-block";
-      // 左下に最後の結果のみ表示
       history.textContent = selected;
     },3000);
-  },3500);
+  },1600); // transition短縮に合わせて停止時間も調整
 });
 </script>
 </body>
