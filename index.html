@@ -202,17 +202,16 @@ setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.b
 function fadeIn(el,delay){setTimeout(()=>{el.style.opacity=1;},delay);}
 fadeIn(document.getElementById("msg1"),500);
 fadeIn(document.getElementById("dataLine"),2000);
-fadeIn(document.getElementById("imgA"),5000);
 
 setTimeout(()=>{
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
   const name = document.getElementById("name");
 
-  // 最初は A を表示
+  // 最初は A を表示（ここで初めて出す）
   imgA.style.zIndex = 2;
   imgB.style.zIndex = 1;
-  imgA.style.opacity = 1;
+  imgA.style.opacity = 1;  // ←ここでフェードインでもOK
   imgB.style.opacity = 0;
   name.style.opacity = 1;
 
@@ -237,6 +236,7 @@ setTimeout(()=>{
   document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
+
 
 // 確率ポップアップ
 const probBtn=document.getElementById("probBtn");
@@ -296,6 +296,7 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
 
