@@ -263,11 +263,24 @@ const fortunes = [
   { name: "凶 😱", probability: 0.04 },
   { name: "大凶 💀", probability: 0.01 }
 ];
+// 結果カウント用オブジェクト
+const fortuneCounts = {
+  "大吉 🎉": 0,
+  "中吉 😀": 0,
+  "小吉 🙂": 0,
+  "吉 😊": 0,
+  "末吉 😌": 0,
+  "凶 😱": 0,
+  "大凶 💀": 0
+};
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
+// カウントを表示（例: 履歴の下に追記）
+history.textContent = `${selected}（${fortuneCounts[selected]}回目）`;
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
+
 
 // 確率に従っておみくじを選ぶ関数
 function pickFortune() {
@@ -294,6 +307,8 @@ btn.addEventListener("click", () => {
       div.textContent = f.name;
       rouletteInner.appendChild(div);
     });
+// おみくじボタンクリック内の最後に追加
+fortuneCounts[selected]++; // 出た結果をカウント
   }
 
   // 確率に従って選ぶ
@@ -344,6 +359,7 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
