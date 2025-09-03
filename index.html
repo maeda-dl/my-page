@@ -13,15 +13,18 @@ html, body {
   overflow-x:hidden;
 }
 #particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
+
 .container {
   position:relative; display:flex; flex-direction:column;
   align-items:center; justify-content:flex-start;
   min-height:100vh; padding:2em 1em; z-index:2;
 }
+
 .message, #name { opacity:0; margin:0.5em 0; font-weight:bold; transition:opacity 1s ease; text-align:center; }
 #msg1 { font-size:clamp(20px,5vw,40px); }
 #dataLine { font-size:clamp(22px,6vw,45px); }
 #name { font-size:clamp(22px,6vw,40px); }
+
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
 .image { display:block; width:100%; height:auto; position:absolute; top:0; left:0; opacity:0; transition:opacity 1s ease; box-shadow:0 0 20px rgba(0,0,0,0.2); border-radius:10px; }
 
@@ -34,17 +37,18 @@ html, body {
 }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-/* 確率詳細ボタン */
+/* 確率詳細ボタン（豪華デザイン） */
 #probBtn {
-  position:fixed; bottom:15%; left:50%; transform:translateX(-50%);
-  padding:10px 20px; font-size:16px; border:none; border-radius:8px;
-  background:#fff; /* 白和紙風 */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  cursor:pointer; z-index:3;
-  display:none;
-  font-weight:bold;
-  font-family: "Yu Mincho","serif";
+  position:fixed; bottom:20px; right:20px;
+  padding:12px 20px; font-size:18px; font-weight:bold;
+  border:none; border-radius:20px;
+  background:linear-gradient(135deg,#fbd786,#f7797d);
+  color:#fff; box-shadow:0 5px 15px rgba(0,0,0,0.3);
+  cursor:pointer; display:none; z-index:4;
+  text-shadow:0 1px 2px rgba(0,0,0,0.3);
+  transition:transform 0.2s;
 }
+#probBtn:hover { transform:scale(1.05); }
 
 /* ルーレット */
 #roulette { position:relative; width:100%; overflow:hidden; margin-top:20px; height:50px; display:none; }
@@ -68,9 +72,11 @@ html, body {
 
 /* 確率ポップアップ */
 #probPopup {
-  position:fixed; bottom:0; left:0; width:100%; background:rgba(255,250,240,0.95);
-  color:#000; font-size:16px; padding:15px; display:none; z-index:9998; text-align:center;
-  cursor:pointer; font-family:"Yu Mincho","serif";
+  position:fixed; bottom:0; left:0; width:100%;
+  background:#fff url('https://i.imgur.com/8fXfWLi.png') repeat; /* 和紙風テクスチャ */
+  background-size:cover;
+  color:#000; font-size:16px; padding:20px; display:none; z-index:9998; text-align:center;
+  cursor:pointer; box-shadow:0 -5px 15px rgba(0,0,0,0.3);
 }
 </style>
 </head>
@@ -88,12 +94,13 @@ html, body {
   </div>
 
   <button id="omikujiBtn">おみくじを引く ✨</button>
-  <button id="probBtn">確率詳細</button>
   <div id="roulette"><div id="rouletteInner"></div></div>
 </div>
 
 <div id="resultDisplay"></div>
 <div id="history"></div>
+
+<button id="probBtn">確率詳細</button>
 <div id="probPopup">
   大吉は1%<br>
   中吉は5%<br>
