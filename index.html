@@ -29,8 +29,10 @@ html, body {
 #omikujiBtn {
     position: fixed;
     bottom: 20%;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
+    margin: 0 auto;      /* 左右中央に */
+    width: max-content;  /* ボタン幅を内容に合わせる */
     padding: 12px 25px;
     font-size: 22px;
     font-weight: bold;
@@ -43,7 +45,7 @@ html, body {
     animation: float 3s ease-in-out infinite;
     display: none;
     white-space: nowrap;
-    text-align: center; /* 追加 */
+    text-align: center;
 }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
@@ -199,4 +201,5 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
