@@ -40,13 +40,22 @@ html, body {
 #dataLine { font-size:clamp(22px,6vw,45px); }
 #name { font-size:clamp(22px,6vw,40px); }
 
-.image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
+.image-wrapper {
+  margin-top:1em; 
+  position:relative; 
+  width:90%; 
+  max-width:400px; 
+  background:#ffffff; /* 背景を固定 */
+  border-radius:10px;
+  overflow:hidden; /* 画像以外ははみ出さない */
+}
+
 .image {
   display:block;
   width:100%; height:auto;
   position:absolute; top:0; left:0;
-  opacity:0;
-  transition:opacity 0.8s ease;
+  opacity:1; /* opacity は常に 1 */
+  transition:none; /* 透過アニメは使わない */
   box-shadow:0 0 20px rgba(0,0,0,0.2);
   border-radius:10px;
 }
@@ -260,15 +269,17 @@ setTimeout(()=>{
   const name = document.getElementById("name");
   imgA.style.zIndex = 2; imgB.style.zIndex = 1;
   imgA.style.opacity = 1; imgB.style.opacity = 0; name.style.opacity = 1;
-  let showA = true;
-  setInterval(()=>{
-    showA = !showA;
-    if(showA){ imgA.style.zIndex=2; imgB.style.zIndex=1; imgA.style.opacity=1; imgB.style.opacity=0; }
-    else { imgB.style.zIndex=2; imgA.style.zIndex=1; imgB.style.opacity=1; imgA.style.opacity=0; }
-  },2000);
-  document.getElementById("omikujiBtn").style.display="inline-block";
-  document.getElementById("probBtn").style.display="inline-block";
-},8000);
+let showA = true;
+setInterval(()=>{
+  showA = !showA;
+  if(showA){
+    imgA.style.zIndex = 2;
+    imgB.style.zIndex = 1;
+  } else {
+    imgB.style.zIndex = 2;
+    imgA.style.zIndex = 1;
+  }
+}, 2000);
 
 // 確率ポップアップ
 const probBtn=document.getElementById("probBtn");
@@ -353,3 +364,4 @@ btn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
