@@ -112,21 +112,20 @@ html, body {
 
 #probPopup {
   position: fixed;
-  bottom: 20px; left: 50%;
-  transform: translateX(-50%) translateY(100%);
+  bottom: 100px;  /* 下端から100px上に */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;      /* 横幅調整 */
+  max-width: 400px;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  font-size: 18px; /* フォントサイズ調整 */
+  padding: 15px;
   display: none;
   z-index: 99997;
+  text-align: left;  /* 左寄せにして読みやすく */
   cursor: pointer;
-  width: 300px;          /* 横幅を広げる */
-  max-width: 90%;
-  padding: 15px 20px;
-  border-radius: 15px;
-  background: rgba(255,255,255,0.95);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  transition: transform 0.4s ease, opacity 0.4s ease;
-  opacity: 0;
-  font-size: 18px;       /* フォントサイズ調整 */
-  line-height: 2;        /* 1行ずつの高さ */
+  border-radius: 10px; /* 角丸 */
 }
 
 #probPopup.show { 
@@ -135,13 +134,10 @@ html, body {
 }
 
 .probItem {
-  display: flex; 
+  display: flex;
   justify-content: space-between;
-  padding: 6px 10px;   /* 左右にもスペースを追加 */
-  margin: 0;            
-  font-weight: bold;
-  background: none;     
-  box-shadow: none;     
+  padding: 6px 10px; /* 左右スペース */
+  margin: 0;
 }
 
 .probItem:nth-child(1){ background: linear-gradient(135deg, #e0f7fa, #80deea); }
@@ -321,5 +317,6 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
