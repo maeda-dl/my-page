@@ -92,7 +92,7 @@ html, body {
 /* 確率ポップアップ */
 #probPopup {
   position: fixed;
-  bottom: 60px; left:50%;
+  bottom: 80px; left:50%;
   transform: translateX(-50%);
   width:280px; max-height:400px; overflow-y:auto;
   background:#0f1b4c;
@@ -100,8 +100,9 @@ html, body {
   display:none; z-index:999999; text-align:left;
   border-radius:12px;
   box-shadow:0 8px 20px rgba(0,0,0,0.3);
-  border: 2px solid silver; /* シルバー枠 */
-  animation: borderShine 3s linear infinite;
+  border: 4px solid;
+  border-image: linear-gradient(90deg, silver, white, silver) 1;
+  animation: borderFlow 3s linear infinite;
 }
 #probPopup .probLine {
   display:flex; justify-content:space-between; 
@@ -111,10 +112,10 @@ html, body {
   font-weight:bold;
 }
 
-@keyframes borderShine {
-  0% { border-color: silver; box-shadow: 0 0 5px silver; }
-  50% { border-color: white; box-shadow: 0 0 15px silver; }
-  100% { border-color: silver; box-shadow: 0 0 5px silver; }
+@keyframes borderFlow {
+  0% { border-image: linear-gradient(90deg, silver, white, silver) 1; }
+  50% { border-image: linear-gradient(270deg, silver, white, silver) 1; }
+  100% { border-image: linear-gradient(90deg, silver, white, silver) 1; }
 }
 
 #roulette { position: fixed; bottom:30%; left:50%; transform:translateX(-50%);
@@ -238,9 +239,9 @@ probBtn.addEventListener("click",()=>{
   probPopup.style.display="block";
 });
 
-// 画面タッチでポップアップ閉じる
+// 画面上のどこでもポップアップ閉じる
 document.body.addEventListener("click", (e)=>{
-  if(probPopup.style.display==="block" && !probPopup.contains(e.target) && e.target!==probBtn){
+  if(probPopup.style.display==="block" && e.target!==probBtn){
     probPopup.style.display="none";
   }
 });
