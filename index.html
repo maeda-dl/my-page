@@ -103,37 +103,22 @@ html, body {
   text-align:center; word-break:break-word;
 }
 
-/* 確率ポップアップ（シンプル＆揃える） */
+/* 確率ポップアップ */
 #probPopup {
-  position: fixed; top:50%; left:50%;
+  position: fixed;
+  top:50%; left:50%;
   transform: translate(-50%,-50%);
   width:280px; max-height:400px; overflow-y:auto;
   background:#0f1b4c;
   color:#fff; font-size:16px; padding:15px;
   display:none; z-index:999999; text-align:left;
-  cursor:pointer; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.3);
-}
-#probPopup .probLine {
-  background: rgba(255,255,255,0.08); margin:5px 0; padding:8px 12px;
-  border-radius:8px; display:flex; justify-content:space-between;
-}
-/* 確率詳細ポップアップ */
-#probDetail {
-  position: fixed;
-  bottom: 120px; /* 左下の結果表示を避ける */
-  left: 20px;
-  width: 260px;
-  padding: 15px;
-  background: rgba(20,20,20,0.9);
-  color: white;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.6);
-  z-index: 999;
-  overflow: hidden;
+  cursor:pointer; border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  overflow:hidden; /* 枠線エフェクトのために必要 */
 }
 
 /* 輝くシルバーの枠線 */
-#probDetail::before {
+#probPopup::before {
   content: "";
   position: absolute;
   top: -2px; left: -2px; right: -2px; bottom: -2px;
@@ -218,10 +203,7 @@ html, body {
 
 <button id="omikujiBtn">おみくじを引く ✨</button>
 <button id="probBtn">確率詳細</button>
-<!-- 確率詳細ポップアップ -->
-<div id="probDetail">
-  <div id="probPopup"></div>
-</div>
+<div id="probPopup"></div>
 <script>
 // 粒子アニメーション（変更なし）
 const canvas=document.getElementById("particles");
@@ -377,6 +359,7 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
 
