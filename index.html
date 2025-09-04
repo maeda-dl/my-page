@@ -110,12 +110,12 @@ html, body {
 
 .fortune {
   min-width: 130px; height: 60px; margin: 0 5px;
-  border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 0; box-shadow: none; /* 影・角丸なし */
   color: #0f1b4c; font-size: 20px; display: flex;
   align-items: center; justify-content: center; text-align: center;
-  background: #ffffff;
+  background: transparent; /* 背景なし */
 }
-.fortune.selected { transform: scale(1.1); }
+.fortune.selected { transform: scale(1.1); } /* 選択時の拡大は残す */
 
 #resultDisplay {
   position: fixed; top: 50%; left: 50%;
@@ -129,11 +129,12 @@ html, body {
 @keyframes blink { 50% { opacity:0; } }
 @keyframes pop { 0%{transform:translate(-50%,-50%) scale(0.8);}50%{transform:translate(-50%,-50%) scale(1.2);}100%{transform:translate(-50%,-50%) scale(1);} }
 
+/* 確率詳細ポップアップを最前面に */
 #probPopup {
   position: fixed; bottom: 100px; left: 50%;
   transform: translateX(-50%) translateY(100%);
   display: none;
-  z-index: 99997;
+  z-index: 999999; /* 最大値にして最前面 */
   cursor: pointer;
   width: 300px; max-width: 90%;
   padding: 15px 20px;
@@ -346,6 +347,7 @@ if(window.DeviceOrientationEvent){
 </script>
 </body>
 </html>
+
 
 
 
