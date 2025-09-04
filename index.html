@@ -27,16 +27,17 @@ html, body {
 
 .message, #name {
   opacity:0; margin:0.5em 0;
-  font-family: 'Pacifico', cursive;
   font-weight:bold;
   transition:opacity 1s ease, transform 0.1s ease;
   text-align:center;
 }
 #msg1 { font-size:calc(20px + 2vw);
-        font-family: 'Pacifico', cursive;
 }
 
-  
+#msg1, #name {
+  font-family: 'Pacifico', cursive !important;
+  font-weight: normal;
+}  
 #dataLine { 
   font-size:calc(22px + 2vw); 
   display:inline-block; 
@@ -316,6 +317,7 @@ setTimeout(() => {
 </script>
 </body>
 </html>
+
 
 
 
