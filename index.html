@@ -203,23 +203,21 @@ html, body {
 
 <button id="omikujiBtn">おみくじを引く ✨</button>
 <button id="probBtn">確率詳細</button>
-<div id="probPopup">
-  大吉は5%<br>
-  中吉は10%<br>
-  小吉は20%<br>
-  吉は40%<br>
-  末吉は20%<br>
-  凶は4%<br>
-  大凶は1%<br>
-  <br><br><br>
-</div>
+<div id="probPopup"></div>
 
 <script>
 let totalCount = 0;
-const fortuneCounts = {
-  "大吉 🎉":0, "中吉 😀":0, "小吉 🙂":0,
-  "吉 😊":0, "末吉 😌":0, "凶 😱":0, "大凶 💀":0
-};
+const fortunes = [
+  { name: "大吉 🎉", probability: 0.05 },
+  { name: "中吉 😀", probability: 0.1 },
+  { name: "小吉 🙂", probability: 0.2 },
+  { name: "吉 😊", probability: 0.4 },
+  { name: "末吉 😌", probability: 0.2 },
+  { name: "凶 😱", probability: 0.04 },
+  { name: "大凶 💀", probability: 0.01 }
+];
+const fortuneCounts = {};
+fortunes.forEach(f => fortuneCounts[f.name] = 0);
 
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
@@ -227,12 +225,8 @@ canvas.width=window.innerWidth; canvas.height=window.innerHeight;
 const particleChars="MAEDA";
 let particles=[];
 for(let i=0;i<100;i++){
-  particles.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    r:Math.random()*2+1,
-    dx:(Math.random()-0.5)*1.2,
-    dy:(Math.random()-0.5)*1.2,
+  particles.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height,
+    r:Math.random()*2+1, dx:(Math.random()-0.5)*1.2, dy:(Math.random()-0.5)*1.2,
     char:particleChars[Math.floor(Math.random()*particleChars.length)]
   });
 }
@@ -264,48 +258,31 @@ setTimeout(()=>{
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
   const name = document.getElementById("name");
-
-  imgA.style.zIndex = 2;
-  imgB.style.zIndex = 1;
-  imgA.style.opacity = 1;
-  imgB.style.opacity = 0;
-  name.style.opacity = 1;
-
+  imgA.style.zIndex = 2; imgB.style.zIndex = 1;
+  imgA.style.opacity = 1; imgB.style.opacity = 0; name.style.opacity = 1;
   let showA = true;
   setInterval(()=>{
     showA = !showA;
-    if(showA){
-      imgA.style.zIndex = 2;
-      imgB.style.zIndex = 1;
-      imgA.style.opacity = 1;
-      imgB.style.opacity = 0;
-    } else {
-      imgB.style.zIndex = 2;
-      imgA.style.zIndex = 1;
-      imgB.style.opacity = 1;
-      imgA.style.opacity = 0;
-    }
+    if(showA){ imgA.style.zIndex=2; imgB.style.zIndex=1; imgA.style.opacity=1; imgB.style.opacity=0; }
+    else { imgB.style.zIndex=2; imgA.style.zIndex=1; imgB.style.opacity=1; imgA.style.opacity=0; }
   },2000);
-
   document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
 
+// 確率ポップアップ
 const probBtn=document.getElementById("probBtn");
 const probPopup=document.getElementById("probPopup");
-probBtn.addEventListener("click",()=>{probPopup.style.display="block";});
+function updateProbPopup() {
+  probPopup.innerHTML = fortunes.map(f => `${f.name}は${f.probability*100}%（${fortuneCounts[f.name]}回）`).join("<br>") + "<br><br><br>";
+}
+probBtn.addEventListener("click",()=>{
+  updateProbPopup();
+  probPopup.style.display="block";
+});
 probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
 
-const fortunes = [
-  { name: "大吉 🎉", probability: 0.05 },
-  { name: "中吉 😀", probability: 0.1 },
-  { name: "小吉 🙂", probability: 0.2 },
-  { name: "吉 😊", probability: 0.4 },
-  { name: "末吉 😌", probability: 0.2 },
-  { name: "凶 😱", probability: 0.04 },
-  { name: "大凶 💀", probability: 0.01 }
-];
-
+// おみくじ
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
@@ -315,10 +292,7 @@ const btn=document.getElementById("omikujiBtn");
 function pickFortune(){
   const rand = Math.random();
   let sum = 0;
-  for(let f of fortunes){
-    sum += f.probability;
-    if(rand <= sum) return f.name;
-  }
+  for(let f of fortunes){ sum += f.probability; if(rand <= sum) return f.name; }
   return fortunes[fortunes.length-1].name;
 }
 
