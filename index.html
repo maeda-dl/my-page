@@ -27,7 +27,7 @@ html, body {
   padding:1em;
   box-sizing: border-box;
   z-index:2;
-  perspective: 500px; /* 3D効果用 */
+  perspective: 500px;
 }
 
 .message, #name {
@@ -44,15 +44,26 @@ html, body {
   background-size: 400% 400%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: glitter 3s linear infinite;
+  animation: glitter 3s linear infinite, sparkle 2s linear infinite;
+  position: relative;
+  overflow: hidden;
 }
-#name { font-size:calc(22px + 2vw); }
 
 @keyframes glitter {
   0% {background-position: 0% 50%;}
   50% {background-position: 100% 50%;}
   100% {background-position: 0% 50%;}
 }
+
+/* キラキラ用小要素 */
+@keyframes sparkle {
+  0%, 100% { text-shadow: 0 0 2px #fff; }
+  25% { text-shadow: 0 0 5px #fff; }
+  50% { text-shadow: 0 0 10px #fff; }
+  75% { text-shadow: 0 0 5px #fff; }
+}
+
+#name { font-size:calc(22px + 2vw); }
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
 .image {
@@ -121,6 +132,31 @@ html, body {
   word-break: break-word;
 }
 
+#probPopup {
+  position: fixed;
+  bottom: 100px; /* 履歴表示に被らないよう上に */
+  left: 20px;
+  width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.85);
+  color:#fff;
+  font-size:16px;
+  padding: 10px;
+  display:none;
+  z-index:999999;
+  text-align:center;
+  cursor:pointer;
+  border-radius: 10px;
+}
+#probPopup .probLine {
+  background: rgba(255,255,255,0.1);
+  margin: 5px 0;
+  padding: 8px;
+  border-radius: 8px;
+  text-align: center;
+}
+
 #roulette {
   position: fixed;
   bottom: 30%;
@@ -179,11 +215,6 @@ html, body {
 @keyframes blink { 50% { opacity:0; } }
 @keyframes pop { 0% { transform:translate(-50%,-50%) scale(0.8); } 50% { transform:translate(-50%,-50%) scale(1.2); } 100% { transform:translate(-50%,-50%) scale(1); } }
 
-#probPopup {
-  position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.85);
-  color:#fff; font-size:16px; padding:15px; display:none; z-index:999999; text-align:center;
-  cursor:pointer;
-}
 </style>
 </head>
 <body>
@@ -277,19 +308,19 @@ setTimeout(()=>{
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
 
-// ------------------- デバイス傾き -------------------
+// ------------------- デバイス傾き（感度アップ） -------------------
 window.addEventListener('deviceorientation', (event)=>{
   const x = event.gamma; // 左右
   const y = event.beta;  // 前後
   const container = document.querySelector('.container');
-  container.style.transform = `rotateX(${y/10}deg) rotateY(${x/10}deg)`;
+  container.style.transform = `rotateX(${y/5}deg) rotateY(${x/5}deg)`; // 感度2倍
 });
 
 // ------------------- 確率ポップアップ -------------------
 const probBtn=document.getElementById("probBtn");
 const probPopup=document.getElementById("probPopup");
 function updateProbPopup() {
-  probPopup.innerHTML = fortunes.map(f => `${f.name}は${f.probability*100}%（${fortuneCounts[f.name]}回）`).join("<br>") + "<br><br><br>";
+  probPopup.innerHTML = fortunes.map(f => `<div class="probLine">${f.name}は${f.probability*100}%（${fortuneCounts[f.name]}回）</div>`).join("");
 }
 probBtn.addEventListener("click",()=>{
   updateProbPopup();
