@@ -337,46 +337,54 @@ btn.addEventListener("click", () => {
   resultDisplay.style.display = "none";
   history.style.display = "none";
 
-  // 🎯 ここでは中身を消さない！
-  // rouletteInner.innerHTML = "";
+  // ルーレット表示
+  roulette.style.display = "flex";
+  rouletteInner.innerHTML = ""; // 初期化
 
-  let position = 0;
-  const total = 200 + Math.random()*100; // 回転の長さ
-  const start = performance.now();
-  let last = "";
-
-  function animate(now){
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / 3000, 1);
-    const ease = 1 - Math.pow(1-progress,3);
-    position = ease * total;
-
-    rouletteInner.style.transform = `translateX(${-position*100}%)`;
-
-    const index = Math.floor(position) % fortunes.length;
-    last = fortunes[index].name;
-
-    if(progress < 1){
-      requestAnimationFrame(animate);
-    } else {
-      // 🎯 ここで初めて中身を固定して結果表示
-      resultDisplay.textContent = last;
-      resultDisplay.style.display = "block";
-      totalCount++;
-      fortuneCounts[last]++;
-      setTimeout(()=>{
-        resultDisplay.style.display = "none";
-        btn.style.display = "inline-block";
-        history.textContent = `${last}（${fortuneCounts[last]}回目 / ${totalCount}回中）`;
-        history.style.display = "block";
-      },3000);
-    }
+  // 🎯 fortune 要素を大量に追加（例: 20回分ループ）
+  for (let i = 0; i < 20; i++) {
+    fortunes.forEach(f => {
+      const div = document.createElement("div");
+      div.className = "fortune";
+      div.textContent = f.name;
+      rouletteInner.appendChild(div);
+    });
   }
-  requestAnimationFrame(animate);
+
+  // ランダムに当たりを決める
+  const selected = pickFortune();
+  const index = fortunes.findIndex(f => f.name === selected);
+
+  // 最後に選ばれる位置を計算
+  const totalItems = fortunes.length * 20;
+  const targetIndex = (Math.floor(Math.random() * fortunes.length) + fortunes.length * 15); 
+  const offset = -(targetIndex * 140); // 1要素分の幅（.fortune の min-width 130px + margin）
+
+  // アニメーション
+  rouletteInner.style.transition = "transform 3s ease-out";
+  rouletteInner.style.transform = `translateX(${offset}px)`;
+
+  // 結果表示
+  setTimeout(() => {
+    resultDisplay.textContent = selected;
+    resultDisplay.style.display = "block";
+    totalCount++;
+    fortuneCounts[selected]++;
+
+    setTimeout(() => {
+      resultDisplay.style.display = "none";
+      btn.style.display = "inline-block";
+      history.textContent = `${selected}（${fortuneCounts[selected]}回目 / ${totalCount}回中）`;
+      history.style.display = "block";
+      roulette.style.display = "none"; // ルーレット非表示に戻す
+    }, 3000);
+  }, 3000);
 });
+
 </script>
 </body>
 </html>
+
 
 
 
