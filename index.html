@@ -286,38 +286,69 @@ function pickFortune(){
   for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; }
   return fortunes[fortunes.length-1].name;
 }
-btn.addEventListener("click",()=>{
-  btn.style.display="none"; roulette.style.display="block";
-  rouletteInner.innerHTML=""; rouletteInner.style.transition='none'; rouletteInner.style.transform='translateX(0)'; rouletteInner.offsetHeight;
-  for(let i=0;i<20;i++){ fortunes.forEach(f=>{
-    const div=document.createElement("div"); div.className="fortune"; div.textContent=f.name; rouletteInner.appendChild(div);
-  }); }
-  const selectedName=pickFortune();
-  const allFortunes=rouletteInner.querySelectorAll(".fortune");
-  let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.findIndex(f=>f.name===selectedName);
-  const offset=-allFortunes[stopIndex].offsetLeft+(roulette.offsetWidth/2-75);
-  allFortunes[stopIndex].classList.add('selected');
-  const initialDuration=1200; const finalDuration=800;
-  const interimOffset=offset+50;
-  rouletteInner.style.transition=`transform ${initialDuration}ms cubic-bezier(0.25,0.1,0.25,1)`;
-  rouletteInner.style.transform=`translateX(${interimOffset}px)`;
-  setTimeout(()=>{
-    rouletteInner.style.transition=`transform ${finalDuration}ms ease-out`;
-    rouletteInner.style.transform=`translateX(${offset}px)`;
-    setTimeout(()=>{
-      totalCount++; fortuneCounts[selectedName]++;
-      resultDisplay.textContent=selectedName; resultDisplay.style.display="block";
-      setTimeout(()=>{
-        resultDisplay.style.display="none";
-        btn.style.display="inline-block";
-        history.textContent=`${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
-        history.style.display="block";
-        roulette.style.display="none";
-        allFortunes[stopIndex].classList.remove('selected');
-      },3000);
-    },finalDuration+500);
-  },initialDuration);
+btn.addEventListener("click", () => {
+  btn.style.display = "none"; 
+  roulette.style.display = "flex"; // flexで中央揃え
+  rouletteInner.innerHTML = ""; 
+  rouletteInner.style.transition = "none"; 
+  rouletteInner.style.transform = "translateX(0)"; 
+  rouletteInner.offsetHeight; // reflow
+
+  // ルーレットテキスト作成
+  for(let i = 0; i < 20; i++) { 
+    fortunes.forEach(f => {
+      const div = document.createElement("div"); 
+      div.className = "fortune"; 
+      div.textContent = f.name; 
+      div.style.boxShadow = "none"; // 影なし
+      div.style.background = "transparent"; // 背景なし
+      rouletteInner.appendChild(div);
+    }); 
+  }
+
+  // 当選の決定
+  const selectedName = pickFortune();
+  const allFortunes = rouletteInner.querySelectorAll(".fortune");
+  const stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.findIndex(f => f.name === selectedName);
+  const selectedFortune = allFortunes[stopIndex];
+
+  // 停止位置を中央に
+  const offset = -selectedFortune.offsetLeft + (roulette.offsetWidth / 2 - selectedFortune.offsetWidth / 2);
+
+  selectedFortune.classList.add("selected");
+
+  const initialDuration = 1200;
+  const finalDuration = 800;
+
+  // 最初のスライド
+  rouletteInner.style.transition = `transform ${initialDuration}ms cubic-bezier(0.25,0.1,0.25,1)`;
+  rouletteInner.style.transform = `translateX(${offset + 50}px)`;
+
+  setTimeout(() => {
+    // 最終停止
+    rouletteInner.style.transition = `transform ${finalDuration}ms ease-out`;
+    rouletteInner.style.transform = `translateX(${offset}px)`;
+
+    setTimeout(() => {
+      totalCount++; 
+      fortuneCounts[selectedName]++;
+      resultDisplay.textContent = selectedName; 
+      resultDisplay.style.display = "block";
+
+      setTimeout(() => {
+        resultDisplay.style.display = "none";
+        btn.style.display = "inline-block";
+        history.textContent = `${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
+        history.style.display = "block";
+        roulette.style.display = "none";
+        selectedFortune.classList.remove("selected");
+      }, 3000);
+
+    }, finalDuration + 500);
+
+  }, initialDuration);
 });
+
 
 // スマホ傾きで文字動かす
 if(window.DeviceOrientationEvent){
@@ -347,6 +378,7 @@ if(window.DeviceOrientationEvent){
 </script>
 </body>
 </html>
+
 
 
 
