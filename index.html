@@ -332,66 +332,13 @@ function pickFortune(){
   return fortunes[fortunes.length-1].name;
 }
 
-btn.addEventListener("click", () => {
-  btn.style.display = "none";
-  resultDisplay.style.display = "none";
-  history.style.display = "none";
-
-  // ルーレット表示
-  roulette.style.display = "flex";
-  rouletteInner.innerHTML = ""; // 初期化
-
-  // 初期位置リセット
-  rouletteInner.style.transition = "none";
-  rouletteInner.style.transform = "translateX(0)";
-
-  // 強制再描画（ブラウザにリセットを適用させる）
-  void rouletteInner.offsetWidth;
-
-  // fortune 要素を大量に追加
-  for (let i = 0; i < 20; i++) {
-    fortunes.forEach(f => {
-      const div = document.createElement("div");
-      div.className = "fortune";
-      div.textContent = f.name;
-      rouletteInner.appendChild(div);
-    });
-  }
-
-  // 当たりを決める
-  const selected = pickFortune();
-
-  // 最後に選ばれる位置を計算
-  const targetIndex = (Math.floor(Math.random() * fortunes.length) + fortunes.length * 15);
-  const offset = -(targetIndex * 140);
-
-  // 🎯 アニメーションは「リセットした後」に開始
-  setTimeout(() => {
-    rouletteInner.style.transition = "transform 3s ease-out";
-    rouletteInner.style.transform = `translateX(${offset}px)`;
-  }, 50);
-
-  // 結果表示
-  setTimeout(() => {
-    resultDisplay.textContent = selected;
-    resultDisplay.style.display = "block";
-    totalCount++;
-    fortuneCounts[selected]++;
-
-    setTimeout(() => {
-      resultDisplay.style.display = "none";
-      btn.style.display = "inline-block";
-      history.textContent = `${selected}（${fortuneCounts[selected]}回目 / ${totalCount}回中）`;
-      history.style.display = "block";
-      roulette.style.display = "none"; // ルーレット非表示に戻す
-    }, 3000);
-  }, 3000);
-});
+btn.addEventListener("click", () => { btn.style.display = "none"; roulette.style.display = "block"; rouletteInner.innerHTML = ""; rouletteInner.style.transition = 'none'; rouletteInner.style.transform = 'translateX(0)'; rouletteInner.offsetHeight; // リフロー for (let i = 0; i < 20; i++) { fortunes.forEach(f => { const div = document.createElement("div"); div.className = "fortune"; div.textContent = f; rouletteInner.appendChild(div); }); } const selected = fortunes[Math.floor(Math.random() * fortunes.length)]; const allFortunes = rouletteInner.querySelectorAll(".fortune"); let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.indexOf(selected); const offset = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75); allFortunes[stopIndex].classList.add('selected'); // 2段階アニメーションでじわっと止める const initialDuration = 1200; const finalDuration = 800; const interimOffset = offset + 50; // 最後に少し戻る分 rouletteInner.style.transition = transform ${initialDuration}ms cubic-bezier(0.25,0.1,0.25,1); rouletteInner.style.transform = translateX(${interimOffset}px); setTimeout(()=>{ rouletteInner.style.transition = transform ${finalDuration}ms ease-out; rouletteInner.style.transform = translateX(${offset}px); setTimeout(()=>{ roulette.style.display = "none"; resultDisplay.textContent = selected; resultDisplay.style.display = "block"; resultDisplay.style.opacity = "1"; setTimeout(()=>{ resultDisplay.style.display = "none"; btn.style.display = "inline-block"; history.textContent = selected; allFortunes[stopIndex].classList.remove('selected'); }, 3000); }, finalDuration + 500); }, initialDuration); });
 
 
 </script>
 </body>
 </html>
+
 
 
 
