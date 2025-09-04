@@ -40,7 +40,6 @@ html, body {
   letter-spacing: 2px;
   perspective: 500px;
 }
-
 #dataLine span {
   color: navy; /* 基本色はネイビー */
   display:inline-block;
@@ -51,7 +50,6 @@ html, body {
     2px 2px 3px rgba(0,0,0,0.6),
     -1px -1px 1px rgba(255,255,255,0.2);
 }
-
 @keyframes shimmer {
   0%, 80%, 100% { color: navy; text-shadow: 
     1px 1px 0 #222, 
@@ -64,7 +62,6 @@ html, body {
     2px 2px 5px rgba(0,0,0,0.6); 
   }
 }
-
 
 /* 名前 */
 #name { font-size:calc(22px + 2vw); }
@@ -106,22 +103,28 @@ html, body {
 /* 確率ポップアップ */
 #probPopup {
   position: fixed;
-  top:50%; left:50%;
-  transform: translate(-50%,-50%);
-  width:280px; max-height:400px; overflow-y:auto;
-  background:#0f1b4c;
-  color:#fff; font-size:16px; padding:15px;
-  display:none; z-index:999999; text-align:left;
-  cursor:pointer; border-radius:12px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.3);
-  overflow:hidden; /* 枠線エフェクトのために必要 */
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px; max-height: 400px;
+  overflow-y: auto;
+  background: #0f1b4c;
+  color: #fff;
+  font-size: 16px;
+  padding: 15px;
+  display: none;
+  z-index: 999999;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
 }
-
-/* 輝くシルバーの枠線 */
+/* 輝くシルバーの縁 */
 #probPopup::before {
   content: "";
   position: absolute;
-  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  top: 0; left: 0; right: 0; bottom: 0;
   border-radius: 12px;
   padding: 2px;
   background: linear-gradient(90deg, silver, white, silver);
@@ -130,16 +133,33 @@ html, body {
   -webkit-mask: 
     linear-gradient(#fff 0 0) content-box, 
     linear-gradient(#fff 0 0);
-  -webkit-mask-composite: destination-out;
+  -webkit-mask-composite: xor;
   mask-composite: exclude;
+  pointer-events: none;
 }
-
-/* 光が枠を移動するアニメーション */
 @keyframes borderShine {
-  0% { background-position: 0% 50%; }
+  0%   { background-position: 0% 50%; }
   100% { background-position: 300% 50%; }
 }
-  
+/* 確率行の整列デザイン */
+.probLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.08);
+  padding: 8px 12px;
+  margin: 6px 0;
+  border-radius: 8px;
+  font-weight: bold;
+}
+.probLine span:first-child {
+  color: #ffd700; /* 金色で運勢名 */
+}
+.probLine span:last-child {
+  color: #c0c0c0; /* シルバーで確率 */
+  font-size: 14px;
+}
+
 /* ルーレット & 結果表示 */
 #roulette { position: fixed; bottom:30%; left:50%; transform:translateX(-50%);
   width:90%; max-width:200px; height:70px; display:none; align-items:center; justify-content:center;
@@ -151,33 +171,6 @@ html, body {
   font-size:60px; font-weight:bold; text-align:center; display:none; z-index:99999;
   color:#ff4500; text-shadow:2px 2px 10px rgba(0,0,0,0.3);
   background:transparent; padding:0; animation: blink 0.5s step-start infinite, pop 0.5s ease forwards;
-}
-/* 確率詳細ポップアップ */
-#probDetail {
-
-}
-
-/* 輝くシルバーの枠線 */
-#probDetail::before {
-  content: "";
-  position: absolute;
-  top: -2px; left: -2px; right: -2px; bottom: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: linear-gradient(90deg, silver, white, silver);
-  background-size: 300% 300%;
-  animation: borderShine 3s linear infinite;
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: destination-out;
-  mask-composite: exclude;
-}
-
-/* 光が枠を移動するアニメーション */
-@keyframes borderShine {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
 }
 @keyframes blink { 50% {opacity:0;} } 
 @keyframes pop { 0% {transform:translate(-50%,-50%) scale(0.8);} 50% {transform:translate(-50%,-50%) scale(1.2);} 100% {transform:translate(-50%,-50%) scale(1);} }
@@ -204,8 +197,9 @@ html, body {
 <button id="omikujiBtn">おみくじを引く ✨</button>
 <button id="probBtn">確率詳細</button>
 <div id="probPopup"></div>
+
 <script>
-// 粒子アニメーション（変更なし）
+// 粒子アニメーション
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
@@ -232,12 +226,12 @@ function drawParticles(){
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
-// 背景色切替（変更なし）
+// 背景色切替
 const bgColors=["#ffffff","#f5f5f5","#fffaf0","#f0f8ff"];
 let colorIndex=0;
 setInterval(()=>{ colorIndex=(colorIndex+1)%bgColors.length; document.body.style.background=bgColors[colorIndex]; },3000);
 
-// フェードイン（変更なし）
+// フェードイン
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 
@@ -245,11 +239,10 @@ fadeIn(document.getElementById("msg1"),500);
 const dataLine = document.getElementById("dataLine");
 dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=> 
   `<span style="animation-delay:${i*0.2}s">${c}</span>`).join('');
-
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
-// 画像A/B切替（変更なし）
+// 画像A/B切替
 setTimeout(()=>{
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
@@ -266,13 +259,13 @@ setTimeout(()=>{
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
 
-// デバイス傾きで左右に揺れる（左右のみ強調）
+// デバイス傾き
 let targetY=0, currentY=0;
 window.addEventListener('deviceorientation', (e)=>{
-  targetY = e.gamma/5; // 右左に傾ける量を増やす
+  targetY = e.gamma/5;
 });
 function animateTilt(){
-  currentY += (targetY - currentY)*0.15; // 滑らかに
+  currentY += (targetY - currentY)*0.15;
   document.querySelector('.container').style.transform = `rotateY(${currentY}deg)`;
   requestAnimationFrame(animateTilt);
 }
@@ -295,20 +288,18 @@ function updateProbPopup(){
 probBtn.addEventListener("click",()=>{ updateProbPopup(); probPopup.style.display="block"; });
 probPopup.addEventListener("click",()=>{ probPopup.style.display="none"; });
 
-// おみくじ（変更なし）
+// おみくじ
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
-
 function pickFortune(){
   const rand = Math.random();
   let sum=0;
   for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; }
   return fortunes[fortunes.length-1].name;
 }
-
 let totalCount=0;
 btn.addEventListener("click",()=>{
   btn.style.display="none";
@@ -317,7 +308,6 @@ btn.addEventListener("click",()=>{
   rouletteInner.style.transition='none';
   rouletteInner.style.transform='translateX(0)';
   rouletteInner.offsetHeight;
-
   for(let i=0;i<20;i++){
     fortunes.forEach(f=>{
       const div=document.createElement("div");
@@ -325,26 +315,21 @@ btn.addEventListener("click",()=>{
       rouletteInner.appendChild(div);
     });
   }
-
   const selectedName=pickFortune();
   const allFortunes=rouletteInner.querySelectorAll(".fortune");
   let stopIndex=Math.floor(allFortunes.length*0.8) + fortunes.findIndex(f=>f.name===selectedName);
   const offset=-allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
   allFortunes[stopIndex].classList.add('selected');
-
   rouletteInner.style.transition=`transform 1200ms cubic-bezier(0.25,0.1,0.25,1)`;
   rouletteInner.style.transform=`translateX(${offset+50}px)`;
-
   setTimeout(()=>{
     rouletteInner.style.transition=`transform 800ms ease-out`;
     rouletteInner.style.transform=`translateX(${offset}px)`;
-
     setTimeout(()=>{
       totalCount++;
       fortuneCounts[selectedName]++;
       resultDisplay.textContent = selectedName;
       resultDisplay.style.display="block";
-
       setTimeout(()=>{
         resultDisplay.style.display="none";
         btn.style.display="inline-block";
@@ -359,9 +344,3 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
-
-
-
-
-
-
