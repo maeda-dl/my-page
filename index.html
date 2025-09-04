@@ -31,17 +31,23 @@ html, body {
   text-align:center;
 }
 #msg1 { font-size:calc(20px + 2vw); }
-#dataLine { 
-  font-size:calc(22px + 2vw);
-  background: linear-gradient(45deg, navy, silver, navy, silver);
-  background-size: 400% 400%;
+
+/* DataLineの文字ごとに輝きが順番に移動 */
+#dataLine { font-size:calc(22px + 2vw); display:inline-block; }
+#dataLine span {
+  background: linear-gradient(45deg, #00f, #0ff, #00f);
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: glitter 3s linear infinite, sparkle 2s linear infinite;
+  animation: sparkleLetter 1.5s linear infinite;
+  display:inline-block;
 }
-@keyframes glitter { 0% {background-position:0% 50%;} 50% {background-position:100% 50%;} 100% {background-position:0% 50%;} }
-@keyframes sparkle { 0%,100% {text-shadow:0 0 2px #fff;} 25% {text-shadow:0 0 5px #fff;} 50% {text-shadow:0 0 10px #fff;} 75% {text-shadow:0 0 5px #fff;} }
+@keyframes sparkleLetter {
+  0%,100% { background-position:0% 0%; }
+  50% { background-position:100% 100%; }
+}
 
+/* 名前 */
 #name { font-size:calc(22px + 2vw); }
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
@@ -78,18 +84,19 @@ html, body {
   text-align:center; word-break:break-word;
 }
 
-/* 確率ポップアップ（カード風中央） */
+/* 確率ポップアップ（シンプル＆揃える） */
 #probPopup {
   position: fixed; top:50%; left:50%;
   transform: translate(-50%,-50%);
-  width:300px; max-height:400px; overflow-y:auto;
-  background: linear-gradient(145deg, #0f1b4c, #1a2a6c);
-  color:#fff; font-size:16px; padding:20px;
-  display:none; z-index:999999; text-align:center;
-  cursor:pointer; border-radius:15px; box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  width:280px; max-height:400px; overflow-y:auto;
+  background:#0f1b4c;
+  color:#fff; font-size:16px; padding:15px;
+  display:none; z-index:999999; text-align:left;
+  cursor:pointer; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.3);
 }
 #probPopup .probLine {
-  background: rgba(255,255,255,0.1); margin:8px 0; padding:10px; border-radius:10px;
+  background: rgba(255,255,255,0.08); margin:5px 0; padding:8px 12px;
+  border-radius:8px; display:flex; justify-content:space-between;
 }
 
 /* ルーレット & 結果表示 */
@@ -104,8 +111,8 @@ html, body {
   color:#ff4500; text-shadow:2px 2px 10px rgba(0,0,0,0.3);
   background:transparent; padding:0; animation: blink 0.5s step-start infinite, pop 0.5s ease forwards;
 }
-@keyframes blink { 50% {opacity:0;} } @keyframes pop { 0% {transform:translate(-50%,-50%) scale(0.8);} 50% {transform:translate(-50%,-50%) scale(1.2);} 100% {transform:translate(-50%,-50%) scale(1);} }
-
+@keyframes blink { 50% {opacity:0;} } 
+@keyframes pop { 0% {transform:translate(-50%,-50%) scale(0.8);} 50% {transform:translate(-50%,-50%) scale(1.2);} 100% {transform:translate(-50%,-50%) scale(1);} }
 </style>
 </head>
 <body>
@@ -131,7 +138,7 @@ html, body {
 <div id="probPopup"></div>
 
 <script>
-// ------------------- 粒子アニメーション -------------------
+// 粒子アニメーション（変更なし）
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
@@ -158,18 +165,22 @@ function drawParticles(){
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
-// ------------------- 背景 -------------------
+// 背景色切替（変更なし）
 const bgColors=["#ffffff","#f5f5f5","#fffaf0","#f0f8ff"];
 let colorIndex=0;
 setInterval(()=>{ colorIndex=(colorIndex+1)%bgColors.length; document.body.style.background=bgColors[colorIndex]; },3000);
 
-// ------------------- フェードイン -------------------
+// フェードイン（変更なし）
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
+
+// DataLine文字をspanで分割して順番に輝かせる
+const dataLine=document.getElementById("dataLine");
+dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=>`<span style="animation-delay:${i*0.1}s">${c}</span>`).join('');
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
-// ------------------- 画像A/B切替（変更なし） -------------------
+// 画像A/B切替（変更なし）
 setTimeout(()=>{
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
@@ -186,21 +197,19 @@ setTimeout(()=>{
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
 
-// ------------------- デバイス傾き滑らか -------------------
-let targetX=0, targetY=0, currentX=0, currentY=0;
+// デバイス傾きで左右に揺れる（左右のみ強調）
+let targetY=0, currentY=0;
 window.addEventListener('deviceorientation', (e)=>{
-  targetX = e.gamma/5;
-  targetY = e.beta/5;
+  targetY = e.gamma/3; // 右左に傾ける量を増やす
 });
 function animateTilt(){
-  currentX += (targetX - currentX)*0.1;
-  currentY += (targetY - currentY)*0.1;
-  document.querySelector('.container').style.transform = `rotateX(${currentY}deg) rotateY(${currentX}deg)`;
+  currentY += (targetY - currentY)*0.15; // 滑らかに
+  document.querySelector('.container').style.transform = `rotateY(${currentY}deg)`;
   requestAnimationFrame(animateTilt);
 }
 animateTilt();
 
-// ------------------- 確率ポップアップ -------------------
+// 確率ポップアップ
 const fortunes=[
   {name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},
   {name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}
@@ -210,12 +219,14 @@ fortunes.forEach(f=>fortuneCounts[f.name]=0);
 const probBtn=document.getElementById("probBtn");
 const probPopup=document.getElementById("probPopup");
 function updateProbPopup(){
-  probPopup.innerHTML = fortunes.map(f=>`<div class="probLine">${f.name}は${(f.probability*100).toFixed(1)}%（${fortuneCounts[f.name]}回）</div>`).join("");
+  probPopup.innerHTML = fortunes.map(f=>
+    `<div class="probLine"><span>${f.name}</span><span>${(f.probability*100).toFixed(1)}% (${fortuneCounts[f.name]}回)</span></div>`
+  ).join("");
 }
 probBtn.addEventListener("click",()=>{ updateProbPopup(); probPopup.style.display="block"; });
 probPopup.addEventListener("click",()=>{ probPopup.style.display="none"; });
 
-// ------------------- おみくじ -------------------
+// おみくじ（変更なし）
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
