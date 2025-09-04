@@ -13,7 +13,7 @@ html, body {
   background: #ffffff;
   transition: background 1s ease;
   overflow-x: hidden;
-  overflow-y: hidden;  /* 縦スクロール防止 */
+  overflow-y: hidden;
 }
 #particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 
@@ -51,12 +51,11 @@ html, body {
   border-radius:10px;
 }
 
-/* おみくじボタン */
 #omikujiBtn {
   position: fixed;
   bottom: 20%;
   left: 50%;
-  transform: translate(-50%, 0); /* ← 中央基準に修正 */
+  transform: translate(-50%, 0);
   width: max-content;
   padding: 12px 25px;
   font-size: 22px;
@@ -78,8 +77,7 @@ html, body {
   0%, 100% { transform: translate(-50%, 0) translateY(0); }
   50% { transform: translate(-50%, 0) translateY(-10px); }
 }
-  
-/* 確率詳細ボタン */
+
 #probBtn {
   position: fixed;
   bottom: 20px;
@@ -96,7 +94,6 @@ html, body {
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-/* 左下の履歴 */
 #history {
   display: none; 
   position: fixed;
@@ -107,14 +104,13 @@ html, body {
   color: #0f1b4c;
   padding: 5px 10px;
   border-radius: 8px;
-  max-width: 200px;
+  max-width: 250px;
   z-index: 99999;
   box-shadow: 0 6px 12px rgba(0,0,0,0.2);
   text-align: center;
   word-break: break-word;
 }
 
-/* ルーレット */
 #roulette {
   position: fixed;
   bottom: 30%;
@@ -161,7 +157,6 @@ html, body {
   color:#0f1b4c;
 }
 
-/* 結果表示 */
 #resultDisplay {
   position: fixed;
   top: 50%;
@@ -181,7 +176,6 @@ html, body {
 @keyframes blink { 50% { opacity:0; } }
 @keyframes pop { 0% { transform:translate(-50%,-50%) scale(0.8); } 50% { transform:translate(-50%,-50%) scale(1.2); } 100% { transform:translate(-50%,-50%) scale(1); } }
 
-/* 確率ポップアップ */
 #probPopup {
   position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.85);
   color:#fff; font-size:16px; padding:15px; display:none; z-index:99997; text-align:center;
@@ -222,8 +216,11 @@ html, body {
 
 <script>
 let totalCount = 0;
+const fortuneCounts = {
+  "大吉 🎉":0, "中吉 😀":0, "小吉 🙂":0,
+  "吉 😊":0, "末吉 😌":0, "凶 😱":0, "大凶 💀":0
+};
 
-// 粒子アニメーション
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
@@ -254,12 +251,10 @@ function drawParticles(){
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
-// 背景色変化
 const bgColors=["#ffffff","#f5f5f5","#fffaf0","#f0f8ff"];
 let colorIndex=0;
 setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.background=bgColors[colorIndex];},3000);
 
-// フェードイン
 function fadeIn(el,delay){setTimeout(()=>{el.style.opacity=1;},delay);}
 fadeIn(document.getElementById("msg1"),500);
 fadeIn(document.getElementById("dataLine"),2000);
@@ -296,13 +291,11 @@ setTimeout(()=>{
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
 
-// 確率ポップアップ
 const probBtn=document.getElementById("probBtn");
 const probPopup=document.getElementById("probPopup");
 probBtn.addEventListener("click",()=>{probPopup.style.display="block";});
 probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
 
-// おみくじ
 const fortunes = [
   { name: "大吉 🎉", probability: 0.05 },
   { name: "中吉 😀", probability: 0.1 },
@@ -312,10 +305,7 @@ const fortunes = [
   { name: "凶 😱", probability: 0.04 },
   { name: "大凶 💀", probability: 0.01 }
 ];
-const fortuneCounts = {
-  "大吉 🎉":0, "中吉 😀":0, "小吉 🙂":0,
-  "吉 😊":0, "末吉 😌":0, "凶 😱":0, "大凶 💀":0
-};
+
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
@@ -327,21 +317,65 @@ function pickFortune(){
   let sum = 0;
   for(let f of fortunes){
     sum += f.probability;
-    if(rand<=sum) return f.name;
+    if(rand <= sum) return f.name;
   }
   return fortunes[fortunes.length-1].name;
 }
 
-btn.addEventListener("click", () => { btn.style.display = "none"; roulette.style.display = "block"; rouletteInner.innerHTML = ""; rouletteInner.style.transition = 'none'; rouletteInner.style.transform = 'translateX(0)'; rouletteInner.offsetHeight; // リフロー for (let i = 0; i < 20; i++) { fortunes.forEach(f => { const div = document.createElement("div"); div.className = "fortune"; div.textContent = f; rouletteInner.appendChild(div); }); } const selected = fortunes[Math.floor(Math.random() * fortunes.length)]; const allFortunes = rouletteInner.querySelectorAll(".fortune"); let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.indexOf(selected); const offset = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75); allFortunes[stopIndex].classList.add('selected'); // 2段階アニメーションでじわっと止める const initialDuration = 1200; const finalDuration = 800; const interimOffset = offset + 50; // 最後に少し戻る分 rouletteInner.style.transition = transform ${initialDuration}ms cubic-bezier(0.25,0.1,0.25,1); rouletteInner.style.transform = translateX(${interimOffset}px); setTimeout(()=>{ rouletteInner.style.transition = transform ${finalDuration}ms ease-out; rouletteInner.style.transform = translateX(${offset}px); setTimeout(()=>{ roulette.style.display = "none"; resultDisplay.textContent = selected; resultDisplay.style.display = "block"; resultDisplay.style.opacity = "1"; setTimeout(()=>{ resultDisplay.style.display = "none"; btn.style.display = "inline-block"; history.textContent = selected; allFortunes[stopIndex].classList.remove('selected'); }, 3000); }, finalDuration + 500); }, initialDuration); });
+btn.addEventListener("click", () => {
+  btn.style.display = "none";
+  roulette.style.display = "block";
+  rouletteInner.innerHTML = "";
+  rouletteInner.style.transition = 'none';
+  rouletteInner.style.transform = 'translateX(0)';
+  rouletteInner.offsetHeight; // リフロー
 
+  for (let i = 0; i < 20; i++) {
+    fortunes.forEach(f => {
+      const div = document.createElement("div");
+      div.className = "fortune";
+      div.textContent = f.name;
+      rouletteInner.appendChild(div);
+    });
+  }
 
+  const selectedName = pickFortune();
+  const allFortunes = rouletteInner.querySelectorAll(".fortune");
+  let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.findIndex(f => f.name === selectedName);
+  const offset = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
+  allFortunes[stopIndex].classList.add('selected');
+
+  const initialDuration = 1200;
+  const finalDuration = 800;
+  const interimOffset = offset + 50;
+
+  rouletteInner.style.transition = `transform ${initialDuration}ms cubic-bezier(0.25,0.1,0.25,1)`;
+  rouletteInner.style.transform = `translateX(${interimOffset}px)`;
+
+  setTimeout(() => {
+    rouletteInner.style.transition = `transform ${finalDuration}ms ease-out`;
+    rouletteInner.style.transform = `translateX(${offset}px)`;
+
+    setTimeout(() => {
+      // 結果表示と履歴更新
+      totalCount++;
+      fortuneCounts[selectedName]++;
+
+      resultDisplay.textContent = selectedName;
+      resultDisplay.style.display = "block";
+
+      setTimeout(() => {
+        resultDisplay.style.display = "none";
+        btn.style.display = "inline-block";
+        history.textContent = `${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
+        history.style.display = "block";
+        roulette.style.display = "none";
+        allFortunes[stopIndex].classList.remove('selected');
+      }, 3000);
+    }, finalDuration + 500);
+
+  }, initialDuration);
+});
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
