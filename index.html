@@ -40,16 +40,17 @@ html, body {
   letter-spacing: 2px;
   perspective: 500px;
 }
+
 #dataLine span {
-  color: navy; /* 基本色はネイビー */
+  color: navy;
   display:inline-block;
   animation: shimmer 1.5s linear infinite;
-  /* 立体感を出す多層シャドウ */
   text-shadow: 
     1px 1px 0 #222, 
     2px 2px 3px rgba(0,0,0,0.6),
     -1px -1px 1px rgba(255,255,255,0.2);
 }
+
 @keyframes shimmer {
   0%, 80%, 100% { color: navy; text-shadow: 
     1px 1px 0 #222, 
@@ -63,7 +64,6 @@ html, body {
   }
 }
 
-/* 名前 */
 #name { font-size:calc(22px + 2vw); }
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
@@ -103,28 +103,29 @@ html, body {
 /* 確率ポップアップ */
 #probPopup {
   position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 280px; max-height: 400px;
-  overflow-y: auto;
-  background: #0f1b4c;
-  color: #fff;
-  font-size: 16px;
-  padding: 15px;
-  display: none;
-  z-index: 999999;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  position: relative;
-  overflow: hidden;
+  top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width:280px; max-height:400px; overflow-y:auto;
+  background:#0f1b4c;
+  color:#fff; font-size:16px; padding:15px;
+  display:none; z-index:999999; text-align:left;
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  overflow:hidden;
 }
-/* 輝くシルバーの縁 */
+#probPopup .probLine {
+  display:flex; justify-content:space-between; 
+  padding:6px 10px; margin:5px 0;
+  background:rgba(255,255,255,0.05);
+  border-radius:6px;
+  font-weight:bold;
+}
+
+/* 輝くシルバーの枠線 */
 #probPopup::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
   border-radius: 12px;
   padding: 2px;
   background: linear-gradient(90deg, silver, white, silver);
@@ -133,44 +134,23 @@ html, body {
   -webkit-mask: 
     linear-gradient(#fff 0 0) content-box, 
     linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
+  -webkit-mask-composite: destination-out;
   mask-composite: exclude;
-  pointer-events: none;
 }
 @keyframes borderShine {
-  0%   { background-position: 0% 50%; }
+  0% { background-position: 0% 50%; }
   100% { background-position: 300% 50%; }
 }
-/* 確率行の整列デザイン */
-.probLine {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255,255,255,0.08);
-  padding: 8px 12px;
-  margin: 6px 0;
-  border-radius: 8px;
-  font-weight: bold;
-}
-.probLine span:first-child {
-  color: #ffd700; /* 金色で運勢名 */
-}
-.probLine span:last-child {
-  color: #c0c0c0; /* シルバーで確率 */
-  font-size: 14px;
-}
 
-/* ルーレット & 結果表示 */
 #roulette { position: fixed; bottom:30%; left:50%; transform:translateX(-50%);
   width:90%; max-width:200px; height:70px; display:none; align-items:center; justify-content:center;
   z-index:99998; border-radius:30px; overflow:hidden; background:#fefefe; border:3px solid #0f1b4c;
 }
 #rouletteInner { display:flex; white-space:nowrap; font-size:28px; font-weight:bold; will-change: transform; }
-.fortune { min-width:130px; height:60px; margin:0 5px; color:#0f1b4c; font-size:20px; display:flex; align-items:center; justify-content:center; text-align:center; background:transparent; box-shadow:none; }
+.fortune { min-width:130px; height:60px; margin:0 5px; color:#0f1b4c; font-size:20px; display:flex; align-items:center; justify-content:center; }
 #resultDisplay { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
   font-size:60px; font-weight:bold; text-align:center; display:none; z-index:99999;
   color:#ff4500; text-shadow:2px 2px 10px rgba(0,0,0,0.3);
-  background:transparent; padding:0; animation: blink 0.5s step-start infinite, pop 0.5s ease forwards;
 }
 @keyframes blink { 50% {opacity:0;} } 
 @keyframes pop { 0% {transform:translate(-50%,-50%) scale(0.8);} 50% {transform:translate(-50%,-50%) scale(1.2);} 100% {transform:translate(-50%,-50%) scale(1);} }
@@ -226,16 +206,9 @@ function drawParticles(){
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
-// 背景色切替
-const bgColors=["#ffffff","#f5f5f5","#fffaf0","#f0f8ff"];
-let colorIndex=0;
-setInterval(()=>{ colorIndex=(colorIndex+1)%bgColors.length; document.body.style.background=bgColors[colorIndex]; },3000);
-
 // フェードイン
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
-
-// DataLine文字をspanで分割して順番に光らせる
 const dataLine = document.getElementById("dataLine");
 dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=> 
   `<span style="animation-delay:${i*0.2}s">${c}</span>`).join('');
@@ -259,19 +232,21 @@ setTimeout(()=>{
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
 
-// デバイス傾き
-let targetY=0, currentY=0;
+// スマホ傾き反応（感度強化・X/Y両方）
+let targetX=0, targetY=0, currentX=0, currentY=0;
 window.addEventListener('deviceorientation', (e)=>{
-  targetY = e.gamma/5;
+  targetY = e.gamma/2; // 左右
+  targetX = e.beta/3;  // 前後
 });
 function animateTilt(){
   currentY += (targetY - currentY)*0.15;
-  document.querySelector('.container').style.transform = `rotateY(${currentY}deg)`;
+  currentX += (targetX - currentX)*0.15;
+  document.querySelector('.container').style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
   requestAnimationFrame(animateTilt);
 }
 animateTilt();
 
-// 確率ポップアップ
+// 確率詳細
 const fortunes=[
   {name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},
   {name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}
@@ -285,8 +260,10 @@ function updateProbPopup(){
     `<div class="probLine"><span>${f.name}</span><span>${(f.probability*100).toFixed(1)}% (${fortuneCounts[f.name]}回)</span></div>`
   ).join("");
 }
-probBtn.addEventListener("click",()=>{ updateProbPopup(); probPopup.style.display="block"; });
-probPopup.addEventListener("click",()=>{ probPopup.style.display="none"; });
+probBtn.addEventListener("click",()=>{
+  updateProbPopup();
+  probPopup.style.display = (probPopup.style.display==="block") ? "none" : "block";
+});
 
 // おみくじ
 const roulette=document.getElementById("roulette");
@@ -294,12 +271,14 @@ const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
+
 function pickFortune(){
   const rand = Math.random();
   let sum=0;
   for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; }
   return fortunes[fortunes.length-1].name;
 }
+
 let totalCount=0;
 btn.addEventListener("click",()=>{
   btn.style.display="none";
@@ -308,6 +287,7 @@ btn.addEventListener("click",()=>{
   rouletteInner.style.transition='none';
   rouletteInner.style.transform='translateX(0)';
   rouletteInner.offsetHeight;
+
   for(let i=0;i<20;i++){
     fortunes.forEach(f=>{
       const div=document.createElement("div");
@@ -315,16 +295,20 @@ btn.addEventListener("click",()=>{
       rouletteInner.appendChild(div);
     });
   }
+
   const selectedName=pickFortune();
   const allFortunes=rouletteInner.querySelectorAll(".fortune");
   let stopIndex=Math.floor(allFortunes.length*0.8) + fortunes.findIndex(f=>f.name===selectedName);
   const offset=-allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
   allFortunes[stopIndex].classList.add('selected');
+
   rouletteInner.style.transition=`transform 1200ms cubic-bezier(0.25,0.1,0.25,1)`;
   rouletteInner.style.transform=`translateX(${offset+50}px)`;
+
   setTimeout(()=>{
     rouletteInner.style.transition=`transform 800ms ease-out`;
     rouletteInner.style.transform=`translateX(${offset}px)`;
+
     setTimeout(()=>{
       totalCount++;
       fortuneCounts[selectedName]++;
