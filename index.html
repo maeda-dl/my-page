@@ -109,23 +109,52 @@ html, body {
   transform: translate(-50%,-50%);
   width:280px; max-height:400px; overflow-y:auto;
   background:#0f1b4c;
-  font-size:16px; padding:15px;
+  color:#fff; font-size:16px; padding:15px;
   display:none; z-index:999999; text-align:left;
   cursor:pointer; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.3);
-
-  bottom: 120px; /* 左下の結果表示を避ける */
-  background: rgba(20,20,20,0.9);
-  color: white;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.6);
-  overflow: hidden;
-
 }
 #probPopup .probLine {
   background: rgba(255,255,255,0.08); margin:5px 0; padding:8px 12px;
   border-radius:8px; display:flex; justify-content:space-between;
 }
+/* 確率詳細ポップアップ */
+#probDetail {
+  position: fixed;
+  bottom: 120px; /* 左下の結果表示を避ける */
+  left: 20px;
+  width: 260px;
+  padding: 15px;
+  background: rgba(20,20,20,0.9);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.6);
+  z-index: 999;
+  overflow: hidden;
+}
 
+/* 輝くシルバーの枠線 */
+#probDetail::before {
+  content: "";
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  border-radius: 12px;
+  padding: 2px;
+  background: linear-gradient(90deg, silver, white, silver);
+  background-size: 300% 300%;
+  animation: borderShine 3s linear infinite;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+
+/* 光が枠を移動するアニメーション */
+@keyframes borderShine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+  
 /* ルーレット & 結果表示 */
 #roulette { position: fixed; bottom:30%; left:50%; transform:translateX(-50%);
   width:90%; max-width:200px; height:70px; display:none; align-items:center; justify-content:center;
@@ -189,8 +218,10 @@ html, body {
 
 <button id="omikujiBtn">おみくじを引く ✨</button>
 <button id="probBtn">確率詳細</button>
-<div id="probPopup"></div>
-
+<!-- 確率詳細ポップアップ -->
+<div id="probDetail">
+  <div id="probPopup"></div>
+</div>
 <script>
 // 粒子アニメーション（変更なし）
 const canvas=document.getElementById("particles");
@@ -346,6 +377,7 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
 
