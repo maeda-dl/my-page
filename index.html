@@ -137,12 +137,13 @@ html, body {
 .probItem {
   display: flex; 
   justify-content: space-between;
-  padding: 6px 0;        /* 上下スペースを調整 */
-  margin: 0;              /* 余白をなくす */
+  padding: 6px 10px;   /* 左右にもスペースを追加 */
+  margin: 0;            
   font-weight: bold;
-  background: none;       /* カラー削除 */
-  box-shadow: none;       /* シャドウ削除 */
+  background: none;     
+  box-shadow: none;     
 }
+
 .probItem:nth-child(1){ background: linear-gradient(135deg, #e0f7fa, #80deea); }
 .probItem:nth-child(2){ background: linear-gradient(135deg, #fff3e0, #ffcc80); }
 .probItem:nth-child(3){ background: linear-gradient(135deg, #f3e5f5, #ce93d8); }
@@ -320,4 +321,5 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
