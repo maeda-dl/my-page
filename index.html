@@ -6,14 +6,11 @@
 <title>社員紹介＋おみくじ</title>
 <style>
 html, body {
-  margin:0; 
-  padding:0; 
-  height:100%;
+  margin:0; padding:0; height:100%;
   font-family:sans-serif;
   background: #ffffff;
   transition: background 1s ease;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-x: hidden; overflow-y: hidden;
 }
 #particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 
@@ -33,7 +30,7 @@ html, body {
   opacity:0;
   margin:0.5em 0;
   font-weight:bold;
-  transition:opacity 1s ease;
+  transition:opacity 1s ease, transform 0.1s linear;
   text-align:center;
 }
 #msg1 { font-size:clamp(20px,5vw,40px); }
@@ -42,8 +39,7 @@ html, body {
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
 .image {
-  display:block;
-  width:100%; height:auto;
+  display:block; width:100%; height:auto;
   position:absolute; top:0; left:0;
   opacity:0;
   transition:opacity 0.8s ease;
@@ -52,138 +48,98 @@ html, body {
 }
 
 #omikujiBtn {
-  position: fixed;
-  bottom: 20%;
-  left: 50%;
+  position: fixed; bottom: 20%; left: 50%;
   transform: translate(-50%, 0);
   width: max-content;
-  padding: 12px 25px;
-  font-size: 22px;
-  font-weight: bold;
-  border: none;
-  border-radius: 50px;
+  padding: 12px 25px; font-size: 22px; font-weight: bold;
+  border: none; border-radius: 50px;
   background: linear-gradient(145deg, #1a2a6c, #0f1b4c);
-  color: #fff;
-  cursor: pointer;
-  z-index: 4;
+  color: #fff; cursor: pointer; z-index: 4;
   animation: float 3s ease-in-out infinite;
-  display: none;
-  white-space: nowrap;
-  text-align: center;
+  display: none; white-space: nowrap; text-align: center;
   box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
-
-@keyframes float {
-  0%, 100% { transform: translate(-50%, 0) translateY(0); }
-  50% { transform: translate(-50%, 0) translateY(-10px); }
-}
+@keyframes float { 0%,100%{transform:translate(-50%,0) translateY(0);} 50%{transform:translate(-50%,0) translateY(-10px);} }
 
 #probBtn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 15px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
+  position: fixed; bottom: 20px; right: 20px;
+  padding: 10px 15px; font-size: 16px;
+  border: none; border-radius: 8px;
   background: linear-gradient(145deg, #0f1b4c, #1a2a6c);
-  color: #fff;
-  cursor: pointer;
-  display: none;
-  z-index: 4;
+  color: #fff; cursor: pointer; display: none; z-index: 4;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 #history {
-  display: none; 
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  font-size: 16px;
-  background: #ffffff;
-  color: #0f1b4c;
-  padding: 5px 10px;
-  border-radius: 8px;
-  max-width: 250px;
-  z-index: 99999;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-  text-align: center;
-  word-break: break-word;
+  display: none; position: fixed; bottom: 20px; left: 20px;
+  font-size: 16px; background: #ffffff; color: #0f1b4c;
+  padding: 5px 10px; border-radius: 8px; max-width: 250px;
+  z-index: 99999; box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  text-align: center; word-break: break-word;
 }
 
 #roulette {
-  position: fixed;
-  bottom: 30%;
-  left: 50%;
+  position: fixed; bottom: 30%; left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  max-width: 200px;
-  height: 70px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 99998;
-  border-radius: 30px;
-  overflow: hidden;
-  background: #fefefe;
-  border: 3px solid #0f1b4c;
+  width: 90%; max-width: 200px; height: 70px;
+  display: none; align-items: center; justify-content: center;
+  z-index: 99998; border-radius: 30px; overflow: hidden;
+  background: #fefefe; border: 3px solid #0f1b4c;
   box-shadow: 0 8px 15px rgba(0,0,0,0.2);
 }
-#rouletteInner {
-  display:flex; 
-  white-space:nowrap; 
-  font-size:28px; 
-  font-weight:bold;
-  will-change: transform;
-}
+#rouletteInner { display:flex; white-space:nowrap; font-size:28px; font-weight:bold; will-change: transform; }
 
 .fortune {
-  min-width: 130px;
-  height: 60px;
-  margin: 0 5px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  color: #0f1b4c;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  min-width: 130px; height: 60px; margin: 0 5px;
+  border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  color: #0f1b4c; font-size: 20px; display: flex;
+  align-items: center; justify-content: center; text-align: center;
   background: #ffffff;
 }
-.fortune.selected {
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  color:#0f1b4c;
-}
+.fortune.selected { transform: scale(1.1); }
 
 #resultDisplay {
-  position: fixed;
-  top: 50%;
-  left: 50%;
+  position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 60px;
-  font-weight: bold;
-  text-align: center;
-  display: none;
-  z-index: 99999;
-  color: #ff4500;
-  text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-  background: transparent;
-  padding: 0;
+  font-size: 60px; font-weight: bold; text-align: center;
+  display: none; z-index: 99999;
+  color: #ff4500; text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  background: transparent; padding: 0;
   animation: blink 0.5s step-start infinite, pop 0.5s ease forwards;
 }
 @keyframes blink { 50% { opacity:0; } }
-@keyframes pop { 0% { transform:translate(-50%,-50%) scale(0.8); } 50% { transform:translate(-50%,-50%) scale(1.2); } 100% { transform:translate(-50%,-50%) scale(1); } }
+@keyframes pop { 0%{transform:translate(-50%,-50%) scale(0.8);}50%{transform:translate(-50%,-50%) scale(1.2);}100%{transform:translate(-50%,-50%) scale(1);} }
 
 #probPopup {
-  position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.85);
-  color:#fff; font-size:16px; padding:15px; display:none; z-index:99997; text-align:center;
-  cursor:pointer;
+  position: fixed; bottom: 100px; left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  display: none;
+  z-index: 99997;
+  cursor: pointer;
+  width: 300px; max-width: 90%;
+  padding: 15px 20px;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #0f1b4c, #1a2a6c);
+  color: #000;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
+  font-size: 18px; line-height: 2;
 }
+#probPopup.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+.probItem { display:flex; justify-content:space-between; padding:6px 10px; margin:0; font-weight:bold; color:#000; border-radius:8px; margin-bottom:4px; }
+.probItem:nth-child(1){ background: linear-gradient(135deg, #e0f7fa, #80deea); }
+.probItem:nth-child(2){ background: linear-gradient(135deg, #fff3e0, #ffcc80); }
+.probItem:nth-child(3){ background: linear-gradient(135deg, #f3e5f5, #ce93d8); }
+.probItem:nth-child(4){ background: linear-gradient(135deg, #e8f5e9, #a5d6a7); }
+.probItem:nth-child(5){ background: linear-gradient(135deg, #fffde7, #fff176); }
+.probItem:nth-child(6){ background: linear-gradient(135deg, #ffebee, #ef9a9a); }
+.probItem:nth-child(7){ background: linear-gradient(135deg, #d7ccc8, #a1887f); }
 </style>
 </head>
 <body>
+
 <canvas id="particles"></canvas>
 
 <div class="container">
@@ -200,7 +156,6 @@ html, body {
 <div id="roulette"><div id="rouletteInner"></div></div>
 <div id="resultDisplay"></div>
 <div id="history"></div>
-
 <button id="omikujiBtn">おみくじを引く ✨</button>
 <button id="probBtn">確率詳細</button>
 <div id="probPopup"></div>
@@ -219,14 +174,19 @@ const fortunes = [
 const fortuneCounts = {};
 fortunes.forEach(f => fortuneCounts[f.name] = 0);
 
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth; canvas.height=window.innerHeight;
-const particleChars="MAEDA";
-let particles=[];
+// パーティクル
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+const particleChars = "MAEDA";
+let particles = [];
 for(let i=0;i<100;i++){
-  particles.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height,
-    r:Math.random()*2+1, dx:(Math.random()-0.5)*1.2, dy:(Math.random()-0.5)*1.2,
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*2+1,
+    dx:(Math.random()-0.5)*1.2,
+    dy:(Math.random()-0.5)*1.2,
     char:particleChars[Math.floor(Math.random()*particleChars.length)]
   });
 }
@@ -245,26 +205,29 @@ function drawParticles(){
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
+// 背景色切替
 const bgColors=["#ffffff","#f5f5f5","#fffaf0","#f0f8ff"];
 let colorIndex=0;
-setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.background=bgColors[colorIndex];},3000);
+setInterval(()=>{ colorIndex=(colorIndex+1)%bgColors.length; document.body.style.background=bgColors[colorIndex]; },3000);
 
-function fadeIn(el,delay){setTimeout(()=>{el.style.opacity=1;},delay);}
+// フェードイン
+function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
+// 画像切替
 setTimeout(()=>{
-  const imgA = document.getElementById("imgA");
-  const imgB = document.getElementById("imgB");
-  const name = document.getElementById("name");
-  imgA.style.zIndex = 2; imgB.style.zIndex = 1;
-  imgA.style.opacity = 1; imgB.style.opacity = 0; name.style.opacity = 1;
-  let showA = true;
+  const imgA=document.getElementById("imgA");
+  const imgB=document.getElementById("imgB");
+  const name=document.getElementById("name");
+  imgA.style.zIndex=2; imgB.style.zIndex=1;
+  imgA.style.opacity=1; imgB.style.opacity=0; name.style.opacity=1;
+  let showA=true;
   setInterval(()=>{
-    showA = !showA;
+    showA=!showA;
     if(showA){ imgA.style.zIndex=2; imgB.style.zIndex=1; imgA.style.opacity=1; imgB.style.opacity=0; }
-    else { imgB.style.zIndex=2; imgA.style.zIndex=1; imgB.style.opacity=1; imgA.style.opacity=0; }
+    else{ imgB.style.zIndex=2; imgA.style.zIndex=1; imgB.style.opacity=1; imgA.style.opacity=0; }
   },2000);
   document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
@@ -274,13 +237,19 @@ setTimeout(()=>{
 const probBtn=document.getElementById("probBtn");
 const probPopup=document.getElementById("probPopup");
 function updateProbPopup() {
-  probPopup.innerHTML = fortunes.map(f => `${f.name}は${f.probability*100}%（${fortuneCounts[f.name]}回）`).join("<br>") + "<br><br><br>";
+  probPopup.innerHTML = fortunes.map(f => 
+    `<div class="probItem"><span>${f.name}</span><span>${(f.probability*100).toFixed(1)}% (${fortuneCounts[f.name]}回)</span></div>`
+  ).join('');
 }
 probBtn.addEventListener("click",()=>{
   updateProbPopup();
+  probPopup.classList.add("show");
   probPopup.style.display="block";
 });
-probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
+probPopup.addEventListener("click",()=>{
+  probPopup.classList.remove("show");
+  setTimeout(()=>{ probPopup.style.display="none"; },400);
+});
 
 // おみくじ
 const roulette=document.getElementById("roulette");
@@ -288,69 +257,61 @@ const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
-
 function pickFortune(){
-  const rand = Math.random();
-  let sum = 0;
-  for(let f of fortunes){ sum += f.probability; if(rand <= sum) return f.name; }
+  const rand=Math.random();
+  let sum=0;
+  for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; }
   return fortunes[fortunes.length-1].name;
 }
-
-btn.addEventListener("click", () => {
-  btn.style.display = "none";
-  roulette.style.display = "block";
-  rouletteInner.innerHTML = "";
-  rouletteInner.style.transition = 'none';
-  rouletteInner.style.transform = 'translateX(0)';
-  rouletteInner.offsetHeight; // リフロー
-
-  for (let i = 0; i < 20; i++) {
-    fortunes.forEach(f => {
-      const div = document.createElement("div");
-      div.className = "fortune";
-      div.textContent = f.name;
-      rouletteInner.appendChild(div);
-    });
-  }
-
-  const selectedName = pickFortune();
-  const allFortunes = rouletteInner.querySelectorAll(".fortune");
-  let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.findIndex(f => f.name === selectedName);
-  const offset = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
+btn.addEventListener("click",()=>{
+  btn.style.display="none"; roulette.style.display="block";
+  rouletteInner.innerHTML=""; rouletteInner.style.transition='none'; rouletteInner.style.transform='translateX(0)'; rouletteInner.offsetHeight;
+  for(let i=0;i<20;i++){ fortunes.forEach(f=>{
+    const div=document.createElement("div"); div.className="fortune"; div.textContent=f.name; rouletteInner.appendChild(div);
+  }); }
+  const selectedName=pickFortune();
+  const allFortunes=rouletteInner.querySelectorAll(".fortune");
+  let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.findIndex(f=>f.name===selectedName);
+  const offset=-allFortunes[stopIndex].offsetLeft+(roulette.offsetWidth/2-75);
   allFortunes[stopIndex].classList.add('selected');
-
-  const initialDuration = 1200;
-  const finalDuration = 800;
-  const interimOffset = offset + 50;
-
-  rouletteInner.style.transition = `transform ${initialDuration}ms cubic-bezier(0.25,0.1,0.25,1)`;
-  rouletteInner.style.transform = `translateX(${interimOffset}px)`;
-
-  setTimeout(() => {
-    rouletteInner.style.transition = `transform ${finalDuration}ms ease-out`;
-    rouletteInner.style.transform = `translateX(${offset}px)`;
-
-    setTimeout(() => {
-      // 結果表示と履歴更新
-      totalCount++;
-      fortuneCounts[selectedName]++;
-
-      resultDisplay.textContent = selectedName;
-      resultDisplay.style.display = "block";
-
-      setTimeout(() => {
-        resultDisplay.style.display = "none";
-        btn.style.display = "inline-block";
-        history.textContent = `${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
-        history.style.display = "block";
-        roulette.style.display = "none";
+  const initialDuration=1200; const finalDuration=800;
+  const interimOffset=offset+50;
+  rouletteInner.style.transition=`transform ${initialDuration}ms cubic-bezier(0.25,0.1,0.25,1)`;
+  rouletteInner.style.transform=`translateX(${interimOffset}px)`;
+  setTimeout(()=>{
+    rouletteInner.style.transition=`transform ${finalDuration}ms ease-out`;
+    rouletteInner.style.transform=`translateX(${offset}px)`;
+    setTimeout(()=>{
+      totalCount++; fortuneCounts[selectedName]++;
+      resultDisplay.textContent=selectedName; resultDisplay.style.display="block";
+      setTimeout(()=>{
+        resultDisplay.style.display="none";
+        btn.style.display="inline-block";
+        history.textContent=`${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
+        history.style.display="block";
+        roulette.style.display="none";
         allFortunes[stopIndex].classList.remove('selected');
-      }, 3000);
-    }, finalDuration + 500);
-
-  }, initialDuration);
+      },3000);
+    },finalDuration+500);
+  },initialDuration);
 });
+
+// スマホ傾きで文字動かす
+if(window.DeviceOrientationEvent){
+  window.addEventListener('deviceorientation', function(event){
+    const gamma = event.gamma; // 左右
+    const beta = event.beta;   // 前後
+    const msg1 = document.getElementById("msg1");
+    const dataLine = document.getElementById("dataLine");
+    const name = document.getElementById("name");
+    const maxOffset=20;
+    const xOffset = gamma/90*maxOffset;
+    const yOffset = beta/180*maxOffset;
+    msg1.style.transform=`translate(${xOffset}px, ${yOffset}px)`;
+    dataLine.style.transform=`translate(${xOffset*0.8}px, ${yOffset*0.8}px)`;
+    name.style.transform=`translate(${xOffset*0.6}px, ${yOffset*0.6}px)`;
+  });
+}
 </script>
 </body>
 </html>
-
