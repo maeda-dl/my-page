@@ -35,6 +35,18 @@ html, body {
 }
 #msg1 { font-size:clamp(20px,5vw,40px); }
 #dataLine { font-size:clamp(22px,6vw,45px); }
+#dataLine span {
+display: inline-block;
+animation: flicker 1.5s infinite;
+}
+
+@keyframes flicker {
+  0%,100% { color:#ffd700; text-shadow: 0 0 2px #fff; }
+  50% { color:#fffacd; text-shadow: 0 0 10px #fff, 0 0 15px #ff0; }
+}
+#dataLine span:nth-child(odd) { animation-delay: 0s; }
+#dataLine span:nth-child(even){ animation-delay: 0.3s; }
+
 #name { font-size:clamp(22px,6vw,40px); }
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
@@ -144,7 +156,10 @@ html, body {
 
 <div class="container">
   <div id="msg1" class="message">はじめまして</div>
-  <div id="dataLine" class="message">Data Line</div>
+  <div id="dataLine" class="message">
+  <span>D</span><span>a</span><span>t</span><span>a</span> <span>L</span><span>i</span><span>n</span><span>e</span>
+　</div>
+
   <div id="name">前田だよ</div>
 
   <div class="image-wrapper">
@@ -301,17 +316,27 @@ if(window.DeviceOrientationEvent){
   window.addEventListener('deviceorientation', function(event){
     const gamma = event.gamma; // 左右
     const beta = event.beta;   // 前後
+
     const msg1 = document.getElementById("msg1");
     const dataLine = document.getElementById("dataLine");
     const name = document.getElementById("name");
-    const maxOffset=20;
+
+    const maxOffset=25;
+    const maxRotate=5; // 回転最大角度
+    const maxScale=0.05; // 拡大縮小
+
     const xOffset = gamma/90*maxOffset;
     const yOffset = beta/180*maxOffset;
-    msg1.style.transform=`translate(${xOffset}px, ${yOffset}px)`;
-    dataLine.style.transform=`translate(${xOffset*0.8}px, ${yOffset*0.8}px)`;
-    name.style.transform=`translate(${xOffset*0.6}px, ${yOffset*0.6}px)`;
+    const rotate = gamma/90*maxRotate;
+    const scale = 1 + beta/180*maxScale;
+
+    msg1.style.transform=`translate(${xOffset}px, ${yOffset}px) rotate(${rotate}deg) scale(${scale})`;
+    dataLine.style.transform=`translate(${xOffset*0.6}px, ${yOffset*0.6}px) rotate(${rotate*0.6}deg) scale(${1 + (beta/180*maxScale*0.6)})`;
+    name.style.transform=`translate(${xOffset*0.4}px, ${yOffset*0.4}px) rotate(${rotate*0.4}deg) scale(${1 + (beta/180*maxScale*0.4)})`;
   });
 }
+
 </script>
 </body>
 </html>
+
