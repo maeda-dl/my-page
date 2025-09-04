@@ -332,51 +332,53 @@ function pickFortune(){
   return fortunes[fortunes.length-1].name;
 }
 
-btn.addEventListener("click", () => {
-  btn.style.display = "none";
-  resultDisplay.style.display = "none";
-  history.style.display = "none";
+btn.addEventListener("click",()=>{
+  btn.style.display="none";
+  roulette.style.display="block";
+  rouletteInner.innerHTML="";
 
-  // 🎯 ここでは中身を消さない！
-  // rouletteInner.innerHTML = "";
+  rouletteInner.style.transition='none';
+  rouletteInner.style.transform='translateX(0)';
+  rouletteInner.offsetHeight;
+  rouletteInner.style.transition='transform 1.5s ease-out';
 
-  let position = 0;
-  const total = 200 + Math.random()*100; // 回転の長さ
-  const start = performance.now();
-  let last = "";
-
-  function animate(now){
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / 3000, 1);
-    const ease = 1 - Math.pow(1-progress,3);
-    position = ease * total;
-
-    rouletteInner.style.transform = `translateX(${-position*100}%)`;
-
-    const index = Math.floor(position) % fortunes.length;
-    last = fortunes[index].name;
-
-    if(progress < 1){
-      requestAnimationFrame(animate);
-    } else {
-      // 🎯 ここで初めて中身を固定して結果表示
-      resultDisplay.textContent = last;
-      resultDisplay.style.display = "block";
-      totalCount++;
-      fortuneCounts[last]++;
-      setTimeout(()=>{
-        resultDisplay.style.display = "none";
-        btn.style.display = "inline-block";
-        history.textContent = `${last}（${fortuneCounts[last]}回目 / ${totalCount}回中）`;
-        history.style.display = "block";
-      },3000);
-    }
+  for(let i=0;i<20;i++){
+    fortunes.forEach(f=>{
+      const div=document.createElement("div");
+      div.className="fortune"; div.textContent=f;
+      rouletteInner.appendChild(div);
+    });
   }
-  requestAnimationFrame(animate);
-});
 
+  const selected=fortunes[Math.floor(Math.random()*fortunes.length)];
+  const allFortunes=rouletteInner.querySelectorAll(".fortune");
+  let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.indexOf(selected);
+  const offset=-allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
+
+  // 中央カードを強調
+  allFortunes[stopIndex].classList.add('selected');
+
+  setTimeout(()=>{rouletteInner.style.transform=`translateX(${offset}px)`;},50);
+
+  setTimeout(()=>{
+    roulette.style.display="none";
+    resultDisplay.textContent=selected;
+    resultDisplay.style.display="block";
+    resultDisplay.style.opacity = "1";
+
+    setTimeout(()=>{
+      resultDisplay.style.display="none";
+      btn.style.display="inline-block";
+      history.textContent = selected;
+
+      // 選択カードの強調解除
+      allFortunes[stopIndex].classList.remove('selected');
+    },3000);
+  },1600);
+});
 </script>
 </body>
 </html>
+
 
 
