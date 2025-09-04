@@ -340,7 +340,10 @@ btn.addEventListener("click",()=>{
 
   // 🎯 ここでリセット（開始時）
   rouletteInner.innerHTML = "";
-  rouletteInner.style.transform = "translateX(0)";
+  rouletteInner.style.transition='none';
+  rouletteInner.style.transform='translateX(0)';
+  rouletteInner.offsetHeight;
+  rouletteInner.style.transition='transform 1.5s ease-out';
 
   // 新しいルーレットを作成
   for(let i=0;i<20;i++){
@@ -395,21 +398,8 @@ btn.addEventListener("click",()=>{
 },3000);
   }
 }
-
   requestAnimationFrame(animate);
 });
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
