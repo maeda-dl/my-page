@@ -337,12 +337,11 @@ btn.addEventListener("click",()=>{
   roulette.style.display = "flex";
   totalCount++;
 
-  // 🎯 ここでリセット
-  rouletteInner.innerHTML = "";
-  rouletteInner.style.transition='none';
-  rouletteInner.style.transform='translateX(0)';
-  rouletteInner.offsetHeight;
-  rouletteInner.style.transition='transform 1.5s ease-out';
+// 🎯 ここでリセット
+rouletteInner.innerHTML = "";
+rouletteInner.style.transition = "none";   // ← transitionは完全オフ
+rouletteInner.style.transform = "translateX(0)";
+
 
   // 新しいルーレットを作成
   for(let i=0;i<20;i++){
@@ -400,3 +399,4 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
