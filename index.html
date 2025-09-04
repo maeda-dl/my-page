@@ -221,7 +221,7 @@ setTimeout(()=>{
 // デバイス傾きで左右に揺れる（左右のみ強調）
 let targetY=0, currentY=0;
 window.addEventListener('deviceorientation', (e)=>{
-  targetY = e.gamma/3; // 右左に傾ける量を増やす
+  targetY = e.gamma/5; // 右左に傾ける量を増やす
 });
 function animateTilt(){
   currentY += (targetY - currentY)*0.15; // 滑らかに
@@ -311,5 +311,6 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
 
