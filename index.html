@@ -36,16 +36,23 @@ html, body {
 #msg1 { font-size:clamp(20px,5vw,40px); }
 #dataLine { font-size:clamp(22px,6vw,45px); }
 #dataLine span {
-display: inline-block;
-animation: flicker 1.5s infinite;
+  display: inline-block;
+  font-weight: bold;
+  animation: flicker 1.5s infinite alternate;
+  text-shadow: 0 0 2px rgba(255,255,255,0.5);
 }
 
+/* アニメーションでネイビー ↔ シルバー */
 @keyframes flicker {
-  0%,100% { color:#ffd700; text-shadow: 0 0 2px #fff; }
-  50% { color:#fffacd; text-shadow: 0 0 10px #fff, 0 0 15px #ff0; }
+  0%   { color: #001f5b; text-shadow: 0 0 2px #c0c0c0; }
+  50%  { color: #c0c0c0; text-shadow: 0 0 8px #ffffff, 0 0 12px #c0c0c0; }
+  100% { color: #001f5b; text-shadow: 0 0 2px #c0c0c0; }
 }
-#dataLine span:nth-child(odd) { animation-delay: 0s; }
-#dataLine span:nth-child(even){ animation-delay: 0.3s; }
+
+/* 偶数文字と奇数文字でアニメーションタイミングをずらす */
+#dataLine span:nth-child(odd)  { animation-delay: 0s; }
+#dataLine span:nth-child(even) { animation-delay: 0.6s; }
+
 
 #name { font-size:clamp(22px,6vw,40px); }
 
@@ -157,9 +164,9 @@ animation: flicker 1.5s infinite;
 <div class="container">
   <div id="msg1" class="message">はじめまして</div>
   <div id="dataLine" class="message">
-  <span>D</span><span>a</span><span>t</span><span>a</span> <span>L</span><span>i</span><span>n</span><span>e</span>
-　</div>
-
+    <span>D</span><span>a</span><span>t</span><span>a</span> 
+    <span>L</span><span>i</span><span>n</span><span>e</span>
+  </div>
   <div id="name">前田だよ</div>
 
   <div class="image-wrapper">
@@ -331,12 +338,13 @@ if(window.DeviceOrientationEvent){
     const scale = 1 + beta/180*maxScale;
 
     msg1.style.transform=`translate(${xOffset}px, ${yOffset}px) rotate(${rotate}deg) scale(${scale})`;
-    dataLine.style.transform=`translate(${xOffset*0.6}px, ${yOffset*0.6}px) rotate(${rotate*0.6}deg) scale(${1 + (beta/180*maxScale*0.6)})`;
-    name.style.transform=`translate(${xOffset*0.4}px, ${yOffset*0.4}px) rotate(${rotate*0.4}deg) scale(${1 + (beta/180*maxScale*0.4)})`;
+    dataLine.style.transform=`translate(${xOffset*0.8}px, ${yOffset*0.8}px) rotate(${rotate*0.8}deg) scale(${1 + (beta/180*maxScale*0.8)})`;
+    name.style.transform=`translate(${xOffset*0.6}px, ${yOffset*0.6}px) rotate(${rotate*0.6}deg) scale(${1 + (beta/180*maxScale*0.6)})`;
   });
 }
 
 </script>
 </body>
 </html>
+
 
