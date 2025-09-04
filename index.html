@@ -32,19 +32,21 @@ html, body {
 }
 #msg1 { font-size:calc(20px + 2vw); }
 
-/* DataLineの文字ごとに輝きが順番に移動 */
-#dataLine { font-size:calc(22px + 2vw); display:inline-block; }
-#dataLine span {
-  background: linear-gradient(45deg, #00f, #0ff, #00f);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: sparkleLetter 1.5s linear infinite;
-  display:inline-block;
+/* DataLine ネイビー × シルバーで一文字ずつ輝く */
+#dataLine { 
+  font-size:calc(22px + 2vw); 
+  display:inline-block; 
+  font-weight:bold;
+  letter-spacing: 2px;
 }
-@keyframes sparkleLetter {
-  0%,100% { background-position:0% 0%; }
-  50% { background-position:100% 100%; }
+#dataLine span {
+  color: navy; /* ベースはネイビー */
+  display:inline-block;
+  animation: shimmer 1.5s linear infinite;
+}
+@keyframes shimmer {
+  0%, 80%, 100% { color: navy; text-shadow: none; }
+  40% { color: silver; text-shadow: 0 0 8px rgba(192,192,192,0.8); }
 }
 
 /* 名前 */
@@ -174,9 +176,10 @@ setInterval(()=>{ colorIndex=(colorIndex+1)%bgColors.length; document.body.style
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 
-// DataLine文字をspanで分割して順番に輝かせる
-const dataLine=document.getElementById("dataLine");
-dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=>`<span style="animation-delay:${i*0.1}s">${c}</span>`).join('');
+// DataLine文字をspanで分割して順番に光を走らせる
+const dataLine = document.getElementById("dataLine");
+dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=> 
+  `<span style="animation-delay:${i*0.2}s">${c}</span>`).join('');
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
@@ -290,3 +293,4 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
