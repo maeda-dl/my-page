@@ -6,12 +6,9 @@
 <title>社員紹介＋おみくじ</title>
 <style>
 html, body {
-  margin:0; 
-  padding:0; 
-  height:100%;
+  margin:0; padding:0; height:100%;
   font-family:sans-serif;
   background: #ffffff;
-  transition: background 1s ease;
   overflow-x: hidden;
   overflow-y: hidden;
 }
@@ -19,56 +16,37 @@ html, body {
 
 .container {
   position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  height:100%;
-  padding:1em;
-  box-sizing: border-box;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:flex-start;
+  height:100%; padding:1em;
+  box-sizing:border-box;
   z-index:2;
   perspective: 500px;
 }
 
 .message, #name {
-  opacity:0;
-  margin:0.5em 0;
+  opacity:0; margin:0.5em 0;
   font-weight:bold;
   transition:opacity 1s ease, transform 0.1s ease;
   text-align:center;
 }
 #msg1 { font-size:calc(20px + 2vw); }
 #dataLine { 
-  font-size:calc(22px + 2vw); 
+  font-size:calc(22px + 2vw);
   background: linear-gradient(45deg, navy, silver, navy, silver);
   background-size: 400% 400%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: glitter 3s linear infinite, sparkle 2s linear infinite;
-  position: relative;
-  overflow: hidden;
 }
-
-@keyframes glitter {
-  0% {background-position: 0% 50%;}
-  50% {background-position: 100% 50%;}
-  100% {background-position: 0% 50%;}
-}
-
-/* キラキラ用小要素 */
-@keyframes sparkle {
-  0%, 100% { text-shadow: 0 0 2px #fff; }
-  25% { text-shadow: 0 0 5px #fff; }
-  50% { text-shadow: 0 0 10px #fff; }
-  75% { text-shadow: 0 0 5px #fff; }
-}
+@keyframes glitter { 0% {background-position:0% 50%;} 50% {background-position:100% 50%;} 100% {background-position:0% 50%;} }
+@keyframes sparkle { 0%,100% {text-shadow:0 0 2px #fff;} 25% {text-shadow:0 0 5px #fff;} 50% {text-shadow:0 0 10px #fff;} 75% {text-shadow:0 0 5px #fff;} }
 
 #name { font-size:calc(22px + 2vw); }
 
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
 .image {
-  display:block;
-  width:100%; height:auto;
+  display:block; width:100%; height:auto;
   position:absolute; top:0; left:0;
   opacity:0;
   transition:opacity 0.8s ease;
@@ -76,144 +54,57 @@ html, body {
 }
 
 #omikujiBtn {
-  position: fixed;
-  bottom: 20%;
-  left: 50%;
-  transform: translate(-50%, 0);
-  width: max-content;
-  padding: 12px 25px;
-  font-size: 22px;
-  font-weight: bold;
-  border: none;
-  border-radius: 50px;
+  position: fixed; bottom: 20%; left:50%; transform:translate(-50%,0);
+  width:max-content; padding:12px 25px; font-size:22px; font-weight:bold;
+  border:none; border-radius:50px;
   background: linear-gradient(145deg, #1a2a6c, #0f1b4c);
-  color: #fff;
-  cursor: pointer;
-  z-index: 4;
+  color:#fff; cursor:pointer; z-index:4;
   animation: float 3s ease-in-out infinite;
-  display: none;
-  white-space: nowrap;
-  text-align: center;
+  display:none; white-space:nowrap; text-align:center;
 }
-
-@keyframes float {
-  0%, 100% { transform: translate(-50%, 0) translateY(0); }
-  50% { transform: translate(-50%, 0) translateY(-10px); }
-}
+@keyframes float { 0%,100%{transform:translate(-50%,0) translateY(0);} 50%{transform:translate(-50%,0) translateY(-10px);} }
 
 #probBtn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 15px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
+  position: fixed; bottom:20px; right:20px;
+  padding:10px 15px; font-size:16px; border:none; border-radius:8px;
   background: linear-gradient(145deg, #0f1b4c, #1a2a6c);
-  color: #fff;
-  cursor: pointer;
-  display: none;
-  z-index: 4;
+  color:#fff; cursor:pointer; display:none; z-index:4;
 }
 
 #history {
-  display: none; 
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  font-size: 16px;
-  background: #ffffff;
-  color: #0f1b4c;
-  padding: 5px 10px;
-  border-radius: 8px;
-  max-width: 250px;
-  z-index: 99999;
-  text-align: center;
-  word-break: break-word;
+  display:none; position: fixed; bottom:20px; left:20px;
+  font-size:16px; background:#ffffff; color:#0f1b4c; padding:5px 10px;
+  border-radius:8px; max-width:250px; z-index:99999;
+  text-align:center; word-break:break-word;
 }
 
+/* 確率ポップアップ（カード風中央） */
 #probPopup {
-  position: fixed;
-  bottom: 100px; /* 履歴表示に被らないよう上に */
-  left: 20px;
-  width: 250px;
-  max-height: 300px;
-  overflow-y: auto;
-  background: rgba(0,0,0,0.85);
-  color:#fff;
-  font-size:16px;
-  padding: 10px;
-  display:none;
-  z-index:999999;
-  text-align:center;
-  cursor:pointer;
-  border-radius: 10px;
+  position: fixed; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width:300px; max-height:400px; overflow-y:auto;
+  background: linear-gradient(145deg, #0f1b4c, #1a2a6c);
+  color:#fff; font-size:16px; padding:20px;
+  display:none; z-index:999999; text-align:center;
+  cursor:pointer; border-radius:15px; box-shadow:0 8px 20px rgba(0,0,0,0.3);
 }
 #probPopup .probLine {
-  background: rgba(255,255,255,0.1);
-  margin: 5px 0;
-  padding: 8px;
-  border-radius: 8px;
-  text-align: center;
+  background: rgba(255,255,255,0.1); margin:8px 0; padding:10px; border-radius:10px;
 }
 
-#roulette {
-  position: fixed;
-  bottom: 30%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 200px;
-  height: 70px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 99998;
-  border-radius: 30px;
-  overflow: hidden;
-  background: #fefefe;
-  border: 3px solid #0f1b4c;
+/* ルーレット & 結果表示 */
+#roulette { position: fixed; bottom:30%; left:50%; transform:translateX(-50%);
+  width:90%; max-width:200px; height:70px; display:none; align-items:center; justify-content:center;
+  z-index:99998; border-radius:30px; overflow:hidden; background:#fefefe; border:3px solid #0f1b4c;
 }
-#rouletteInner {
-  display:flex; 
-  white-space:nowrap; 
-  font-size:28px; 
-  font-weight:bold;
-  will-change: transform;
+#rouletteInner { display:flex; white-space:nowrap; font-size:28px; font-weight:bold; will-change: transform; }
+.fortune { min-width:130px; height:60px; margin:0 5px; color:#0f1b4c; font-size:20px; display:flex; align-items:center; justify-content:center; text-align:center; background:transparent; box-shadow:none; }
+#resultDisplay { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  font-size:60px; font-weight:bold; text-align:center; display:none; z-index:99999;
+  color:#ff4500; text-shadow:2px 2px 10px rgba(0,0,0,0.3);
+  background:transparent; padding:0; animation: blink 0.5s step-start infinite, pop 0.5s ease forwards;
 }
-
-.fortune {
-  min-width: 130px;
-  height: 60px;
-  margin: 0 5px;
-  color: #0f1b4c;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: transparent;
-  box-shadow: none;
-}
-
-#resultDisplay {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 60px;
-  font-weight: bold;
-  text-align: center;
-  display: none;
-  z-index: 99999;
-  color: #ff4500;
-  text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-  background: transparent;
-  padding: 0;
-  animation: blink 0.5s step-start infinite, pop 0.5s ease forwards;
-}
-@keyframes blink { 50% { opacity:0; } }
-@keyframes pop { 0% { transform:translate(-50%,-50%) scale(0.8); } 50% { transform:translate(-50%,-50%) scale(1.2); } 100% { transform:translate(-50%,-50%) scale(1); } }
+@keyframes blink { 50% {opacity:0;} } @keyframes pop { 0% {transform:translate(-50%,-50%) scale(0.8);} 50% {transform:translate(-50%,-50%) scale(1.2);} 100% {transform:translate(-50%,-50%) scale(1);} }
 
 </style>
 </head>
@@ -240,20 +131,7 @@ html, body {
 <div id="probPopup"></div>
 
 <script>
-// ------------------- パーティクル -------------------
-let totalCount = 0;
-const fortunes = [
-  { name: "大吉 🎉", probability: 0.05 },
-  { name: "中吉 😀", probability: 0.1 },
-  { name: "小吉 🙂", probability: 0.2 },
-  { name: "吉 😊", probability: 0.4 },
-  { name: "末吉 😌", probability: 0.2 },
-  { name: "凶 😱", probability: 0.04 },
-  { name: "大凶 💀", probability: 0.01 }
-];
-const fortuneCounts = {};
-fortunes.forEach(f => fortuneCounts[f.name] = 0);
-
+// ------------------- 粒子アニメーション -------------------
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
@@ -283,15 +161,15 @@ window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.hei
 // ------------------- 背景 -------------------
 const bgColors=["#ffffff","#f5f5f5","#fffaf0","#f0f8ff"];
 let colorIndex=0;
-setInterval(()=>{colorIndex=(colorIndex+1)%bgColors.length;document.body.style.background=bgColors[colorIndex];},3000);
+setInterval(()=>{ colorIndex=(colorIndex+1)%bgColors.length; document.body.style.background=bgColors[colorIndex]; },3000);
 
 // ------------------- フェードイン -------------------
-function fadeIn(el,delay){setTimeout(()=>{el.style.opacity=1;},delay);}
+function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
-// ------------------- 画像切替 -------------------
+// ------------------- 画像A/B切替（変更なし） -------------------
 setTimeout(()=>{
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
@@ -308,25 +186,34 @@ setTimeout(()=>{
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
 
-// ------------------- デバイス傾き（感度アップ） -------------------
-window.addEventListener('deviceorientation', (event)=>{
-  const x = event.gamma; // 左右
-  const y = event.beta;  // 前後
-  const container = document.querySelector('.container');
-  container.style.transform = `rotateX(${y/5}deg) rotateY(${x/5}deg)`; // 感度2倍
+// ------------------- デバイス傾き滑らか -------------------
+let targetX=0, targetY=0, currentX=0, currentY=0;
+window.addEventListener('deviceorientation', (e)=>{
+  targetX = e.gamma/5;
+  targetY = e.beta/5;
 });
+function animateTilt(){
+  currentX += (targetX - currentX)*0.1;
+  currentY += (targetY - currentY)*0.1;
+  document.querySelector('.container').style.transform = `rotateX(${currentY}deg) rotateY(${currentX}deg)`;
+  requestAnimationFrame(animateTilt);
+}
+animateTilt();
 
 // ------------------- 確率ポップアップ -------------------
+const fortunes=[
+  {name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},
+  {name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}
+];
+const fortuneCounts = {};
+fortunes.forEach(f=>fortuneCounts[f.name]=0);
 const probBtn=document.getElementById("probBtn");
 const probPopup=document.getElementById("probPopup");
-function updateProbPopup() {
-  probPopup.innerHTML = fortunes.map(f => `<div class="probLine">${f.name}は${f.probability*100}%（${fortuneCounts[f.name]}回）</div>`).join("");
+function updateProbPopup(){
+  probPopup.innerHTML = fortunes.map(f=>`<div class="probLine">${f.name}は${(f.probability*100).toFixed(1)}%（${fortuneCounts[f.name]}回）</div>`).join("");
 }
-probBtn.addEventListener("click",()=>{
-  updateProbPopup();
-  probPopup.style.display="block";
-});
-probPopup.addEventListener("click",()=>{probPopup.style.display="none";});
+probBtn.addEventListener("click",()=>{ updateProbPopup(); probPopup.style.display="block"; });
+probPopup.addEventListener("click",()=>{ probPopup.style.display="none"; });
 
 // ------------------- おみくじ -------------------
 const roulette=document.getElementById("roulette");
@@ -337,63 +224,57 @@ const btn=document.getElementById("omikujiBtn");
 
 function pickFortune(){
   const rand = Math.random();
-  let sum = 0;
-  for(let f of fortunes){ sum += f.probability; if(rand <= sum) return f.name; }
+  let sum=0;
+  for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; }
   return fortunes[fortunes.length-1].name;
 }
 
-btn.addEventListener("click", () => {
-  btn.style.display = "none";
-  roulette.style.display = "block";
-  rouletteInner.innerHTML = "";
-  rouletteInner.style.transition = 'none';
-  rouletteInner.style.transform = 'translateX(0)';
+let totalCount=0;
+btn.addEventListener("click",()=>{
+  btn.style.display="none";
+  roulette.style.display="block";
+  rouletteInner.innerHTML="";
+  rouletteInner.style.transition='none';
+  rouletteInner.style.transform='translateX(0)';
   rouletteInner.offsetHeight;
 
-  for (let i = 0; i < 20; i++) {
-    fortunes.forEach(f => {
-      const div = document.createElement("div");
-      div.className = "fortune";
-      div.textContent = f.name;
+  for(let i=0;i<20;i++){
+    fortunes.forEach(f=>{
+      const div=document.createElement("div");
+      div.className="fortune"; div.textContent=f.name;
       rouletteInner.appendChild(div);
     });
   }
 
-  const selectedName = pickFortune();
-  const allFortunes = rouletteInner.querySelectorAll(".fortune");
-  let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.findIndex(f => f.name === selectedName);
-  const offset = -allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth / 2 - 75);
+  const selectedName=pickFortune();
+  const allFortunes=rouletteInner.querySelectorAll(".fortune");
+  let stopIndex=Math.floor(allFortunes.length*0.8) + fortunes.findIndex(f=>f.name===selectedName);
+  const offset=-allFortunes[stopIndex].offsetLeft + (roulette.offsetWidth/2 - 75);
   allFortunes[stopIndex].classList.add('selected');
 
-  const initialDuration = 1200;
-  const finalDuration = 800;
-  const interimOffset = offset + 50;
+  rouletteInner.style.transition=`transform 1200ms cubic-bezier(0.25,0.1,0.25,1)`;
+  rouletteInner.style.transform=`translateX(${offset+50}px)`;
 
-  rouletteInner.style.transition = `transform ${initialDuration}ms cubic-bezier(0.25,0.1,0.25,1)`;
-  rouletteInner.style.transform = `translateX(${interimOffset}px)`;
+  setTimeout(()=>{
+    rouletteInner.style.transition=`transform 800ms ease-out`;
+    rouletteInner.style.transform=`translateX(${offset}px)`;
 
-  setTimeout(() => {
-    rouletteInner.style.transition = `transform ${finalDuration}ms ease-out`;
-    rouletteInner.style.transform = `translateX(${offset}px)`;
-
-    setTimeout(() => {
+    setTimeout(()=>{
       totalCount++;
       fortuneCounts[selectedName]++;
-
       resultDisplay.textContent = selectedName;
-      resultDisplay.style.display = "block";
+      resultDisplay.style.display="block";
 
-      setTimeout(() => {
-        resultDisplay.style.display = "none";
-        btn.style.display = "inline-block";
-        history.textContent = `${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
-        history.style.display = "block";
-        roulette.style.display = "none";
+      setTimeout(()=>{
+        resultDisplay.style.display="none";
+        btn.style.display="inline-block";
+        history.textContent=`${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
+        history.style.display="block";
+        roulette.style.display="none";
         allFortunes[stopIndex].classList.remove('selected');
-      }, 3000);
-    }, finalDuration + 500);
-
-  }, initialDuration);
+      },3000);
+    },1300);
+  },1200);
 });
 </script>
 </body>
