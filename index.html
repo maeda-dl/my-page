@@ -117,6 +117,7 @@ html, body {
   display: none;
   z-index: 99997;
   cursor: pointer;
+  width: 300px;          /* 横幅を広げる */
   max-width: 90%;
   padding: 15px 20px;
   border-radius: 15px;
@@ -124,17 +125,23 @@ html, body {
   box-shadow: 0 10px 25px rgba(0,0,0,0.25);
   transition: transform 0.4s ease, opacity 0.4s ease;
   opacity: 0;
-  font-size: 16px;
+  font-size: 18px;       /* フォントサイズ調整 */
+  line-height: 2;        /* 1行ずつの高さ */
 }
-#probPopup.show { transform: translateX(-50%) translateY(0); opacity:1; }
+
+#probPopup.show { 
+  transform: translateX(-50%) translateY(0); 
+  opacity: 1; 
+}
 
 .probItem {
-  display:flex; justify-content:space-between;
-  padding: 8px 12px; margin: 5px 0;
-  border-radius:10px;
-  font-weight:bold;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-  color:#0f1b4c;
+  display: flex; 
+  justify-content: space-between;
+  padding: 6px 0;        /* 上下スペースを調整 */
+  margin: 0;              /* 余白をなくす */
+  font-weight: bold;
+  background: none;       /* カラー削除 */
+  box-shadow: none;       /* シャドウ削除 */
 }
 .probItem:nth-child(1){ background: linear-gradient(135deg, #e0f7fa, #80deea); }
 .probItem:nth-child(2){ background: linear-gradient(135deg, #fff3e0, #ffcc80); }
@@ -313,3 +320,4 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
