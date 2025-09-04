@@ -32,22 +32,39 @@ html, body {
 }
 #msg1 { font-size:calc(20px + 2vw); }
 
-/* DataLine ネイビー × シルバーで一文字ずつ輝く */
+/* DataLine ネイビー基調 + シルバー輝き + 立体感 */
 #dataLine { 
   font-size:calc(22px + 2vw); 
   display:inline-block; 
   font-weight:bold;
   letter-spacing: 2px;
+  perspective: 500px;
 }
+
 #dataLine span {
-  color: navy; /* ベースはネイビー */
+  color: navy; /* 基本色はネイビー */
   display:inline-block;
   animation: shimmer 1.5s linear infinite;
+  /* 立体感を出す多層シャドウ */
+  text-shadow: 
+    1px 1px 0 #222, 
+    2px 2px 3px rgba(0,0,0,0.6),
+    -1px -1px 1px rgba(255,255,255,0.2);
 }
+
 @keyframes shimmer {
-  0%, 80%, 100% { color: navy; text-shadow: none; }
-  40% { color: silver; text-shadow: 0 0 8px rgba(192,192,192,0.8); }
+  0%, 80%, 100% { color: navy; text-shadow: 
+    1px 1px 0 #222, 
+    2px 2px 3px rgba(0,0,0,0.6),
+    -1px -1px 1px rgba(255,255,255,0.2); 
+  }
+  40% { color: silver; text-shadow: 
+    0 0 8px rgba(192,192,192,0.8), 
+    1px 1px 0 #222, 
+    2px 2px 5px rgba(0,0,0,0.6); 
+  }
 }
+
 
 /* 名前 */
 #name { font-size:calc(22px + 2vw); }
@@ -176,10 +193,11 @@ setInterval(()=>{ colorIndex=(colorIndex+1)%bgColors.length; document.body.style
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 
-// DataLine文字をspanで分割して順番に光を走らせる
+// DataLine文字をspanで分割して順番に光らせる
 const dataLine = document.getElementById("dataLine");
 dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=> 
   `<span style="animation-delay:${i*0.2}s">${c}</span>`).join('');
+
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
@@ -293,4 +311,5 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
