@@ -42,8 +42,6 @@ html, body {
   font-weight:bold;
   letter-spacing: 2px;
   perspective: 500px;
-  user-select:none;
-  touch-action:none;
 }
 #dataLine span {
   color: navy;
@@ -96,6 +94,7 @@ html, body {
   text-align:center; word-break:break-word;
 }
 
+/* 確率ポップアップ */
 #probPopup {
   position: fixed;
   bottom: -500px;
@@ -124,6 +123,7 @@ html, body {
   color:#ff4500; text-shadow:2px 2px 10px rgba(0,0,0,0.3);
 }
 
+/* --- リセットモーダル --- */
 #resetModal {
   display:none;
   position:fixed; top:50%; left:50%;
@@ -148,13 +148,23 @@ html, body {
 #modalYes { background:#1a2a6c; color:#fff; }
 #modalNo { background:#ccc; color:#000; }
 
-#broom {
-  position:fixed;
-  font-size:30px;
-  pointer-events:auto;
-  z-index:9999999;
+/* --- DataLineこすり用ほうき --- */
+#broom { position: fixed; font-size: 36px; display:none; z-index:9999; pointer-events:none; }
+
+/* --- ヒントボタン --- */
+#hintBtn { position: fixed; top:15px; right:15px; font-size:28px; cursor:pointer; z-index:100000; }
+#hintPopup {
   display:none;
-  user-select:none;
+  position: fixed; top:60px; right:15px;
+  background: rgba(255,255,255,0.95);
+  color: #0f1b4c;
+  padding: 10px 15px;
+  border-radius: 12px;
+  font-family: 'Playfair Display', serif;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index:100000;
 }
 </style>
 </head>
@@ -186,10 +196,15 @@ html, body {
   <button id="modalNo">No</button>
 </div>
 
+<!-- DataLineこすり用ほうき -->
 <div id="broom">🧹</div>
 
+<!-- ヒントボタン -->
+<div id="hintBtn">💡</div>
+<div id="hintPopup">ある機能が隠れてるよ<br>色々操作してさがしてね<br>①背景色変え<br>②おみくじリセット</div>
+
 <script>
-// --- 粒子 ---
+// --- 粒子アニメーション ---
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
@@ -225,7 +240,7 @@ dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=>
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
-// --- 画像A/B ---
+// --- 画像A/B切替 ---
 setTimeout(()=>{
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
@@ -257,15 +272,28 @@ function animateTilt(){
 animateTilt();
 
 // --- 確率詳細 ---
-const fortunes=[{name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},{name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}];
-const fortuneCounts={}; fortunes.forEach(f=>fortuneCounts[f.name]=0);
+const fortunes=[
+  {name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},
+  {name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}
+];
+const fortuneCounts = {};
+fortunes.forEach(f=>fortuneCounts[f.name]=0);
 const probBtn=document.getElementById("probBtn");
 const probPopup=document.getElementById("probPopup");
 function updateProbPopup(){
-  probPopup.innerHTML = fortunes.map(f=> `<div class="probLine"><span>${f.name}</span><span>${(f.probability*100).toFixed(1)}% (${fortuneCounts[f.name]}回)</span></div>`).join("");
+  probPopup.innerHTML = fortunes.map(f=>
+    `<div class="probLine"><span>${f.name}</span><span>${(f.probability*100).toFixed(1)}% (${fortuneCounts[f.name]}回)</span></div>`
+  ).join("");
 }
-probBtn.addEventListener("click",()=>{ updateProbPopup(); probPopup.classList.toggle("open"); });
-document.body.addEventListener("click",(e)=>{ if(probPopup.classList.contains("open") && e.target!==probBtn && !probPopup.contains(e.target)) probPopup.classList.remove("open"); });
+probBtn.addEventListener("click",()=>{
+  updateProbPopup();
+  probPopup.classList.toggle("open");
+});
+document.body.addEventListener("click", (e)=>{
+  if(probPopup.classList.contains("open") && e.target!==probBtn && !probPopup.contains(e.target)){
+    probPopup.classList.remove("open");
+  }
+});
 
 // --- おみくじ ---
 const roulette=document.getElementById("roulette");
@@ -274,11 +302,14 @@ const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
 let totalCount=0;
+
 function pickFortune(){
-  const rand=Math.random(); let sum=0;
+  const rand = Math.random();
+  let sum=0;
   for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; }
   return fortunes[fortunes.length-1].name;
 }
+
 btn.addEventListener("click",()=>{
   btn.style.display="none";
   roulette.style.display="block";
@@ -295,105 +326,107 @@ btn.addEventListener("click",()=>{
     });
   }
 
-  const selectedName=pickFortune();
-  const allFortunes=rouletteInner.querySelectorAll(".fortune");
-  let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.findIndex(f=>f.name===selectedName);
-  const selectedDiv=allFortunes[stopIndex];
-  const offset=-selectedDiv.offsetLeft+(roulette.offsetWidth/2)-(selectedDiv.offsetWidth/2);
+  const selectedName = pickFortune();
+  const allFortunes = rouletteInner.querySelectorAll(".fortune");
+  let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.findIndex(f => f.name === selectedName);
+  const selectedDiv = allFortunes[stopIndex];
+  const offset = -selectedDiv.offsetLeft + (roulette.offsetWidth / 2) - (selectedDiv.offsetWidth / 2);
   selectedDiv.classList.add('selected');
 
-  rouletteInner.style.transition=`transform 1200ms cubic-bezier(0.25,0.1,0.25,1)`;
-  rouletteInner.style.transform=`translateX(${offset+50}px)`;
+  rouletteInner.style.transition = `transform 1200ms cubic-bezier(0.25,0.1,0.25,1)`;
+  rouletteInner.style.transform = `translateX(${offset + 50}px)`;
 
-  setTimeout(()=>{
-    rouletteInner.style.transition=`transform 800ms ease-out`;
-    rouletteInner.style.transform=`translateX(${offset}px)`;
+  setTimeout(() => {
+    rouletteInner.style.transition = `transform 800ms ease-out`;
+    rouletteInner.style.transform = `translateX(${offset}px)`;
 
-    setTimeout(()=>{
+    setTimeout(() => {
       totalCount++;
       fortuneCounts[selectedName]++;
-      resultDisplay.textContent=selectedName;
-      resultDisplay.style.display="block";
-      setTimeout(()=>{
-        resultDisplay.style.display="none";
-        btn.style.display="inline-block";
-        history.textContent=`${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
-        history.style.display="block";
-        roulette.style.display="none";
+      resultDisplay.textContent = selectedName;
+      resultDisplay.style.display = "block";
+      setTimeout(() => {
+        resultDisplay.style.display = "none";
+        btn.style.display = "inline-block";
+        history.textContent = `${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
+        history.style.display = "block";
+        roulette.style.display = "none";
         selectedDiv.classList.remove('selected');
-      },3000);
-    },1300);
-  },1200);
+      }, 3000);
+    }, 1300);
+  }, 1200);
 });
 
 // --- 背景色順番用 ---
-const bgColors=["#fef6f0","#e6f7ff","#f0fff0","#fff0f5","#fffaf0","#f5f5dc","#ffffff"];
-let bgIndex=0;
-function nextBackgroundColor(){ document.body.style.background=bgColors[bgIndex]; bgIndex=(bgIndex+1)%bgColors.length; }
+const bgColors = ["#fef6f0", "#e6f7ff", "#f0fff0", "#fff0f5", "#fffaf0", "#f5f5dc" , "#ffffff"];
+let bgIndex = 0;
+function nextBackgroundColor(){
+  document.body.style.background = bgColors[bgIndex];
+  bgIndex = (bgIndex + 1) % bgColors.length;
+}
 
-// --- シェイクで背景変更（2回で背景） ---
-let shakeTimes=0, lastShakeTime=0, lastAcc={x:0,y:0,z:0};
-const shakeWindow=500; //0.5秒
-window.addEventListener('devicemotion',(event)=>{
-  const acc=event.accelerationIncludingGravity; if(!acc) return;
-  const diffX=acc.x-lastAcc.x, diffY=acc.y-lastAcc.y, diffZ=acc.z-lastAcc.z;
-  const totalDiff=Math.sqrt(diffX*diffX+diffY*diffY+diffZ*diffZ);
-  lastAcc={x:acc.x,y:acc.y,z:acc.z};
-  const threshold=25; const now=Date.now();
-  if(totalDiff>threshold){
-    if(now-lastShakeTime<=shakeWindow) shakeTimes++;
-    else shakeTimes=1;
-    lastShakeTime=now;
-    if(shakeTimes===2) nextBackgroundColor();
+// --- こするでほうき表示とリセット ---
+const broom = document.getElementById("broom");
+const resetModal = document.getElementById("resetModal");
+const btnYes = document.getElementById("modalYes");
+const btnNo = document.getElementById("modalNo");
+
+dataLine.addEventListener("touchstart", (e)=>{
+  broom.style.display="block";
+});
+dataLine.addEventListener("touchmove", (e)=>{
+  const touch = e.touches[0];
+  broom.style.left = (touch.clientX-18)+"px";
+  broom.style.top = (touch.clientY-18)+"px";
+});
+dataLine.addEventListener("touchend", ()=>{
+  broom.style.display="none";
+  resetModal.style.display="block";
+});
+
+btnYes.addEventListener("click", ()=>{
+  for(let key in fortuneCounts) fortuneCounts[key] = 0;
+  totalCount = 0;
+  history.style.display = "none";
+  resultDisplay.style.display = "none";
+  roulette.style.display = "none";
+  updateProbPopup();
+  nextBackgroundColor();
+  resetModal.style.display = "none";
+});
+btnNo.addEventListener("click", ()=>{ resetModal.style.display = "none"; });
+
+// --- 2回振ると背景色変更 ---
+let shakeTimes = 0;
+let lastShakeTime = 0;
+let lastAcc = {x:0,y:0,z:0};
+const shakeWindow = 500; // 0.5秒
+window.addEventListener('devicemotion', (event)=>{
+  const acc = event.accelerationIncludingGravity;
+  if(!acc) return;
+  const diffX = acc.x - lastAcc.x;
+  const diffY = acc.y - lastAcc.y;
+  const diffZ = acc.z - lastAcc.z;
+  const totalDiff = Math.sqrt(diffX*diffX + diffY*diffY + diffZ*diffZ);
+  lastAcc = {x: acc.x, y: acc.y, z: acc.z};
+  const threshold = 25;
+  const now = Date.now();
+  if(totalDiff > threshold){
+    if(now - lastShakeTime <= shakeWindow){ shakeTimes++; } 
+    else { shakeTimes = 1; }
+    lastShakeTime = now;
+    if(shakeTimes === 2){ nextBackgroundColor(); }
   }
 });
 
-// --- リセットモーダル ---
-const modal=document.getElementById("resetModal");
-const btnYes=document.getElementById("modalYes");
-const btnNo=document.getElementById("modalNo");
-btnYes.addEventListener("click",()=>{
-  for(let key in fortuneCounts) fortuneCounts[key]=0;
-  totalCount=0;
-  history.style.display="none";
-  resultDisplay.style.display="none";
-  roulette.style.display="none";
-  updateProbPopup();
-  nextBackgroundColor();
-  modal.style.display="none";
+// --- ヒントボタン ---
+const hintBtn = document.getElementById("hintBtn");
+const hintPopup = document.getElementById("hintPopup");
+hintBtn.addEventListener("click", ()=>{
+  hintPopup.style.display = hintPopup.style.display === "block" ? "none" : "block";
 });
-btnNo.addEventListener("click",()=>{ modal.style.display="none"; });
-
-// --- ほうきの追従 ---
-const broom=document.getElementById("broom");
-let broomVisible=false;
-let lastTouch=null;
-
-function showBroom(x,y){
-  broom.style.display="block";
-  broom.style.left=(x-15)+"px";
-  broom.style.top=(y-15)+"px";
-  broomVisible=true;
-}
-
-dataLine.addEventListener('pointerdown',(e)=>{
-  e.preventDefault();
-  showBroom(e.clientX,e.clientY);
-  lastTouch={x:e.clientX,y:e.clientY};
-});
-dataLine.addEventListener('pointermove',(e)=>{
-  if(!lastTouch) return;
-  e.preventDefault();
-  lastTouch={x:e.clientX,y:e.clientY};
-  broom.style.left=(e.clientX-15)+"px";
-  broom.style.top=(e.clientY-15)+"px";
-});
-dataLine.addEventListener('pointerup',(e)=>{
-  lastTouch=null;
-});
-
-broom.addEventListener('click',()=>{
-  modal.style.display="block";
+document.body.addEventListener("click", (e)=>{
+  if(e.target!==hintBtn && !hintPopup.contains(e.target)) hintPopup.style.display = "none";
 });
 </script>
 </body>
