@@ -159,9 +159,44 @@ setTimeout(()=>{
 
 // --- 傾き ---
 let targetX=0,targetY=0,currentX=0,currentY=0;
-window.addEventListener('deviceorientation', (e)=>{ targetY=e.gamma/2; targetX=e.beta/3; });
+window.addEventListener('deviceorientation', (e)=>{ 
+  targetY=e.gamma/2; 
+  targetX=e.beta/3; 
+  showHeart(e.beta); // 💘 表示処理
+});
 function animateTilt(){ currentY+=(targetY-currentY)*0.15; currentX+=(targetX-currentX)*0.15; document.querySelector('.container').style.transform=`rotateX(${currentX}deg) rotateY(${currentY}deg)`; requestAnimationFrame(animateTilt);}
 animateTilt();
+
+// --- 💘 一瞬表示 ---
+let heartTimeout = null;
+const heartEl = document.createElement('div');
+heartEl.textContent = '💘';
+heartEl.style.position = 'absolute';
+heartEl.style.fontSize = '28px';
+heartEl.style.zIndex = 99999;
+heartEl.style.pointerEvents = 'none';
+heartEl.style.display = 'none';
+document.body.appendChild(heartEl);
+
+function showHeart(beta){
+  const imgA = document.getElementById("imgA");
+  const imgB = document.getElementById("imgB");
+  const img = imgA.style.opacity==1 ? imgA : imgB;
+  const rect = img.getBoundingClientRect();
+
+  if(beta > 40){ // 手前に傾けた判定
+    if(heartTimeout) clearTimeout(heartTimeout);
+
+    heartEl.style.left = `${rect.left + rect.width/2 - 14}px`; // 水平中央
+    heartEl.style.top = `${rect.top + 25}px`; // 上端から25px
+    heartEl.style.display = 'block';
+
+    heartTimeout = setTimeout(()=>{
+      heartEl.style.display='none';
+      heartTimeout = null;
+    }, 500); // 0.5秒で消える
+  }
+}
 
 // --- おみくじ・確率 ---
 const fortunes=[{name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},{name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}];
@@ -197,14 +232,13 @@ btn.addEventListener("click", ()=>{
   const allFortunes=rouletteInner.querySelectorAll(".fortune");
   let stopIndex=Math.floor(allFortunes.length*0.8)+fortunes.findIndex(f=>f.name===selectedName);
   const selectedDiv=allFortunes[stopIndex];
-  const offset=-selectedDiv.offsetLeft+(roulette.offsetWidth/2)-(selectedDiv.offsetWidth/2);
   selectedDiv.classList.add('selected');
   rouletteInner.style.transition=`transform 1200ms cubic-bezier(0.25,0.1,0.25,1)`;
-  rouletteInner.style.transform=`translateX(${offset + 50}px)`;
+  rouletteInner.style.transform=`translateX(${ -selectedDiv.offsetLeft + (roulette.offsetWidth/2) - (selectedDiv.offsetWidth/2) + 50}px)`;
   
   setTimeout(()=>{
     rouletteInner.style.transition=`transform 800ms ease-out`;
-    rouletteInner.style.transform=`translateX(${offset}px)`;
+    rouletteInner.style.transform=`translateX(${ -selectedDiv.offsetLeft + (roulette.offsetWidth/2) - (selectedDiv.offsetWidth/2)}px)`;
     setTimeout(()=>{
       totalCount++; 
       fortuneCounts[selectedName]++;
@@ -213,8 +247,8 @@ btn.addEventListener("click", ()=>{
         resultDisplay.textContent = selectedName;
         resultDisplay.style.display = "block";
         setTimeout(()=>{
-          resultDisplay.style.display="none";
-          btn.style.display="inline-block";
+          resultDisplay.style.display = "none";
+          btn.style.display = "inline-block";
           history.textContent=`${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
           history.style.display="block";
           selectedDiv.classList.remove('selected');
@@ -310,4 +344,3 @@ document.body.addEventListener("click",(e)=>{
 </script>
 </body>
 </html>
-
