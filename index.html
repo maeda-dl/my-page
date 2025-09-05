@@ -223,7 +223,7 @@ btn.addEventListener("click", ()=>{
           if(totalCount === 15){
             specialParticles = [];
             for(let i=0;i<5;i++){
-              const p = { x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*3+2, dx: (Math.random()-0.5)*1.5, dy: (Math.random()-0.5)*1.5, char: "(☆▽☆)" };
+              const p = { x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*3+1, dx: (Math.random()-0.5)*1.5, dy: (Math.random()-0.5)*1.5, char: "(☆▽☆)" };
               particles.push(p);
               specialParticles.push(p);
             }
@@ -310,3 +310,4 @@ document.body.addEventListener("click",(e)=>{
 </script>
 </body>
 </html>
+
