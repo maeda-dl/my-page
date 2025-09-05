@@ -264,21 +264,10 @@ function pickFortune(){
 }
 
 let totalCount=0;
-
-// 長押しリセット用
 let pressTimer;
 let longPressTriggered = false;
 
-btn.addEventListener("mousedown", startPress);
-btn.addEventListener("touchstart", startPress);
-btn.addEventListener("mouseup", cancelPress);
-btn.addEventListener("mouseleave", cancelPress);
-btn.addEventListener("touchend", cancelPress);
-btn.addEventListener("touchcancel", cancelPress);
-btn.addEventListener("contextmenu", e=>e.preventDefault()); // 右クリックメニュー無効
-
 function startPress(e){
-  e.preventDefault(); // 長押し時の選択・メニューを無効化
   longPressTriggered = false;
   pressTimer = setTimeout(()=>{
     longPressTriggered = true;
@@ -296,7 +285,15 @@ function cancelPress(){
   clearTimeout(pressTimer);
 }
 
-// クリックイベント
+btn.addEventListener("mousedown", startPress);
+btn.addEventListener("touchstart", startPress);
+btn.addEventListener("mouseup", cancelPress);
+btn.addEventListener("mouseleave", cancelPress);
+btn.addEventListener("touchend", cancelPress);
+btn.addEventListener("touchcancel", cancelPress);
+btn.addEventListener("touchmove", cancelPress); // 移動でキャンセル
+btn.addEventListener("contextmenu", e=>e.preventDefault()); // 右クリック無効
+
 btn.addEventListener("click", (e)=>{
   if(longPressTriggered) return;
 
