@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>社員紹介＋おみくじ</title>
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
@@ -25,23 +25,7 @@ html, body {
 #name { font-size:calc(22px + 2vw); }
 .image-wrapper { margin-top:1em; position:relative; width:90%; max-width:400px; }
 .image { display:block; width:100%; height:auto; position:absolute; top:0; left:0; opacity:0; transition:opacity 0.8s ease; border-radius:10px; }
-#omikujiBtn { 
-  position: fixed; 
-  bottom: 20%; 
-  left:50%; 
-  transform:translate(-50%,0); 
-  padding:12px 35px; 
-  font-size:22px; 
-  font-weight:bold; 
-  border:none; 
-  border-radius:50px; 
-  background: linear-gradient(145deg, #1a2a6c, #0f1b4c); 
-  color:#fff; 
-  cursor:pointer; 
-  z-index:4; 
-  display:none; 
-  white-space:nowrap; 
-}
+#omikujiBtn { position: fixed; bottom: 20%; left:50%; transform:translate(-50%,0); width:160px; padding:12px 25px; font-size:22px; font-weight:bold; border:none; border-radius:50px; background: linear-gradient(145deg, #1a2a6c, #0f1b4c); color:#fff; cursor:pointer; z-index:4; display:none; white-space:nowrap; }
 #probBtn { position: fixed; bottom:20px; right:20px; padding:10px 15px; font-size:16px; border:none; border-radius:8px; background: linear-gradient(145deg, #0f1b4c, #1a2a6c); color:#fff; cursor:pointer; display:none; z-index:4; }
 #history { display:none; position: fixed; bottom:20px; left:20px; font-size:16px; background:#fff; color:#0f1b4c; padding:5px 10px; border-radius:8px; max-width:250px; z-index:99999; text-align:center; word-break:break-word; }
 #probPopup { position: fixed; bottom: -500px; left:50%; transform:translateX(-50%); width:280px; max-height:400px; overflow-y:auto; background:#0f1b4c; color:#fff; font-size:16px; padding:15px; z-index:999999; text-align:left; border-radius:16px; border:2px solid silver; box-shadow:0 8px 20px rgba(0,0,0,0.3); transition:bottom 0.4s ease; }
@@ -61,7 +45,7 @@ html, body {
 #broom { position:absolute; font-size:30px; display:none; z-index:99999; pointer-events:none; }
 
 /* ヒントマーク */
-#hintBtn { position:fixed; top:10px; right:10px; font-size:28px; z-index:999999; cursor:pointer; }
+#hintBtn { position:fixed; top:10px; right:10px; font-size:28px; z-index:999999; cursor:pointer; display:none; }
 #hintPopup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:300px; background:#ffffff; color:#0f1b4c; border-radius:16px; padding:20px; box-shadow:0 0 20px rgba(0,0,0,0.6); text-align:left; font-weight:bold; z-index:1000000; font-family:'Playfair Display', serif; }
 #hintPopup p { margin:8px 0; }
 </style>
@@ -94,7 +78,7 @@ html, body {
 </div>
 
 <div id="broom">🧹</div>
-<div id="hintBtn">🔔</div>
+<div id="hintBtn">💡</div>
 <div id="hintPopup">
   <p>ある機能が隠れてるよ</p>
   <p>色々操作して探してね</p>
@@ -150,8 +134,13 @@ setTimeout(()=>{
     if(showA){ imgA.style.zIndex=2; imgB.style.zIndex=1; imgA.style.opacity=1; imgB.style.opacity=0; }
     else{ imgB.style.zIndex=2; imgA.style.zIndex=1; imgB.style.opacity=1; imgA.style.opacity=0; }
   },2000);
+
+  // おみくじボタンと確率ボタン表示
   document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
+
+  // ヒントボタンも表示
+  document.getElementById("hintBtn").style.display="block";
 },8000);
 
 // --- 傾き ---
@@ -297,7 +286,7 @@ btnYes.addEventListener("click",()=>{
   resultDisplay.style.display="none";
   roulette.style.display="none";
   updateProbPopup();
-  document.body.style.background="#ffffff"; // リセットで白に戻す
+  document.body.style.background="#ffffff";
   modal.style.display="none";
 });
 btnNo.addEventListener("click",()=>{ modal.style.display="none"; });
@@ -305,13 +294,10 @@ btnNo.addEventListener("click",()=>{ modal.style.display="none"; });
 // --- ヒント ---
 const hintBtn=document.getElementById("hintBtn");
 const hintPopup=document.getElementById("hintPopup");
-hintBtn.addEventListener("click", (e)=>{
-  e.stopPropagation();
-  hintPopup.style.display = hintPopup.style.display === "block" ? "none" : "block";
-});
-document.addEventListener("click", (e)=>{
-  if(hintPopup.style.display === "block" && e.target !== hintBtn && !hintPopup.contains(e.target)){
-    hintPopup.style.display = "none";
+hintBtn.addEventListener("click",()=>{ hintPopup.style.display=hintPopup.style.display==="block"?"none":"block"; });
+document.body.addEventListener("click",(e)=>{
+  if(hintPopup.style.display==="block" && !hintPopup.contains(e.target) && e.target!==hintBtn){
+    hintPopup.style.display="none";
   }
 });
 
@@ -320,4 +306,3 @@ document.body.addEventListener("click",initDeviceMotion,{once:true});
 </script>
 </body>
 </html>
-
