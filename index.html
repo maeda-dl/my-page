@@ -75,6 +75,7 @@ html, body {
   color:#fff; cursor:pointer; z-index:4;
   animation: float 3s ease-in-out infinite;
   display:none; white-space:nowrap; text-align:center;
+  position: relative; overflow: hidden; /* 波紋用 */
 }
 @keyframes float { 0%,100%{transform:translate(-50%,0) translateY(0);} 50%{transform:translate(-50%,0) translateY(-10px);} }
 
@@ -128,6 +129,22 @@ html, body {
 #resultDisplay { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
   font-size:60px; font-weight:bold; text-align:center; display:none; z-index:99999;
   color:#ff4500; text-shadow:2px 2px 10px rgba(0,0,0,0.3);
+}
+
+/* 波紋アニメーション */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  background: rgba(255,255,255,0.6);
+  animation: ripple-animation 0.6s linear;
+  pointer-events: none;
+}
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
 }
 </style>
 </head>
@@ -264,10 +281,20 @@ function pickFortune(){
 let tapCount = 0;
 let tapTimer = null;
 
-btn.addEventListener("click",()=>{
+btn.addEventListener("click",(e)=>{
+  // 波紋作成
+  const ripple = document.createElement("span");
+  ripple.className = "ripple";
+  const rect = btn.getBoundingClientRect();
+  ripple.style.left = (e.clientX - rect.left) + "px";
+  ripple.style.top = (e.clientY - rect.top) + "px";
+  btn.appendChild(ripple);
+  ripple.addEventListener("animationend", ()=>{ ripple.remove(); });
+
+  // --- おみくじ処理 ---
   tapCount++;
   clearTimeout(tapTimer);
-  tapTimer = setTimeout(()=>{ tapCount=0; }, 1000); // 1秒以内に3回で判定
+  tapTimer = setTimeout(()=>{ tapCount=0; }, 1000);
 
   if(tapCount >= 3){
     tapCount = 0;
@@ -278,10 +305,10 @@ btn.addEventListener("click",()=>{
       updateProbPopup();
       alert("リセットしました！");
     }
-    return; // リセット時はおみくじ処理中断
+    return;
   }
 
-  // --- おみくじルーレット処理 ---
+  // ルーレット処理
   btn.style.display="none";
   roulette.style.display="block";
   rouletteInner.innerHTML="";
@@ -330,4 +357,3 @@ btn.addEventListener("click",()=>{
 </script>
 </body>
 </html>
-
