@@ -343,18 +343,31 @@ btn.addEventListener("click",()=>{
   }, 1200);
 });
 
-// 🔹 長押し5秒でリロード
+// 🔹 長押し5秒で確認ダイアログ
 let pressTimer;
-document.body.addEventListener("mousedown", () => {
-  pressTimer = setTimeout(() => location.reload(), 5000);
-});
-document.body.addEventListener("mouseup", () => clearTimeout(pressTimer));
-document.body.addEventListener("mouseleave", () => clearTimeout(pressTimer));
-document.body.addEventListener("touchstart", () => {
-  pressTimer = setTimeout(() => location.reload(), 5000);
-});
-document.body.addEventListener("touchend", () => clearTimeout(pressTimer));
-document.body.addEventListener("touchcancel", () => clearTimeout(pressTimer));
+const resetDialog = document.getElementById("resetDialog");
+const resetYes = document.getElementById("resetYes");
+const resetNo = document.getElementById("resetNo");
+
+function startPress() {
+  pressTimer = setTimeout(() => {
+    resetDialog.style.display = "block";
+  }, 5000);
+}
+function cancelPress() {
+  clearTimeout(pressTimer);
+}
+
+document.body.addEventListener("mousedown", startPress);
+document.body.addEventListener("mouseup", cancelPress);
+document.body.addEventListener("mouseleave", cancelPress);
+document.body.addEventListener("touchstart", startPress);
+document.body.addEventListener("touchend", cancelPress);
+document.body.addEventListener("touchcancel", cancelPress);
+
+resetYes.addEventListener("click", ()=> location.reload());
+resetNo.addEventListener("click", ()=> resetDialog.style.display="none");
 </script>
 </body>
 </html>
+
