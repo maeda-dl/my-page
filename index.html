@@ -358,7 +358,7 @@ window.addEventListener('devicemotion', (event) => {
   const acc = event.accelerationIncludingGravity;
   if(!acc) return;
 
-  const threshold = 12;
+  const threshold = 25;
   const now = Date.now();
   const totalAcc = Math.sqrt(acc.x*acc.x + acc.y*acc.y + acc.z*acc.z);
 
@@ -393,3 +393,4 @@ btnNo.addEventListener("click", ()=>{
 </script>
 </body>
 </html>
+
