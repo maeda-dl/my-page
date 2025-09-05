@@ -14,7 +14,7 @@ html, body {
   background: #ffffff;
   overflow-x: hidden;
   overflow-y: hidden;
-  transition: background 1s ease; /* 背景フェード */
+  transition: background 1s ease;
 }
 #particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 
@@ -339,12 +339,14 @@ function nextBackgroundColor(){
   bgIndex = (bgIndex + 1) % bgColors.length;
 }
 
-// --- シェイク判定（2回で背景、4回でリセット） ---
+// --- シェイク判定（0.5秒以内に2回で背景、4回でリセット） ---
 let shakeTimes = 0;
+let lastShakeTime = 0;
 let lastAcc = {x:0,y:0,z:0};
 const modal = document.getElementById("resetModal");
 const btnYes = document.getElementById("modalYes");
 const btnNo = document.getElementById("modalNo");
+const shakeWindow = 500; // 0.5秒
 
 window.addEventListener('devicemotion', (event)=>{
   const acc = event.accelerationIncludingGravity;
@@ -354,16 +356,23 @@ window.addEventListener('devicemotion', (event)=>{
   const diffY = acc.y - lastAcc.y;
   const diffZ = acc.z - lastAcc.z;
   const totalDiff = Math.sqrt(diffX*diffX + diffY*diffY + diffZ*diffZ);
-
   lastAcc = {x: acc.x, y: acc.y, z: acc.z};
 
   const threshold = 25;
+  const now = Date.now();
+
   if(totalDiff > threshold){
-    shakeTimes++;
+    if(now - lastShakeTime <= shakeWindow){
+      shakeTimes++;
+    } else {
+      shakeTimes = 1;
+    }
+    lastShakeTime = now;
+
     if(shakeTimes === 2){
-      nextBackgroundColor(); // 背景変更
+      nextBackgroundColor();
     } else if(shakeTimes >= 4){
-      modal.style.display = "block"; // リセットモーダル
+      modal.style.display = "block";
       shakeTimes = 0;
     }
   }
