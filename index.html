@@ -96,7 +96,7 @@ html, body {
 /* 確率ポップアップ */
 #probPopup {
   position: fixed;
-  bottom: -500px; /* 初期は画面下に隠す */
+  bottom: -500px;
   left:50%;
   transform: translateX(-50%);
   width:280px; max-height:400px; overflow-y:auto;
@@ -106,10 +106,10 @@ html, body {
   border-radius:16px;
   border: 2px solid silver;
   box-shadow:0 8px 20px rgba(0,0,0,0.3);
-  transition: bottom 0.4s ease; /* スライド用トランジション */
+  transition: bottom 0.4s ease;
 }
 #probPopup.open {
-  bottom: 80px; /* 出現位置 */
+  bottom: 80px;
 }
 #probPopup .probLine {
   display:flex; justify-content:space-between; 
@@ -129,6 +129,31 @@ html, body {
   font-size:60px; font-weight:bold; text-align:center; display:none; z-index:99999;
   color:#ff4500; text-shadow:2px 2px 10px rgba(0,0,0,0.3);
 }
+
+/* --- リセットモーダル --- */
+#resetModal {
+  display:none;
+  position:fixed; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  background:rgba(255,255,255,0.95);
+  border-radius:16px;
+  padding:20px 25px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  text-align:center;
+  z-index:1000000;
+  font-family:'Playfair Display', serif;
+}
+#resetModal p { font-size:18px; margin-bottom:20px; }
+#resetModal button {
+  margin:0 10px;
+  padding:8px 20px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+}
+#modalYes { background:#1a2a6c; color:#fff; }
+#modalNo { background:#ccc; color:#000; }
 </style>
 </head>
 <body>
@@ -152,6 +177,13 @@ html, body {
 <button id="omikujiBtn">おみくじを引く ✨</button>
 <button id="probBtn">確率詳細</button>
 <div id="probPopup"></div>
+
+<!-- モーダル -->
+<div id="resetModal">
+  <p>おみくじ履歴をリセットしますか？</p>
+  <button id="modalYes">Yes</button>
+  <button id="modalNo">No</button>
+</div>
 
 <script>
 // --- 粒子アニメーション ---
@@ -239,7 +271,6 @@ probBtn.addEventListener("click",()=>{
   updateProbPopup();
   probPopup.classList.toggle("open");
 });
-// 他クリックで閉じる
 document.body.addEventListener("click", (e)=>{
   if(probPopup.classList.contains("open") && e.target!==probBtn && !probPopup.contains(e.target)){
     probPopup.classList.remove("open");
@@ -252,6 +283,7 @@ const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
+let totalCount=0;
 
 function pickFortune(){
   const rand = Math.random();
@@ -260,7 +292,6 @@ function pickFortune(){
   return fortunes[fortunes.length-1].name;
 }
 
-let totalCount=0;
 btn.addEventListener("click",()=>{
   btn.style.display="none";
   roulette.style.display="block";
@@ -308,24 +339,27 @@ btn.addEventListener("click",()=>{
   }, 1200);
 });
 
-// --- 背景色パターン ---
+// --- 背景色順番用 ---
 const bgColors = ["#fef6f0", "#e6f7ff", "#f0fff0", "#fff0f5", "#fffaf0", "#f5f5dc", "#f0f8ff"];
-function changeBackgroundColor() {
-  const color = bgColors[Math.floor(Math.random() * bgColors.length)];
-  document.body.style.background = color;
+let bgIndex = 0;
+function nextBackgroundColor(){
+  document.body.style.background = bgColors[bgIndex];
+  bgIndex = (bgIndex + 1) % bgColors.length;
 }
 
-// --- ダブルシェイク判定でリセット ---
+// --- モーダル＋ダブルシェイク判定 ---
 let lastShakeTime = 0;
 let shakeCount = 0;
+const modal = document.getElementById("resetModal");
+const btnYes = document.getElementById("modalYes");
+const btnNo = document.getElementById("modalNo");
 
 window.addEventListener('devicemotion', (event) => {
   const acc = event.accelerationIncludingGravity;
   if(!acc) return;
-  
+
   const threshold = 12;
   const now = Date.now();
-  
   const totalAcc = Math.sqrt(acc.x*acc.x + acc.y*acc.y + acc.z*acc.z);
 
   if(totalAcc > threshold){
@@ -333,21 +367,28 @@ window.addEventListener('devicemotion', (event) => {
       shakeCount++;
       if(shakeCount >= 2){
         shakeCount = 0;
-        if(confirm("おみくじ履歴をリセットしますか？")){
-          for(let key in fortuneCounts) fortuneCounts[key] = 0;
-          totalCount = 0;
-          history.style.display = "none";
-          resultDisplay.style.display = "none";
-          roulette.style.display = "none";
-          updateProbPopup();
-          changeBackgroundColor();
-        }
+        modal.style.display = "block";
       }
     } else {
       shakeCount = 1;
     }
     lastShakeTime = now;
   }
+});
+
+btnYes.addEventListener("click", ()=>{
+  for(let key in fortuneCounts) fortuneCounts[key] = 0;
+  totalCount = 0;
+  history.style.display = "none";
+  resultDisplay.style.display = "none";
+  roulette.style.display = "none";
+  updateProbPopup();
+  nextBackgroundColor();
+  modal.style.display = "none";
+});
+
+btnNo.addEventListener("click", ()=>{
+  modal.style.display = "none";
 });
 </script>
 </body>
