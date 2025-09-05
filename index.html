@@ -157,46 +157,49 @@ setTimeout(()=>{
   document.getElementById("hintBtn").style.display="block";
 },8000);
 
-// --- 💘 一瞬表示（画像Bかつ真下向き） ---
-let heartTimeout = null;
+// --- 💘 一瞬表示 (画像Bが表示中でスマホを真下に) ---
 const heartEl = document.createElement('div');
 heartEl.textContent = '💘';
 heartEl.style.position = 'absolute';
-heartEl.style.fontSize = '20px';
-heartEl.style.zIndex = 99999;
+heartEl.style.fontSize = '16px';
+heartEl.style.zIndex = 9999;
 heartEl.style.pointerEvents = 'none';
 heartEl.style.display = 'none';
-document.body.appendChild(heartEl);
+document.querySelector('.container').appendChild(heartEl);
 
+let heartTimeout = null;
 function showHeart(beta){
   const imgB = document.getElementById("imgB");
-  if(imgB.style.opacity != "1") return; // 画像Bでない場合は非表示
-  if(beta < 160 || beta > 200) return; // 真下でない場合は非表示
+  if(imgB.style.opacity != "1") return; // B表示中のみ
+  if(beta < 160 || beta > 200) return; // 画面を真下向きのみ
+  if(heartTimeout) return;
+
   const rect = imgB.getBoundingClientRect();
-  if(heartTimeout) clearTimeout(heartTimeout);
-  heartEl.style.left = `${rect.left + rect.width/2 - 10}px`;
+  heartEl.style.left = `${rect.left + rect.width/2 - 8}px`;
   heartEl.style.top = `${rect.top + 35}px`;
   heartEl.style.display = 'block';
-  heartTimeout = setTimeout(()=>{ heartEl.style.display='none'; heartTimeout = null; }, 300);
+  heartTimeout = setTimeout(()=>{
+    heartEl.style.display='none';
+    heartTimeout = null;
+  }, 300);
 }
 
 // --- 傾き ---
 let targetX=0,targetY=0,currentX=0,currentY=0;
-window.addEventListener('deviceorientation', (e)=>{ 
-  targetY = e.gamma/2; 
-  targetX = e.beta/3; 
-  showHeart(e.beta); // 💘 表示
+window.addEventListener('deviceorientation', (e)=>{
+  targetY=e.gamma/2; 
+  targetX=e.beta/3; 
+  showHeart(e.beta);
 });
 function animateTilt(){ 
-  currentY += (targetY - currentY)*0.15; 
-  currentX += (targetX - currentX)*0.15; 
-  document.querySelector('.container').style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`; 
+  currentY+=(targetY-currentY)*0.15; 
+  currentX+=(targetX-currentX)*0.15; 
+  document.querySelector('.container').style.transform=`rotateX(${currentX}deg) rotateY(${currentY}deg)`; 
   requestAnimationFrame(animateTilt);
 }
 animateTilt();
 
-// --- 以下、おみくじ・確率・背景色・シェイク・長押し・ヒントなど既存コードと同じ ---
-// （必要に応じて前回のコードをこの下に追加）
+// --- 以下、おみくじ・確率・背景色・シェイク・長押し・ヒント など前回のコードと同じ ---
 </script>
 </body>
 </html>
