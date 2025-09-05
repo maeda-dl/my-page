@@ -57,7 +57,7 @@ html, body {
   position:fixed; 
   top:50%; 
   left:50%; 
-  transform:translate(-50%,-50%) translateY(40px); /* ← 20px下に移動 */
+  transform:translate(-50%,-50%) translateY(40px);
   font-size:60px; 
   font-weight:bold; 
   text-align:center; 
@@ -71,11 +71,7 @@ html, body {
 #resetModal button { margin:0 10px; padding:8px 20px; border:none; border-radius:10px; font-size:16px; cursor:pointer; }
 #modalYes { background:#1a2a6c; color:#fff; }
 #modalNo { background:#ccc; color:#000; }
-
-/* ほうき */
 #broom { position:absolute; font-size:30px; display:none; z-index:99999; pointer-events:none; }
-
-/* ヒントマーク */
 #hintBtn { position:fixed; top:10px; right:10px; font-size:28px; z-index:999999; cursor:pointer; display:none; }
 #hintPopup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:300px; background:#ffffff; color:#0f1b4c; border-radius:16px; padding:20px; box-shadow:0 0 20px rgba(0,0,0,0.6); text-align:left; font-weight:bold; z-index:1000000; font-family:'Playfair Display', serif; }
 #hintPopup p { margin:8px 0; }
@@ -166,16 +162,12 @@ setTimeout(()=>{
     if(showA){ imgA.style.zIndex=2; imgB.style.zIndex=1; imgA.style.opacity=1; imgB.style.opacity=0; }
     else{ imgB.style.zIndex=2; imgA.style.zIndex=1; imgB.style.opacity=1; imgA.style.opacity=0; }
   },2000);
-
-  // おみくじボタンと確率ボタン表示
   document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
-
-  // ヒントボタンも表示
   document.getElementById("hintBtn").style.display="block";
 },8000);
 
-// --- 傾き ---
+// --- Tilt ---
 let targetX=0,targetY=0,currentX=0,currentY=0;
 window.addEventListener('deviceorientation', (e)=>{
   targetY=e.gamma/2;
@@ -189,7 +181,7 @@ function animateTilt(){
 }
 animateTilt();
 
-// --- 確率・おみくじ ---
+// --- おみくじ ---
 const fortunes=[{name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},{name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}];
 const fortuneCounts={}; fortunes.forEach(f=>fortuneCounts[f.name]=0);
 const probBtn=document.getElementById("probBtn");
@@ -206,14 +198,12 @@ const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
 let totalCount=0;
-
 function pickFortune(){
   const rand=Math.random();
   let sum=0;
   for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; }
   return fortunes[fortunes.length-1].name;
 }
-
 btn.addEventListener("click",()=>{
   btn.style.display="none";
   roulette.style.display="block";
@@ -233,27 +223,21 @@ btn.addEventListener("click",()=>{
   setTimeout(()=>{
     rouletteInner.style.transition=`transform 800ms ease-out`;
     rouletteInner.style.transform=`translateX(${offset}px)`;
-setTimeout(()=>{
-  totalCount++; 
-  fortuneCounts[selectedName]++;
-
-  // ルーレットを止めた後、まず1秒待つ
-  setTimeout(()=>{
-    roulette.style.display="none"; // 1秒後にルーレット非表示
-    resultDisplay.textContent = selectedName;
-    resultDisplay.style.display = "block";
-
     setTimeout(()=>{
-      resultDisplay.style.display="none";
-      btn.style.display="inline-block";
-      history.textContent=`${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
-      history.style.display="block";
-      selectedDiv.classList.remove('selected');
-    },3000);
-
-  },1000); // ←ここで1秒待ってから結果表示
-},1300);
-
+      totalCount++; fortuneCounts[selectedName]++;
+      setTimeout(()=>{
+        roulette.style.display="none";
+        resultDisplay.textContent=selectedName;
+        resultDisplay.style.display="block";
+        setTimeout(()=>{
+          resultDisplay.style.display="none";
+          btn.style.display="inline-block";
+          history.textContent=`${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
+          history.style.display="block";
+          selectedDiv.classList.remove('selected');
+        },3000);
+      },1000);
+    },1300);
   },1200);
 });
 
@@ -262,21 +246,16 @@ const bgColors=["#fef6f0","#e6f7ff","#f0fff0","#fff0f5","#fffaf0","#f5f5dc","#ff
 let bgIndex=0;
 function nextBackgroundColor(){ document.body.style.background=bgColors[bgIndex]; bgIndex=(bgIndex+1)%bgColors.length; }
 
-// --- シェイク対応 iOS/Android ---
-let shakeTimes=0;
-let lastShakeTime=0;
-let lastAcc={x:0,y:0,z:0};
+// --- Shake ---
+let shakeTimes=0; let lastShakeTime=0; let lastAcc={x:0,y:0,z:0};
 const modal=document.getElementById("resetModal");
 const btnYes=document.getElementById("modalYes");
 const btnNo=document.getElementById("modalNo");
 const shakeWindow=500;
-
 function handleMotion(event){
   const acc=event.accelerationIncludingGravity;
   if(!acc) return;
-  const diffX=acc.x-lastAcc.x;
-  const diffY=acc.y-lastAcc.y;
-  const diffZ=acc.z-lastAcc.z;
+  const diffX=acc.x-lastAcc.x, diffY=acc.y-lastAcc.y, diffZ=acc.z-lastAcc.z;
   const totalDiff=Math.sqrt(diffX*diffX+diffY*diffY+diffZ*diffZ);
   lastAcc={x:acc.x,y:acc.y,z:acc.z};
   const threshold=25;
@@ -287,24 +266,22 @@ function handleMotion(event){
     if(shakeTimes===2) nextBackgroundColor();
   }
 }
-
-// iOS 加速度許可
 function initDeviceMotion(){
   if(typeof DeviceMotionEvent.requestPermission==='function'){
-    DeviceMotionEvent.requestPermission().then(response=>{
-      if(response==='granted'){ window.addEventListener('devicemotion', handleMotion);}
-    }).catch(console.error);
+    DeviceMotionEvent.requestPermission().then(response=>{ if(response==='granted'){ window.addEventListener('devicemotion', handleMotion);} }).catch(console.error);
   } else { window.addEventListener('devicemotion', handleMotion);}
 }
 
-// --- ほうき DataLine ---
+// --- DataLine ほうき 5秒 ---
 const broom=document.getElementById("broom");
 const dataLineEl=document.getElementById("dataLine");
+let broomTimer=null;
 dataLineEl.addEventListener("touchstart",(e)=>{
   const touch=e.touches[0];
   broom.style.left=`${touch.clientX-15}px`;
   broom.style.top=`${touch.clientY-15}px`;
   broom.style.display="block";
+  broomTimer=setTimeout(()=>{ modal.style.display="block"; },5000);
 });
 dataLineEl.addEventListener("touchmove",(e)=>{
   e.preventDefault();
@@ -312,40 +289,19 @@ dataLineEl.addEventListener("touchmove",(e)=>{
   broom.style.left=`${touch.clientX-15}px`;
   broom.style.top=`${touch.clientY-15}px`;
 });
-dataLineEl.addEventListener("touchend",(e)=>{
+dataLineEl.addEventListener("touchend",()=>{
   broom.style.display="none";
-  // モーダル表示のみ、背景は変更しない
-  modal.style.display="block";
+  clearTimeout(broomTimer);
 });
 
-// --- リセットモーダル ---
-btnYes.addEventListener("click",()=>{
-  for(let key in fortuneCounts) fortuneCounts[key]=0;
-  totalCount=0;
-  history.style.display="none";
-  resultDisplay.style.display="none";
-  roulette.style.display="none";
-  updateProbPopup();
-  document.body.style.background="#ffffff"; // 白に戻す
-  modal.style.display="none";
-});
-btnNo.addEventListener("click",()=>{ modal.style.display="none"; });
+// --- ResetModal ---
+btnYes.addEventListener("click",()=>{ totalCount=0; for(let key in fortuneCounts){ fortuneCounts[key]=0;} history.style.display="none"; modal.style.display="none";});
+btnNo.addEventListener("click",()=>{ modal.style.display="none";});
 
 // --- ヒント ---
 const hintBtn=document.getElementById("hintBtn");
 const hintPopup=document.getElementById("hintPopup");
-hintBtn.addEventListener("click",()=>{ hintPopup.style.display=hintPopup.style.display==="block"?"none":"block"; });
-document.body.addEventListener("click",(e)=>{
-  if(hintPopup.style.display==="block" && !hintPopup.contains(e.target) && e.target!==hintBtn){
-    hintPopup.style.display="none";
-  }
-});
-
-// --- iOSユーザー操作で加速度許可 ---
-document.body.addEventListener("click",initDeviceMotion,{once:true});
+hintBtn.addEventListener("click",()=>{ hintPopup.style.display=(hintPopup.style.display==="block"?"none":"block"); });
 </script>
 </body>
 </html>
-
-
-
