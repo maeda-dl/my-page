@@ -53,7 +53,19 @@ html, body {
 #roulette { position: fixed; bottom:30%; left:50%; transform:translateX(-50%); width:90%; max-width:200px; height:70px; display:none; align-items:center; justify-content:center; z-index:99998; border-radius:30px; overflow:hidden; background:#fefefe; border:3px solid #0f1b4c; }
 #rouletteInner { display:flex; white-space:nowrap; font-size:28px; font-weight:bold; will-change: transform; }
 .fortune { min-width:130px; height:60px; margin:0 5px; color:#0f1b4c; font-size:22px; display:flex; align-items:center; justify-content:center; }
-#resultDisplay { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:60px; font-weight:bold; text-align:center; display:none; z-index:99999; color:#ff4500; text-shadow:2px 2px 10px rgba(0,0,0,0.3); }
+#resultDisplay { 
+  position:fixed; 
+  top:50%; 
+  left:50%; 
+  transform:translate(-50%,-50%) translateY(20px); /* ← 20px下に移動 */
+  font-size:60px; 
+  font-weight:bold; 
+  text-align:center; 
+  display:none; 
+  z-index:99999; 
+  color:#ff4500; 
+  text-shadow:2px 2px 10px rgba(0,0,0,0.3); 
+}
 #resetModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(255,255,255,0.95); border-radius:16px; padding:20px 25px; box-shadow:0 8px 20px rgba(0,0,0,0.3); text-align:center; z-index:1000000; font-family:'Playfair Display', serif; }
 #resetModal p { font-size:18px; margin-bottom:20px; }
 #resetModal button { margin:0 10px; padding:8px 20px; border:none; border-radius:10px; font-size:16px; cursor:pointer; }
@@ -334,4 +346,5 @@ document.body.addEventListener("click",initDeviceMotion,{once:true});
 </script>
 </body>
 </html>
+
 
