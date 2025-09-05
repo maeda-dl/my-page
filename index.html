@@ -14,6 +14,10 @@ html, body {
   background: #ffffff;
   overflow-x: hidden;
   overflow-y: hidden;
+  -webkit-user-select: none; /* 長押しテキスト選択防止（iOS） */
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 #particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 
@@ -239,7 +243,6 @@ probBtn.addEventListener("click",()=>{
   updateProbPopup();
   probPopup.classList.toggle("open");
 });
-// 他クリックで閉じる
 document.body.addEventListener("click", (e)=>{
   if(probPopup.classList.contains("open") && e.target!==probBtn && !probPopup.contains(e.target)){
     probPopup.classList.remove("open");
@@ -272,8 +275,10 @@ btn.addEventListener("mouseup", cancelPress);
 btn.addEventListener("mouseleave", cancelPress);
 btn.addEventListener("touchend", cancelPress);
 btn.addEventListener("touchcancel", cancelPress);
+btn.addEventListener("contextmenu", e=>e.preventDefault()); // 右クリックメニュー無効
 
 function startPress(e){
+  e.preventDefault(); // 長押し時の選択・メニューを無効化
   longPressTriggered = false;
   pressTimer = setTimeout(()=>{
     longPressTriggered = true;
@@ -291,7 +296,7 @@ function cancelPress(){
   clearTimeout(pressTimer);
 }
 
-// クリックイベント（長押しと共存）
+// クリックイベント
 btn.addEventListener("click", (e)=>{
   if(longPressTriggered) return;
 
