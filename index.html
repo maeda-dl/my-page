@@ -14,7 +14,7 @@ html, body {
   background: #ffffff;
   overflow-x: hidden;
   overflow-y: hidden;
-  -webkit-user-select: none; /* 長押しテキスト選択防止（iOS） */
+  -webkit-user-select: none; 
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
@@ -68,6 +68,7 @@ html, body {
   opacity:0;
   transition:opacity 0.8s ease;
   border-radius:10px;
+  -webkit-touch-callout: none; /* iOS で長押しメニューを防止 */
 }
 
 #omikujiBtn {
@@ -158,7 +159,7 @@ html, body {
 <div id="probPopup"></div>
 
 <script>
-// 粒子アニメーション
+// ------------------- 粒子アニメーション -------------------
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
@@ -185,7 +186,7 @@ function drawParticles(){
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
-// フェードイン
+// ------------------- フェードイン -------------------
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 const dataLine = document.getElementById("dataLine");
@@ -194,7 +195,7 @@ dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=>
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
-// 画像A/B切替
+// ------------------- 画像A/B切替 -------------------
 setTimeout(()=>{
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
@@ -211,7 +212,7 @@ setTimeout(()=>{
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
 
-// 傾き反応
+// ------------------- 傾き反応 -------------------
 let targetX=0, targetY=0, currentX=0, currentY=0;
 window.addEventListener('deviceorientation', (e)=>{
   targetY = e.gamma/2;
@@ -225,7 +226,7 @@ function animateTilt(){
 }
 animateTilt();
 
-// 確率詳細
+// ------------------- 確率詳細 -------------------
 const fortunes=[
   {name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},
   {name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}
@@ -249,7 +250,7 @@ document.body.addEventListener("click", (e)=>{
   }
 });
 
-// おみくじ
+// ------------------- おみくじ -------------------
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
@@ -268,6 +269,7 @@ let pressTimer;
 let longPressTriggered = false;
 
 function startPress(e){
+  e.preventDefault(); // 長押しメニュー防止
   longPressTriggered = false;
   pressTimer = setTimeout(()=>{
     longPressTriggered = true;
@@ -291,8 +293,7 @@ btn.addEventListener("mouseup", cancelPress);
 btn.addEventListener("mouseleave", cancelPress);
 btn.addEventListener("touchend", cancelPress);
 btn.addEventListener("touchcancel", cancelPress);
-btn.addEventListener("touchmove", cancelPress); // 移動でキャンセル
-btn.addEventListener("contextmenu", e=>e.preventDefault()); // 右クリック無効
+btn.addEventListener("touchmove", cancelPress);
 
 btn.addEventListener("click", (e)=>{
   if(longPressTriggered) return;
@@ -341,6 +342,11 @@ btn.addEventListener("click", (e)=>{
       }, 3000);
     }, 1300);
   }, 1200);
+});
+
+// ------------------- 画像長押しメニュー無効化 -------------------
+document.querySelectorAll('.image').forEach(img=>{
+  img.addEventListener('contextmenu', e=>e.preventDefault());
 });
 </script>
 </body>
