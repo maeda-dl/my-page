@@ -150,20 +150,63 @@ setTimeout(()=>{
   imgA.style.zIndex=2; imgB.style.zIndex=1;
   imgA.style.opacity=1; imgB.style.opacity=0; name.style.opacity=1;
   let showA=true;
-  setInterval(()=>{ showA=!showA; if(showA){ imgA.style.zIndex=2; imgB.style.zIndex=1; imgA.style.opacity=1; imgB.style.opacity=0; } else{ imgB.style.zIndex=2; imgA.style.zIndex=1; imgB.style.opacity=1; imgA.style.opacity=0; } },2000);
+  setInterval(()=>{
+    showA=!showA;
+    if(showA){
+      imgA.style.zIndex=2; imgB.style.zIndex=1; imgA.style.opacity=1; imgB.style.opacity=0;
+    } else{
+      imgB.style.zIndex=2; imgA.style.zIndex=1; imgB.style.opacity=1; imgA.style.opacity=0;
+    }
+  },2000);
 
   document.getElementById("omikujiBtn").style.display="inline-block";
   document.getElementById("probBtn").style.display="inline-block";
   document.getElementById("hintBtn").style.display="block";
 },8000);
 
+// --- 💘 表示 ---
+const heartEl = document.createElement('div');
+heartEl.textContent = '💘';
+heartEl.style.position = 'absolute';
+heartEl.style.fontSize = '16px';
+heartEl.style.zIndex = 9999;
+heartEl.style.pointerEvents = 'none'; 
+heartEl.style.display = 'none';
+document.body.appendChild(heartEl);
+let heartTimeout = null;
+
+function showHeartIfFacingDown(beta){
+  const imgB = document.getElementById('imgB');
+  if(imgB.style.opacity !== "1") return;
+  if(beta < 160 || beta > 200) return;
+  if(heartTimeout) return;
+  const rect = imgB.getBoundingClientRect();
+  heartEl.style.left = `${rect.left + rect.width/2 - 8}px`;
+  heartEl.style.top = `${rect.top + 35}px`;
+  heartEl.style.display = 'block';
+  heartTimeout = setTimeout(()=>{
+    heartEl.style.display = 'none';
+    heartTimeout = null;
+  }, 300);
+}
+
 // --- 傾き ---
 let targetX=0,targetY=0,currentX=0,currentY=0;
-window.addEventListener('deviceorientation', (e)=>{ targetY=e.gamma/2; targetX=e.beta/3; });
-function animateTilt(){ currentY+=(targetY-currentY)*0.15; currentX+=(targetX-currentX)*0.15; document.querySelector('.container').style.transform=`rotateX(${currentX}deg) rotateY(${currentY}deg)`; requestAnimationFrame(animateTilt);}
+window.addEventListener('deviceorientation', (e)=>{
+  targetY = e.gamma/2;
+  targetX = e.beta/3;
+  const container = document.querySelector('.container');
+  container.style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
+  currentY+=(targetY-currentY)*0.15;
+  currentX+=(targetX-currentX)*0.15;
+
+  // 💘表示
+  showHeartIfFacingDown(e.beta);
+});
+function animateTilt(){ requestAnimationFrame(animateTilt); }
 animateTilt();
 
-// --- おみくじ・確率 ---
+// --- おみくじ ---
 const fortunes=[{name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},{name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}];
 const fortuneCounts={}; fortunes.forEach(f=>fortuneCounts[f.name]=0);
 const probBtn=document.getElementById("probBtn");
@@ -219,7 +262,6 @@ btn.addEventListener("click", ()=>{
           history.style.display="block";
           selectedDiv.classList.remove('selected');
 
-          // ★ 15回目専用粒子
           if(totalCount === 15){
             specialParticles = [];
             for(let i=0;i<5;i++){
@@ -230,7 +272,6 @@ btn.addEventListener("click", ()=>{
             specialParticlesAdded = true;
           }
 
-          // ★ 16回目以降は消す
           if(totalCount > 15 && specialParticlesAdded){
             specialParticles.forEach(p=>{ const idx=particles.indexOf(p); if(idx>-1) particles.splice(idx,1); });
             specialParticlesAdded=false;
