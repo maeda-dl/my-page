@@ -96,7 +96,7 @@ html, body {
 /* 確率ポップアップ */
 #probPopup {
   position: fixed;
-  bottom: -500px; /* 初期は画面下に隠す */
+  bottom: -500px;
   left:50%;
   transform: translateX(-50%);
   width:280px; max-height:400px; overflow-y:auto;
@@ -106,10 +106,10 @@ html, body {
   border-radius:16px;
   border: 2px solid silver;
   box-shadow:0 8px 20px rgba(0,0,0,0.3);
-  transition: bottom 0.4s ease; /* スライド用トランジション */
+  transition: bottom 0.4s ease;
 }
 #probPopup.open {
-  bottom: 80px; /* 出現位置 */
+  bottom: 80px;
 }
 #probPopup .probLine {
   display:flex; justify-content:space-between; 
@@ -261,7 +261,40 @@ function pickFortune(){
 }
 
 let totalCount=0;
-btn.addEventListener("click",()=>{
+
+// 長押しリセット用
+let pressTimer;
+let longPressTriggered = false;
+
+btn.addEventListener("mousedown", startPress);
+btn.addEventListener("touchstart", startPress);
+btn.addEventListener("mouseup", cancelPress);
+btn.addEventListener("mouseleave", cancelPress);
+btn.addEventListener("touchend", cancelPress);
+btn.addEventListener("touchcancel", cancelPress);
+
+function startPress(e){
+  longPressTriggered = false;
+  pressTimer = setTimeout(()=>{
+    longPressTriggered = true;
+    if(confirm("おみくじ履歴がクリアされます。\n本当にリセットしますか？")){
+      totalCount = 0;
+      for(let key in fortuneCounts){ fortuneCounts[key]=0; }
+      history.textContent = "";
+      updateProbPopup();
+      alert("履歴をリセットしました。");
+    }
+  }, 5000);
+}
+
+function cancelPress(){
+  clearTimeout(pressTimer);
+}
+
+// クリックイベント（長押しと共存）
+btn.addEventListener("click", (e)=>{
+  if(longPressTriggered) return;
+
   btn.style.display="none";
   roulette.style.display="block";
   rouletteInner.innerHTML="";
@@ -307,33 +340,6 @@ btn.addEventListener("click",()=>{
     }, 1300);
   }, 1200);
 });
-
-// 長押しで履歴リセット
-let pressTimer;
-btn.addEventListener("mousedown", startPress);
-btn.addEventListener("touchstart", startPress);
-
-btn.addEventListener("mouseup", cancelPress);
-btn.addEventListener("mouseleave", cancelPress);
-btn.addEventListener("touchend", cancelPress);
-btn.addEventListener("touchcancel", cancelPress);
-
-function startPress(e){
-  e.preventDefault();
-  pressTimer = setTimeout(()=>{
-    if(confirm("おみくじ履歴がクリアされます。\n本当にリセットしますか？")){
-      totalCount = 0;
-      for(let key in fortuneCounts){ fortuneCounts[key]=0; }
-      history.textContent = "";
-      updateProbPopup();
-      alert("履歴をリセットしました。");
-    }
-  },5000); // 5秒長押し
-}
-
-function cancelPress(){
-  clearTimeout(pressTimer);
-}
 </script>
 </body>
 </html>
