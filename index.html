@@ -14,10 +14,6 @@ html, body {
   background: #ffffff;
   overflow-x: hidden;
   overflow-y: hidden;
-  -webkit-user-select: none; 
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }
 #particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 
@@ -68,7 +64,6 @@ html, body {
   opacity:0;
   transition:opacity 0.8s ease;
   border-radius:10px;
-  -webkit-touch-callout: none; /* iOS で長押しメニューを防止 */
 }
 
 #omikujiBtn {
@@ -101,7 +96,7 @@ html, body {
 /* 確率ポップアップ */
 #probPopup {
   position: fixed;
-  bottom: -500px;
+  bottom: -500px; /* 初期は画面下に隠す */
   left:50%;
   transform: translateX(-50%);
   width:280px; max-height:400px; overflow-y:auto;
@@ -111,10 +106,10 @@ html, body {
   border-radius:16px;
   border: 2px solid silver;
   box-shadow:0 8px 20px rgba(0,0,0,0.3);
-  transition: bottom 0.4s ease;
+  transition: bottom 0.4s ease; /* スライド用トランジション */
 }
 #probPopup.open {
-  bottom: 80px;
+  bottom: 80px; /* 出現位置 */
 }
 #probPopup .probLine {
   display:flex; justify-content:space-between; 
@@ -159,7 +154,7 @@ html, body {
 <div id="probPopup"></div>
 
 <script>
-// ------------------- 粒子アニメーション -------------------
+// 粒子アニメーション
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
@@ -186,7 +181,7 @@ function drawParticles(){
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
-// ------------------- フェードイン -------------------
+// フェードイン
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 const dataLine = document.getElementById("dataLine");
@@ -195,7 +190,7 @@ dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=>
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
-// ------------------- 画像A/B切替 -------------------
+// 画像A/B切替
 setTimeout(()=>{
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
@@ -212,7 +207,7 @@ setTimeout(()=>{
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
 
-// ------------------- 傾き反応 -------------------
+// 傾き反応
 let targetX=0, targetY=0, currentX=0, currentY=0;
 window.addEventListener('deviceorientation', (e)=>{
   targetY = e.gamma/2;
@@ -226,7 +221,7 @@ function animateTilt(){
 }
 animateTilt();
 
-// ------------------- 確率詳細 -------------------
+// 確率詳細
 const fortunes=[
   {name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},
   {name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}
@@ -250,12 +245,13 @@ document.body.addEventListener("click", (e)=>{
   }
 });
 
-// ------------------- おみくじ -------------------
+// おみくじ処理
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
+let totalCount=0;
 
 function pickFortune(){
   const rand = Math.random();
@@ -264,40 +260,28 @@ function pickFortune(){
   return fortunes[fortunes.length-1].name;
 }
 
-let totalCount=0;
-let pressTimer;
-let longPressTriggered = false;
+// 3回連続トントントンでリセット（猶予0.5秒）
+let tapCount = 0;
+let tapTimer = null;
 
-function startPress(e){
-  e.preventDefault(); // 長押しメニュー防止
-  longPressTriggered = false;
-  pressTimer = setTimeout(()=>{
-    longPressTriggered = true;
-    if(confirm("おみくじ履歴がクリアされます。\n本当にリセットしますか？")){
-      totalCount = 0;
-      for(let key in fortuneCounts){ fortuneCounts[key]=0; }
-      history.textContent = "";
+btn.addEventListener("click",()=>{
+  tapCount++;
+  clearTimeout(tapTimer);
+  tapTimer = setTimeout(()=>{ tapCount=0; }, 500); // 0.5秒以内に3回で判定
+
+  if(tapCount >= 3){
+    tapCount = 0;
+    if(confirm("リセットします。おみくじ履歴は削除されます。よろしいですか？")){
+      totalCount=0;
+      for(let f of fortunes){ fortuneCounts[f.name]=0; }
+      history.textContent="";
       updateProbPopup();
-      alert("履歴をリセットしました。");
+      alert("リセットしました！");
     }
-  }, 5000);
-}
+    return; // リセット時はおみくじ処理中断
+  }
 
-function cancelPress(){
-  clearTimeout(pressTimer);
-}
-
-btn.addEventListener("mousedown", startPress);
-btn.addEventListener("touchstart", startPress);
-btn.addEventListener("mouseup", cancelPress);
-btn.addEventListener("mouseleave", cancelPress);
-btn.addEventListener("touchend", cancelPress);
-btn.addEventListener("touchcancel", cancelPress);
-btn.addEventListener("touchmove", cancelPress);
-
-btn.addEventListener("click", (e)=>{
-  if(longPressTriggered) return;
-
+  // --- おみくじルーレット処理 ---
   btn.style.display="none";
   roulette.style.display="block";
   rouletteInner.innerHTML="";
@@ -342,11 +326,6 @@ btn.addEventListener("click", (e)=>{
       }, 3000);
     }, 1300);
   }, 1200);
-});
-
-// ------------------- 画像長押しメニュー無効化 -------------------
-document.querySelectorAll('.image').forEach(img=>{
-  img.addEventListener('contextmenu', e=>e.preventDefault());
 });
 </script>
 </body>
