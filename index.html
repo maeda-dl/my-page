@@ -148,23 +148,21 @@ html, body {
 #modalYes { background:#1a2a6c; color:#fff; }
 #modalNo { background:#ccc; color:#000; }
 
-/* --- DataLineこすり用ほうき --- */
-#broom { position: fixed; font-size: 36px; display:none; z-index:9999; pointer-events:none; }
+/* --- ほうき --- */
+#broom {
+  position:fixed; top:0; left:0; font-size:40px; pointer-events:none;
+  z-index:99997; display:none;
+}
 
-/* --- ヒントボタン --- */
-#hintBtn { position: fixed; top:15px; right:15px; font-size:28px; cursor:pointer; z-index:100000; }
+/* --- ヒント --- */
+#hintBtn {
+  position:fixed; top:20px; right:20px; font-size:28px; cursor:pointer; display:none; z-index:999999;
+}
 #hintPopup {
   display:none;
-  position: fixed; top:60px; right:15px;
-  background: rgba(255,255,255,0.95);
-  color: #0f1b4c;
-  padding: 10px 15px;
-  border-radius: 12px;
-  font-family: 'Playfair Display', serif;
-  font-weight: bold;
-  font-size: 14px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  z-index:100000;
+  position:fixed; top:60px; right:20px;
+  background:#fff;color:#0f1b4c;padding:10px;border-radius:10px;
+  font-size:16px; text-align:left; z-index:999999;
 }
 </style>
 </head>
@@ -196,10 +194,10 @@ html, body {
   <button id="modalNo">No</button>
 </div>
 
-<!-- DataLineこすり用ほうき -->
+<!-- ほうき -->
 <div id="broom">🧹</div>
 
-<!-- ヒントボタン -->
+<!-- ヒント -->
 <div id="hintBtn">💡</div>
 <div id="hintPopup">ある機能が隠れてるよ<br>色々操作してさがしてね<br>①背景色変え<br>②おみくじリセット</div>
 
@@ -365,25 +363,28 @@ function nextBackgroundColor(){
   bgIndex = (bgIndex + 1) % bgColors.length;
 }
 
-// --- こするでほうき表示とリセット ---
+// --- DataLine ほうき表示 + タップでリセット ---
+const dataLineEl = document.getElementById("dataLine");
 const broom = document.getElementById("broom");
-const resetModal = document.getElementById("resetModal");
+const modal = document.getElementById("resetModal");
 const btnYes = document.getElementById("modalYes");
 const btnNo = document.getElementById("modalNo");
 
-dataLine.addEventListener("touchstart", (e)=>{
+dataLineEl.addEventListener("touchstart", (e)=>{
   broom.style.display="block";
+  broom.style.left=e.touches[0].clientX-20+"px";
+  broom.style.top=e.touches[0].clientY-20+"px";
 });
-dataLine.addEventListener("touchmove", (e)=>{
-  const touch = e.touches[0];
-  broom.style.left = (touch.clientX-18)+"px";
-  broom.style.top = (touch.clientY-18)+"px";
+dataLineEl.addEventListener("touchmove", (e)=>{
+  broom.style.left=e.touches[0].clientX-20+"px";
+  broom.style.top=e.touches[0].clientY-20+"px";
 });
-dataLine.addEventListener("touchend", ()=>{
+dataLineEl.addEventListener("touchend", ()=>{
   broom.style.display="none";
-  resetModal.style.display="block";
+  modal.style.display="block";
 });
 
+// --- モーダル ---
 btnYes.addEventListener("click", ()=>{
   for(let key in fortuneCounts) fortuneCounts[key] = 0;
   totalCount = 0;
@@ -392,41 +393,26 @@ btnYes.addEventListener("click", ()=>{
   roulette.style.display = "none";
   updateProbPopup();
   nextBackgroundColor();
-  resetModal.style.display = "none";
+  modal.style.display = "none";
 });
-btnNo.addEventListener("click", ()=>{ resetModal.style.display = "none"; });
+btnNo.addEventListener("click", ()=>{ modal.style.display = "none"; });
 
-// --- 2回振ると背景色変更 ---
-let shakeTimes = 0;
-let lastShakeTime = 0;
-let lastAcc = {x:0,y:0,z:0};
-const shakeWindow = 500; // 0.5秒
-window.addEventListener('devicemotion', (event)=>{
-  const acc = event.accelerationIncludingGravity;
-  if(!acc) return;
-  const diffX = acc.x - lastAcc.x;
-  const diffY = acc.y - lastAcc.y;
-  const diffZ = acc.z - lastAcc.z;
-  const totalDiff = Math.sqrt(diffX*diffX + diffY*diffY + diffZ*diffZ);
-  lastAcc = {x: acc.x, y: acc.y, z: acc.z};
-  const threshold = 25;
-  const now = Date.now();
-  if(totalDiff > threshold){
-    if(now - lastShakeTime <= shakeWindow){ shakeTimes++; } 
-    else { shakeTimes = 1; }
-    lastShakeTime = now;
-    if(shakeTimes === 2){ nextBackgroundColor(); }
-  }
-});
-
-// --- ヒントボタン ---
+// --- ヒント ---
 const hintBtn = document.getElementById("hintBtn");
 const hintPopup = document.getElementById("hintPopup");
-hintBtn.addEventListener("click", ()=>{
-  hintPopup.style.display = hintPopup.style.display === "block" ? "none" : "block";
-});
-document.body.addEventListener("click", (e)=>{
-  if(e.target!==hintBtn && !hintPopup.contains(e.target)) hintPopup.style.display = "none";
+hintBtn.addEventListener("click", ()=>{ hintPopup.style.display = hintPopup.style.display==="block"?"none":"block"; });
+
+// --- ヒント表示タイミング ---
+setTimeout(()=>{ hintBtn.style.display="block"; }, 9000);
+
+// --- 背景変更タップはデバイスシェイクの代わりに2回タップで背景変更 ---
+let tapCount = 0;
+window.addEventListener("click", ()=>{
+  tapCount++;
+  if(tapCount===2){
+    nextBackgroundColor();
+    tapCount=0;
+  }
 });
 </script>
 </body>
