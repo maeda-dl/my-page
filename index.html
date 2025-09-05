@@ -30,8 +30,8 @@ html, body {
   bottom: 20%;
   left: 50%;
   transform: translate(-50%,0);
-  min-width: 200px;      /* 最小幅を広めに */
-  padding: 12px 25px;    /* 左右の余白を広げる */
+  min-width: 220px;
+  padding: 12px 25px;
   font-size: 22px;
   font-weight: bold;
   border: none;
@@ -43,7 +43,7 @@ html, body {
   display: none;
   white-space: nowrap;
   text-align: center;
-  box-sizing: border-box; /* パディングを含めて幅計算 */
+  box-sizing: border-box;
 }
 #probBtn { position: fixed; bottom:20px; right:20px; padding:10px 15px; font-size:16px; border:none; border-radius:8px; background: linear-gradient(145deg, #0f1b4c, #1a2a6c); color:#fff; cursor:pointer; display:none; z-index:4; }
 #history { display:none; position: fixed; bottom:20px; left:20px; font-size:16px; background:#fff; color:#0f1b4c; padding:5px 10px; border-radius:8px; max-width:250px; z-index:99999; text-align:center; word-break:break-word; }
@@ -294,8 +294,8 @@ dataLineEl.addEventListener("touchmove",(e)=>{
 });
 dataLineEl.addEventListener("touchend",(e)=>{
   broom.style.display="none";
+  // モーダル表示のみ、背景は変更しない
   modal.style.display="block";
-  document.body.style.background="#ffffff";
 });
 
 // --- リセットモーダル ---
@@ -306,7 +306,7 @@ btnYes.addEventListener("click",()=>{
   resultDisplay.style.display="none";
   roulette.style.display="none";
   updateProbPopup();
-  document.body.style.background="#ffffff";
+  document.body.style.background="#ffffff"; // 白に戻す
   modal.style.display="none";
 });
 btnNo.addEventListener("click",()=>{ modal.style.display="none"; });
@@ -326,7 +326,3 @@ document.body.addEventListener("click",initDeviceMotion,{once:true});
 </script>
 </body>
 </html>
-
-
-
-
