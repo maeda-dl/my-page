@@ -221,19 +221,27 @@ btn.addEventListener("click",()=>{
   setTimeout(()=>{
     rouletteInner.style.transition=`transform 800ms ease-out`;
     rouletteInner.style.transform=`translateX(${offset}px)`;
+setTimeout(()=>{
+  totalCount++; 
+  fortuneCounts[selectedName]++;
+
+  // ルーレットを止めた後、まず1秒待つ
+  setTimeout(()=>{
+    roulette.style.display="none"; // 1秒後にルーレット非表示
+    resultDisplay.textContent = selectedName;
+    resultDisplay.style.display = "block";
+
     setTimeout(()=>{
-      totalCount++; fortuneCounts[selectedName]++;
-      resultDisplay.textContent=selectedName;
-      resultDisplay.style.display="block";
-      setTimeout(()=>{
-        resultDisplay.style.display="none";
-        btn.style.display="inline-block";
-        history.textContent=`${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
-        history.style.display="block";
-        roulette.style.display="none";
-        selectedDiv.classList.remove('selected');
-      },3000);
-    },1300);
+      resultDisplay.style.display="none";
+      btn.style.display="inline-block";
+      history.textContent=`${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
+      history.style.display="block";
+      selectedDiv.classList.remove('selected');
+    },3000);
+
+  },1000); // ←ここで1秒待ってから結果表示
+},1300);
+
   },1200);
 });
 
@@ -326,3 +334,4 @@ document.body.addEventListener("click",initDeviceMotion,{once:true});
 </script>
 </body>
 </html>
+
