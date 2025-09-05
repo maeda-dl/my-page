@@ -178,49 +178,44 @@ html, body {
 </div>
 
 <script>
-// --- 粒子アニメーション ---
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth; canvas.height=window.innerHeight;
-const particleChars="MAEDA";
-let particles=[];
+// --- 粒子アニメーション + ほうき --- 
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 
-// --- 粒子生成 ---
+const particleChars = "MAEDA";
+let particles = [];
 for(let i=0;i<100;i++){
-  particles.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height,
+  particles.push({
+    x:Math.random()*canvas.width, y:Math.random()*canvas.height,
     r:Math.random()*2+1, dx:(Math.random()-0.5)*1.2, dy:(Math.random()-0.5)*1.2,
     char:particleChars[Math.floor(Math.random()*particleChars.length)]
   });
 }
 
-// --- ほうき粒子 ---
-const broomParticle = {
-  x: Math.random()*canvas.width,
-  y: Math.random()*canvas.height,
-  r: 3,
-  dx: (Math.random()-0.5)*1.5,
-  dy: (Math.random()-0.5)*1.5,
-  char: "🧹",
-  isBroom: true
-};
+// ほうき1つ
+let broom = { x: Math.random()*canvas.width, y: Math.random()*canvas.height, dx:2, dy:1.5, size:24 };
 
+// 描画
 function drawParticles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
+
   // 通常粒子
+  ctx.fillStyle="rgba(80,80,80,0.8)";
   particles.forEach(p=>{
-    ctx.font = `${p.r*6}px sans-serif`;
-    ctx.fillText(p.char, p.x, p.y);
-    p.x += p.dx; p.y += p.dy;
+    ctx.font=`${p.r*6}px sans-serif`;
+    ctx.fillText(p.char,p.x,p.y);
+    p.x+=p.dx; p.y+=p.dy;
     if(p.x<0||p.x>canvas.width)p.dx*=-1;
     if(p.y<0||p.y>canvas.height)p.dy*=-1;
   });
-  // ほうき粒子を最後に描画
-  const b = broomParticle;
-  ctx.font = `${b.r*6}px sans-serif`;
-  ctx.fillText(b.char, b.x, b.y);
-  b.x += b.dx; b.y += b.dy;
-  if(b.x<0||b.x>canvas.width)b.dx*=-1;
-  if(b.y<0||b.y>canvas.height)b.dy*=-1;
+
+  // ほうき
+  ctx.font = `${broom.size}px sans-serif`;
+  ctx.fillText("🧹", broom.x, broom.y);
+  broom.x += broom.dx; broom.y += broom.dy;
+  if(broom.x<0||broom.x>canvas.width)broom.dx*=-1;
+  if(broom.y<0||broom.y>canvas.height)broom.dy*=-1;
 
   requestAnimationFrame(drawParticles);
 }
@@ -228,30 +223,22 @@ drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
 // --- ほうきタップ判定 ---
-const modal = document.getElementById("resetModal");
-function checkBroomTap(clientX, clientY){
+canvas.addEventListener('click', (e)=>{
   const rect = canvas.getBoundingClientRect();
-  const x = clientX - rect.left;
-  const y = clientY - rect.top;
-  const broomRadius = broomParticle.r*6 + 10;
-  const dx = x - broomParticle.x;
-  const dy = y - broomParticle.y;
-  if(Math.sqrt(dx*dx + dy*dy) <= broomRadius){
-    modal.style.display = "block";
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const dx = x - broom.x;
+  const dy = y - broom.y;
+  if(Math.sqrt(dx*dx + dy*dy) < broom.size){
+    document.getElementById("resetModal").style.display="block";
   }
-}
-canvas.addEventListener('click', e => checkBroomTap(e.clientX, e.clientY));
-canvas.addEventListener('touchstart', e => {
-  const touch = e.touches[0];
-  checkBroomTap(touch.clientX, touch.clientY);
 });
 
 // --- フェードイン ---
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 const dataLine = document.getElementById("dataLine");
-dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=> 
-  `<span style="animation-delay:${i*0.2}s">${c}</span>`).join('');
+dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=> `<span style="animation-delay:${i*0.2}s">${c}</span>`).join('');
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
@@ -274,19 +261,38 @@ setTimeout(()=>{
 
 // --- 傾き反応 ---
 let targetX=0, targetY=0, currentX=0, currentY=0;
-window.addEventListener('deviceorientation', (e)=>{
-  targetY = e.gamma/2;
-  targetX = e.beta/3;
-});
-function animateTilt(){
-  currentY += (targetY - currentY)*0.15;
-  currentX += (targetX - currentX)*0.15;
-  document.querySelector('.container').style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
-  requestAnimationFrame(animateTilt);
-}
+window.addEventListener('deviceorientation', (e)=>{ targetY = e.gamma/2; targetX = e.beta/3; });
+function animateTilt(){ currentY += (targetY - currentY)*0.15; currentX += (targetX - currentX)*0.15; document.querySelector('.container').style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`; requestAnimationFrame(animateTilt); }
 animateTilt();
 
-// --- 確率詳細 ---
+// --- 背景色順番用（2回振ると変わる） ---
+const bgColors = ["#fef6f0", "#e6f7ff", "#f0fff0", "#fff0f5", "#fffaf0", "#f5f5dc" , "#ffffff"];
+let bgIndex = 0;
+function nextBackgroundColor(){ document.body.style.background = bgColors[bgIndex]; bgIndex = (bgIndex + 1) % bgColors.length; }
+
+// --- 背景2回振る処理 ---
+let shakeTimes = 0;
+let lastShakeTime = 0;
+let lastAcc = {x:0,y:0,z:0};
+const shakeWindow = 500;
+window.addEventListener('devicemotion', (event)=>{
+  const acc = event.accelerationIncludingGravity;
+  if(!acc) return;
+  const diffX = acc.x - lastAcc.x;
+  const diffY = acc.y - lastAcc.y;
+  const diffZ = acc.z - lastAcc.z;
+  const totalDiff = Math.sqrt(diffX*diffX + diffY*diffY + diffZ*diffZ);
+  lastAcc = {x:acc.x, y:acc.y, z:acc.z};
+  const threshold = 25;
+  const now = Date.now();
+  if(totalDiff > threshold){
+    if(now - lastShakeTime <= shakeWindow){ shakeTimes++; } else { shakeTimes=1; }
+    lastShakeTime = now;
+    if(shakeTimes===2){ nextBackgroundColor(); shakeTimes=0; }
+  }
+});
+
+// --- おみくじ・確率・リセットモーダルは前コードと同じ ---
 const fortunes=[
   {name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},
   {name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}
@@ -295,22 +301,10 @@ const fortuneCounts = {};
 fortunes.forEach(f=>fortuneCounts[f.name]=0);
 const probBtn=document.getElementById("probBtn");
 const probPopup=document.getElementById("probPopup");
-function updateProbPopup(){
-  probPopup.innerHTML = fortunes.map(f=>
-    `<div class="probLine"><span>${f.name}</span><span>${(f.probability*100).toFixed(1)}% (${fortuneCounts[f.name]}回)</span></div>`
-  ).join("");
-}
-probBtn.addEventListener("click",()=>{
-  updateProbPopup();
-  probPopup.classList.toggle("open");
-});
-document.body.addEventListener("click", (e)=>{
-  if(probPopup.classList.contains("open") && e.target!==probBtn && !probPopup.contains(e.target)){
-    probPopup.classList.remove("open");
-  }
-});
+function updateProbPopup(){ probPopup.innerHTML = fortunes.map(f=>`<div class="probLine"><span>${f.name}</span><span>${(f.probability*100).toFixed(1)}% (${fortuneCounts[f.name]}回)</span></div>`).join(""); }
+probBtn.addEventListener("click",()=>{ updateProbPopup(); probPopup.classList.toggle("open"); });
+document.body.addEventListener("click", (e)=>{ if(probPopup.classList.contains("open") && e.target!==probBtn && !probPopup.contains(e.target)){ probPopup.classList.remove("open"); } });
 
-// --- おみくじ ---
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
@@ -318,12 +312,7 @@ const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
 let totalCount=0;
 
-function pickFortune(){
-  const rand = Math.random();
-  let sum=0;
-  for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; }
-  return fortunes[fortunes.length-1].name;
-}
+function pickFortune(){ const rand = Math.random(); let sum=0; for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; } return fortunes[fortunes.length-1].name; }
 
 btn.addEventListener("click",()=>{
   btn.style.display="none";
@@ -332,29 +321,18 @@ btn.addEventListener("click",()=>{
   rouletteInner.style.transition='none';
   rouletteInner.style.transform='translateX(0)';
   rouletteInner.offsetHeight;
-
-  for(let i=0;i<20;i++){
-    fortunes.forEach(f=>{
-      const div=document.createElement("div");
-      div.className="fortune"; div.textContent=f.name;
-      rouletteInner.appendChild(div);
-    });
-  }
-
+  for(let i=0;i<20;i++){ fortunes.forEach(f=>{ const div=document.createElement("div"); div.className="fortune"; div.textContent=f.name; rouletteInner.appendChild(div); }); }
   const selectedName = pickFortune();
   const allFortunes = rouletteInner.querySelectorAll(".fortune");
   let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.findIndex(f => f.name === selectedName);
   const selectedDiv = allFortunes[stopIndex];
   const offset = -selectedDiv.offsetLeft + (roulette.offsetWidth / 2) - (selectedDiv.offsetWidth / 2);
   selectedDiv.classList.add('selected');
-
   rouletteInner.style.transition = `transform 1200ms cubic-bezier(0.25,0.1,0.25,1)`;
   rouletteInner.style.transform = `translateX(${offset + 50}px)`;
-
   setTimeout(() => {
     rouletteInner.style.transition = `transform 800ms ease-out`;
     rouletteInner.style.transform = `translateX(${offset}px)`;
-
     setTimeout(() => {
       totalCount++;
       fortuneCounts[selectedName]++;
@@ -372,15 +350,7 @@ btn.addEventListener("click",()=>{
   }, 1200);
 });
 
-// --- 背景色順番用 ---
-const bgColors = ["#fef6f0", "#e6f7ff", "#f0fff0", "#fff0f5", "#fffaf0", "#f5f5dc" , "#ffffff"];
-let bgIndex = 0;
-function nextBackgroundColor(){
-  document.body.style.background = bgColors[bgIndex];
-  bgIndex = (bgIndex + 1) % bgColors.length;
-}
-
-// --- リセットモーダルボタン ---
+const modal = document.getElementById("resetModal");
 const btnYes = document.getElementById("modalYes");
 const btnNo = document.getElementById("modalNo");
 btnYes.addEventListener("click", ()=>{
