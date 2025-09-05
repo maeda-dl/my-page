@@ -16,7 +16,7 @@ html, body {
   overflow-y: hidden;
   transition: background 1s ease;
 }
-#particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:auto; }
+#particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 
 .container {
   position:relative;
@@ -178,62 +178,67 @@ html, body {
 </div>
 
 <script>
-// --- 粒子 + ほうき ---
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth; canvas.height=window.innerHeight;
-
-const particleChars="MAEDA";
-let particles=[];
-for(let i=0;i<100;i++){
-  particles.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height,
-    r:Math.random()*2+1, dx:(Math.random()-0.5)*1.2, dy:(Math.random()-0.5)*1.2,
-    char:particleChars[Math.floor(Math.random()*particleChars.length)]
-  });
-}
-
-// --- ほうき ---
+// --- 粒子アニメーション（ほうき追加） ---
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const particleChars = "MAEDA";
+let particles = [];
 let broom = {
   x: Math.random()*canvas.width,
   y: Math.random()*canvas.height,
-  dx: (Math.random()-0.5)*2,
-  dy: (Math.random()-0.5)*2,
-  size: 24,
-  char: "🧹"
+  dx: (Math.random()-0.5)*1.2,
+  dy: (Math.random()-0.5)*1.2,
+  size: 30
 };
 
+// 粒子生成
+for(let i=0;i<100;i++){
+  particles.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    r: Math.random()*2+1,
+    dx: (Math.random()-0.5)*1.2,
+    dy: (Math.random()-0.5)*1.2,
+    char: particleChars[Math.floor(Math.random()*particleChars.length)]
+  });
+}
+
+// 描画
 function drawParticles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   // 通常粒子
-  ctx.fillStyle="rgba(80,80,80,0.8)";
+  ctx.fillStyle = "rgba(80,80,80,0.8)";
   particles.forEach(p=>{
-    ctx.font=`${p.r*6}px sans-serif`;
+    ctx.font = `${p.r*6}px sans-serif`;
     ctx.fillText(p.char,p.x,p.y);
-    p.x+=p.dx; p.y+=p.dy;
-    if(p.x<0||p.x>canvas.width)p.dx*=-1;
-    if(p.y<0||p.y>canvas.height)p.dy*=-1;
+    p.x += p.dx; p.y += p.dy;
+    if(p.x<0||p.x>canvas.width) p.dx*=-1;
+    if(p.y<0||p.y>canvas.height) p.dy*=-1;
   });
-  // ほうきは最前面に描画
-  ctx.font=`${broom.size}px sans-serif`;
-  ctx.fillText(broom.char,broom.x,broom.y);
-  broom.x+=broom.dx; broom.y+=broom.dy;
-  if(broom.x<0||broom.x>canvas.width)broom.dx*=-1;
-  if(broom.y<0||broom.y>canvas.height)broom.dy*=-1;
+  // ほうき描画
+  ctx.font = `${broom.size}px sans-serif`;
+  ctx.fillText("🧹", broom.x, broom.y);
+  broom.x += broom.dx; broom.y += broom.dy;
+  if(broom.x<0||broom.x>canvas.width) broom.dx*=-1;
+  if(broom.y<broom.size||broom.y>canvas.height) broom.dy*=-1;
 
   requestAnimationFrame(drawParticles);
 }
 drawParticles();
+
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
-// --- ほうきタップ ---
+// ほうきタップでリセットモーダル
 canvas.addEventListener('click', (e)=>{
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
-  const dx = x - broom.x;
-  const dy = y - (broom.y - broom.size*0.8); // 下基準補正
-  if(Math.sqrt(dx*dx + dy*dy) < broom.size){
-    document.getElementById("resetModal").style.display="block";
+  const broomTop = broom.y - broom.size*0.8;
+  const broomLeft = broom.x - broom.size*0.5;
+  if(x > broomLeft && x < broomLeft + broom.size && y > broomTop && y < broomTop + broom.size){
+    document.getElementById("resetModal").style.display = "block";
   }
 });
 
@@ -241,8 +246,7 @@ canvas.addEventListener('click', (e)=>{
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 const dataLine = document.getElementById("dataLine");
-dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=> 
-  `<span style="animation-delay:${i*0.2}s">${c}</span>`).join('');
+dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=> `<span style="animation-delay:${i*0.2}s">${c}</span>`).join('');
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
@@ -308,6 +312,14 @@ const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
 let totalCount=0;
+let bgColors = ["#fef6f0", "#e6f7ff", "#f0fff0", "#fff0f5", "#fffaf0", "#f5f5dc" , "#ffffff"];
+let bgIndex = 0;
+let shakeTimes = 0;
+
+function nextBackgroundColor(){
+  document.body.style.background = bgColors[bgIndex];
+  bgIndex = (bgIndex + 1) % bgColors.length;
+}
 
 function pickFortune(){
   const rand = Math.random();
@@ -358,54 +370,20 @@ btn.addEventListener("click",()=>{
         history.style.display = "block";
         roulette.style.display = "none";
         selectedDiv.classList.remove('selected');
+
+        // 2回振ったら背景変更
+        shakeTimes++;
+        if(shakeTimes>=2){ nextBackgroundColor(); shakeTimes=0; }
+
       }, 3000);
     }, 1300);
   }, 1200);
 });
 
-// --- 背景色順番 ---
-const bgColors = ["#fef6f0", "#e6f7ff", "#f0fff0", "#fff0f5", "#fffaf0", "#f5f5dc" , "#ffffff"];
-let bgIndex = 0;
-function nextBackgroundColor(){
-  document.body.style.background = bgColors[bgIndex];
-  bgIndex = (bgIndex + 1) % bgColors.length;
-}
-
-// --- シェイクによる背景変更 ---
-let shakeTimes = 0;
-let lastShakeTime = 0;
-let lastAcc = {x:0,y:0,z:0};
+// --- モーダルボタン ---
 const modal = document.getElementById("resetModal");
 const btnYes = document.getElementById("modalYes");
 const btnNo = document.getElementById("modalNo");
-const shakeWindow = 500; // 0.5秒
-
-window.addEventListener('devicemotion', (event)=>{
-  const acc = event.accelerationIncludingGravity;
-  if(!acc) return;
-
-  const diffX = acc.x - lastAcc.x;
-  const diffY = acc.y - lastAcc.y;
-  const diffZ = acc.z - lastAcc.z;
-  const totalDiff = Math.sqrt(diffX*diffX + diffY*diffY + diffZ*diffZ);
-  lastAcc = {x: acc.x, y: acc.y, z: acc.z};
-
-  const threshold = 25;
-  const now = Date.now();
-
-  if(totalDiff > threshold){
-    if(now - lastShakeTime <= shakeWindow){
-      shakeTimes++;
-    } else {
-      shakeTimes = 1;
-    }
-    lastShakeTime = now;
-
-    if(shakeTimes === 2){
-      nextBackgroundColor();
-    }
-  }
-});
 
 btnYes.addEventListener("click", ()=>{
   for(let key in fortuneCounts) fortuneCounts[key] = 0;
