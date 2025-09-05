@@ -34,8 +34,14 @@ html, body {
   border: none; border-radius: 50px;
   background: linear-gradient(145deg, #1a2a6c, #0f1b4c); color: #fff; cursor: pointer;
   z-index: 4; display: none; white-space: nowrap; text-align: center; box-sizing: border-box;
+  font-family: 'Playfair Display', serif; /* ← 追加 */
 }
-#probBtn { position: fixed; bottom:20px; right:20px; padding:10px 15px; font-size:16px; border:none; border-radius:8px; background: linear-gradient(145deg, #0f1b4c, #1a2a6c); color:#fff; cursor:pointer; display:none; z-index:4; }
+#probBtn { 
+  position: fixed; 
+  bottom:20px; right:20px; padding:10px 15px; 
+  font-size:16px; 
+  font-family: 'Playfair Display', serif; /* ← 追加 */
+  border:none; border-radius:8px; background: linear-gradient(145deg, #0f1b4c, #1a2a6c); color:#fff; cursor:pointer; display:none; z-index:4; }
 #history { display:none; position: fixed; bottom:20px; left:20px; font-size:16px; background:#fff; color:#0f1b4c; padding:5px 10px; border-radius:8px; max-width:250px; z-index:99999; text-align:center; word-break:break-word; }
 #probPopup { position: fixed; bottom: -500px; left:50%; transform:translateX(-50%); width:280px; max-height:400px; overflow-y:auto; background:#0f1b4c; color:#fff; font-size:16px; padding:15px; z-index:999999; text-align:left; border-radius:16px; border:2px solid silver; box-shadow:0 8px 20px rgba(0,0,0,0.3); transition:bottom 0.4s ease; }
 #probPopup.open { bottom: 80px; }
@@ -315,3 +321,4 @@ document.body.addEventListener("click",(e)=>{
 </script>
 </body>
 </html>
+
