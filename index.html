@@ -75,7 +75,6 @@ html, body {
   color:#fff; cursor:pointer; z-index:4;
   animation: float 3s ease-in-out infinite;
   display:none; white-space:nowrap; text-align:center;
-  position: relative; overflow: hidden; /* 波紋用 */
 }
 @keyframes float { 0%,100%{transform:translate(-50%,0) translateY(0);} 50%{transform:translate(-50%,0) translateY(-10px);} }
 
@@ -130,22 +129,6 @@ html, body {
   font-size:60px; font-weight:bold; text-align:center; display:none; z-index:99999;
   color:#ff4500; text-shadow:2px 2px 10px rgba(0,0,0,0.3);
 }
-
-/* 波紋アニメーション */
-.ripple {
-  position: absolute;
-  border-radius: 50%;
-  transform: scale(0);
-  background: rgba(255,255,255,0.6);
-  animation: ripple-animation 0.6s linear;
-  pointer-events: none;
-}
-@keyframes ripple-animation {
-  to {
-    transform: scale(4);
-    opacity: 0;
-  }
-}
 </style>
 </head>
 <body>
@@ -171,7 +154,7 @@ html, body {
 <div id="probPopup"></div>
 
 <script>
-// 粒子アニメーション
+// --- 粒子アニメーション ---
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
@@ -198,7 +181,7 @@ function drawParticles(){
 drawParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 
-// フェードイン
+// --- フェードイン ---
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 const dataLine = document.getElementById("dataLine");
@@ -207,7 +190,7 @@ dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=>
 fadeIn(document.getElementById("dataLine"),2000);
 fadeIn(document.getElementById("imgA"),5000);
 
-// 画像A/B切替
+// --- 画像A/B切替 ---
 setTimeout(()=>{
   const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
@@ -224,7 +207,7 @@ setTimeout(()=>{
   document.getElementById("probBtn").style.display="inline-block";
 },8000);
 
-// 傾き反応
+// --- 傾き反応 ---
 let targetX=0, targetY=0, currentX=0, currentY=0;
 window.addEventListener('deviceorientation', (e)=>{
   targetY = e.gamma/2;
@@ -238,7 +221,7 @@ function animateTilt(){
 }
 animateTilt();
 
-// 確率詳細
+// --- 確率詳細 ---
 const fortunes=[
   {name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},
   {name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}
@@ -256,19 +239,19 @@ probBtn.addEventListener("click",()=>{
   updateProbPopup();
   probPopup.classList.toggle("open");
 });
+// 他クリックで閉じる
 document.body.addEventListener("click", (e)=>{
   if(probPopup.classList.contains("open") && e.target!==probBtn && !probPopup.contains(e.target)){
     probPopup.classList.remove("open");
   }
 });
 
-// おみくじ処理
+// --- おみくじ ---
 const roulette=document.getElementById("roulette");
 const rouletteInner=document.getElementById("rouletteInner");
 const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
-let totalCount=0;
 
 function pickFortune(){
   const rand = Math.random();
@@ -277,38 +260,8 @@ function pickFortune(){
   return fortunes[fortunes.length-1].name;
 }
 
-// 3回連続トントントンでリセット（猶予0.5秒）
-let tapCount = 0;
-let tapTimer = null;
-
-btn.addEventListener("click",(e)=>{
-  // 波紋作成
-  const ripple = document.createElement("span");
-  ripple.className = "ripple";
-  const rect = btn.getBoundingClientRect();
-  ripple.style.left = (e.clientX - rect.left) + "px";
-  ripple.style.top = (e.clientY - rect.top) + "px";
-  btn.appendChild(ripple);
-  ripple.addEventListener("animationend", ()=>{ ripple.remove(); });
-
-  // --- おみくじ処理 ---
-  tapCount++;
-  clearTimeout(tapTimer);
-  tapTimer = setTimeout(()=>{ tapCount=0; }, 1000);
-
-  if(tapCount >= 3){
-    tapCount = 0;
-    if(confirm("リセットします。おみくじ履歴は削除されます。よろしいですか？")){
-      totalCount=0;
-      for(let f of fortunes){ fortuneCounts[f.name]=0; }
-      history.textContent="";
-      updateProbPopup();
-      alert("リセットしました！");
-    }
-    return;
-  }
-
-  // ルーレット処理
+let totalCount=0;
+btn.addEventListener("click",()=>{
   btn.style.display="none";
   roulette.style.display="block";
   rouletteInner.innerHTML="";
@@ -353,6 +306,48 @@ btn.addEventListener("click",(e)=>{
       }, 3000);
     }, 1300);
   }, 1200);
+});
+
+// --- 背景色パターン ---
+const bgColors = ["#fef6f0", "#e6f7ff", "#f0fff0", "#fff0f5", "#fffaf0", "#f5f5dc", "#f0f8ff"];
+function changeBackgroundColor() {
+  const color = bgColors[Math.floor(Math.random() * bgColors.length)];
+  document.body.style.background = color;
+}
+
+// --- ダブルシェイク判定でリセット ---
+let lastShakeTime = 0;
+let shakeCount = 0;
+
+window.addEventListener('devicemotion', (event) => {
+  const acc = event.accelerationIncludingGravity;
+  if(!acc) return;
+  
+  const threshold = 12;
+  const now = Date.now();
+  
+  const totalAcc = Math.sqrt(acc.x*acc.x + acc.y*acc.y + acc.z*acc.z);
+
+  if(totalAcc > threshold){
+    if(now - lastShakeTime < 1000){
+      shakeCount++;
+      if(shakeCount >= 2){
+        shakeCount = 0;
+        if(confirm("おみくじ履歴をリセットしますか？")){
+          for(let key in fortuneCounts) fortuneCounts[key] = 0;
+          totalCount = 0;
+          history.style.display = "none";
+          resultDisplay.style.display = "none";
+          roulette.style.display = "none";
+          updateProbPopup();
+          changeBackgroundColor();
+        }
+      }
+    } else {
+      shakeCount = 1;
+    }
+    lastShakeTime = now;
+  }
 });
 </script>
 </body>
