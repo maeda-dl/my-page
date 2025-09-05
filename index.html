@@ -157,7 +157,7 @@ setTimeout(()=>{
   document.getElementById("hintBtn").style.display="block";
 },8000);
 
-// --- 💘 一瞬表示 ---
+// --- 💘 一瞬表示（画像Bかつ真下向き） ---
 let heartTimeout = null;
 const heartEl = document.createElement('div');
 heartEl.textContent = '💘';
@@ -169,11 +169,10 @@ heartEl.style.display = 'none';
 document.body.appendChild(heartEl);
 
 function showHeart(beta){
-  if(beta <= 50) return; // 手前に傾けた角度が50度以上
-  const imgA = document.getElementById("imgA");
   const imgB = document.getElementById("imgB");
-  const img = imgA.style.opacity==1 ? imgA : imgB;
-  const rect = img.getBoundingClientRect();
+  if(imgB.style.opacity != "1") return; // 画像Bでない場合は非表示
+  if(beta < 160 || beta > 200) return; // 真下でない場合は非表示
+  const rect = imgB.getBoundingClientRect();
   if(heartTimeout) clearTimeout(heartTimeout);
   heartEl.style.left = `${rect.left + rect.width/2 - 10}px`;
   heartEl.style.top = `${rect.top + 35}px`;
@@ -184,14 +183,20 @@ function showHeart(beta){
 // --- 傾き ---
 let targetX=0,targetY=0,currentX=0,currentY=0;
 window.addEventListener('deviceorientation', (e)=>{ 
-  targetY=e.gamma/2; 
-  targetX=e.beta/3; 
+  targetY = e.gamma/2; 
+  targetX = e.beta/3; 
   showHeart(e.beta); // 💘 表示
 });
-function animateTilt(){ currentY+=(targetY-currentY)*0.15; currentX+=(targetX-currentX)*0.15; document.querySelector('.container').style.transform=`rotateX(${currentX}deg) rotateY(${currentY}deg)`; requestAnimationFrame(animateTilt);}
+function animateTilt(){ 
+  currentY += (targetY - currentY)*0.15; 
+  currentX += (targetX - currentX)*0.15; 
+  document.querySelector('.container').style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`; 
+  requestAnimationFrame(animateTilt);
+}
 animateTilt();
 
-// --- 以下、おみくじ・確率・背景色・シェイク・長押し・ヒント など前回のコードと同じ ---
+// --- 以下、おみくじ・確率・背景色・シェイク・長押し・ヒントなど既存コードと同じ ---
+// （必要に応じて前回のコードをこの下に追加）
 </script>
 </body>
 </html>
