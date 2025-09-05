@@ -43,6 +43,7 @@ html, body {
   letter-spacing: 2px;
   perspective: 500px;
   position:relative;
+  touch-action: none;
 }
 #dataLine span {
   color: navy;
@@ -161,13 +162,7 @@ html, body {
 /* --- ヒントマーク --- */
 #hint {
   position: fixed; top:20px; right:20px;
-  width:32px; height:32px;
-  background:#ffcc00;
-  border-radius:50%;
-  text-align:center;
-  line-height:32px;
-  font-weight:bold;
-  font-size:24px;
+  font-size:28px;
   cursor:pointer;
   z-index:999999;
   display:none;
@@ -209,7 +204,7 @@ html, body {
 
 <div id="broom">🧹</div>
 
-<div id="hint">?</div>
+<div id="hint">🔔</div>
 <div id="hintMessage">ある機能が隠れてるよ<br>色々操作してさがしてね<br>①背景色変え<br>②おみくじリセット</div>
 
 <script>
@@ -312,14 +307,12 @@ const resultDisplay=document.getElementById("resultDisplay");
 const history=document.getElementById("history");
 const btn=document.getElementById("omikujiBtn");
 let totalCount=0;
-
 function pickFortune(){
   const rand = Math.random();
   let sum=0;
   for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; }
   return fortunes[fortunes.length-1].name;
 }
-
 btn.addEventListener("click",()=>{
   btn.style.display="none";
   roulette.style.display="block";
@@ -383,20 +376,16 @@ const modal = document.getElementById("resetModal");
 const btnYes = document.getElementById("modalYes");
 const btnNo = document.getElementById("modalNo");
 const shakeWindow = 500; // 0.5秒
-
 window.addEventListener('devicemotion', (event)=>{
   const acc = event.accelerationIncludingGravity;
   if(!acc) return;
-
   const diffX = acc.x - lastAcc.x;
   const diffY = acc.y - lastAcc.y;
   const diffZ = acc.z - lastAcc.z;
   const totalDiff = Math.sqrt(diffX*diffX + diffY*diffY + diffZ*diffZ);
   lastAcc = {x: acc.x, y: acc.y, z: acc.z};
-
-  const threshold = 25;
+  const threshold = 15; // iPhoneに合わせ調整
   const now = Date.now();
-
   if(totalDiff > threshold){
     if(now - lastShakeTime <= shakeWindow){
       shakeTimes++;
@@ -404,7 +393,6 @@ window.addEventListener('devicemotion', (event)=>{
       shakeTimes = 1;
     }
     lastShakeTime = now;
-
     if(shakeTimes === 2){
       nextBackgroundColor();
     }
@@ -427,6 +415,7 @@ dataLine.addEventListener("touchmove", e=>{
 dataLine.addEventListener("touchend", e=>{
   broom.style.display = "none";
   modal.style.display = "block";
+  document.body.style.background="#ffffff"; // リセット時に白
 });
 
 // --- モーダルボタン ---
@@ -437,7 +426,6 @@ btnYes.addEventListener("click", ()=>{
   resultDisplay.style.display = "none";
   roulette.style.display = "none";
   updateProbPopup();
-  nextBackgroundColor();
   modal.style.display = "none";
 });
 btnNo.addEventListener("click", ()=>{ modal.style.display = "none"; });
