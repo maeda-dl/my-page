@@ -66,32 +66,24 @@ html, body {
   border-radius:10px;
 }
 
-/* おみくじボタン */
 #omikujiBtn {
   position: fixed; bottom: 20%; left:50%; transform:translate(-50%,0);
   width:max-content; padding:12px 25px; font-size:22px; font-weight:bold;
+  font-family: 'Playfair Display', serif;
+  border:none; border-radius:50px;
   background: linear-gradient(145deg, #1a2a6c, #0f1b4c);
-  color:#fff; cursor:pointer;
+  color:#fff; cursor:pointer; z-index:4;
   animation: float 3s ease-in-out infinite;
   display:none; white-space:nowrap; text-align:center;
-
-  /* シルバー枠風 */
-  border: 2px solid silver;
-  border-radius: 50px;
-  box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
 }
 @keyframes float { 0%,100%{transform:translate(-50%,0) translateY(0);} 50%{transform:translate(-50%,0) translateY(-10px);} }
 
-/* 確率詳細ボタン */
 #probBtn {
   position: fixed; bottom:20px; right:20px;
-  font-size:16px; padding:10px 15px; border:none; border-radius:8px;
+  font-family: 'Playfair Display', serif;
+  padding:10px 15px; font-size:16px; border:none; border-radius:8px;
   background: linear-gradient(145deg, #0f1b4c, #1a2a6c);
-  color:#fff; cursor:pointer; display:none;
-
-  /* シルバー枠風 */
-  border: 2px solid silver;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+  color:#fff; cursor:pointer; display:none; z-index:4;
 }
 
 #history {
@@ -101,10 +93,10 @@ html, body {
   text-align:center; word-break:break-word;
 }
 
-/* 確率詳細ポップアップ */
+/* 確率ポップアップ */
 #probPopup {
   position: fixed;
-  bottom: -500px;
+  bottom: -500px; /* 初期は画面下に隠す */
   left:50%;
   transform: translateX(-50%);
   width:280px; max-height:400px; overflow-y:auto;
@@ -112,13 +104,13 @@ html, body {
   color:#fff; font-size:16px; padding:15px;
   z-index:999999; text-align:left;
   border-radius:16px;
-
-  /* シルバー枠風 */
   border: 2px solid silver;
   box-shadow:0 8px 20px rgba(0,0,0,0.3);
-  transition: bottom 0.4s ease;
+  transition: bottom 0.4s ease; /* スライド用トランジション */
 }
-#probPopup.open { bottom: 80px; }
+#probPopup.open {
+  bottom: 80px; /* 出現位置 */
+}
 #probPopup .probLine {
   display:flex; justify-content:space-between; 
   padding:6px 10px; margin:5px 0;
@@ -127,43 +119,15 @@ html, body {
   font-weight:bold;
 }
 
-/* ルーレット */
-#roulette {
-  position: fixed; bottom:30%; left:50%; transform:translateX(-50%);
+#roulette { position: fixed; bottom:30%; left:50%; transform:translateX(-50%);
   width:90%; max-width:200px; height:70px; display:none; align-items:center; justify-content:center;
-  background:#fefefe;
-  border-radius:30px;
-
-  /* シルバー枠風 */
-  border: 2px solid silver;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.25);
+  z-index:99998; border-radius:30px; overflow:hidden; background:#fefefe; border:3px solid #0f1b4c;
 }
 #rouletteInner { display:flex; white-space:nowrap; font-size:28px; font-weight:bold; will-change: transform; }
 .fortune { min-width:130px; height:60px; margin:0 5px; color:#0f1b4c; font-size:22px; display:flex; align-items:center; justify-content:center; }
 #resultDisplay { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
   font-size:60px; font-weight:bold; text-align:center; display:none; z-index:99999;
   color:#ff4500; text-shadow:2px 2px 10px rgba(0,0,0,0.3);
-}
-/* カスタム確認ダイアログ */
-#resetDialog {
-  position: fixed;
-  top:50%; left:50%; transform:translate(-50%,-50%);
-  width:300px; background:#0f1b4c; color:#fff;
-  border-radius:16px;
-  padding:20px; text-align:center;
-  display:none; z-index:100000;
-
-  /* シルバー枠風 */
-  border: 2px solid silver;
-  box-shadow:0 8px 20px rgba(0,0,0,0.3);
-}
-#resetDialog button {
-  padding:8px 16px; font-size:16px; margin:0 10px;
-  font-weight:bold; border-radius:8px; cursor:pointer;
-  border:2px solid silver;
-  background: linear-gradient(145deg, #1a2a6c, #0f1b4c);
-  color:#fff;
-  box-shadow:1px 1px 5px rgba(0,0,0,0.2);
 }
 </style>
 </head>
@@ -275,6 +239,7 @@ probBtn.addEventListener("click",()=>{
   updateProbPopup();
   probPopup.classList.toggle("open");
 });
+// 他クリックで閉じる
 document.body.addEventListener("click", (e)=>{
   if(probPopup.classList.contains("open") && e.target!==probBtn && !probPopup.contains(e.target)){
     probPopup.classList.remove("open");
@@ -343,31 +308,32 @@ btn.addEventListener("click",()=>{
   }, 1200);
 });
 
-// 🔹 長押し5秒で確認ダイアログ
+// 長押しで履歴リセット
 let pressTimer;
-const resetDialog = document.getElementById("resetDialog");
-const resetYes = document.getElementById("resetYes");
-const resetNo = document.getElementById("resetNo");
+btn.addEventListener("mousedown", startPress);
+btn.addEventListener("touchstart", startPress);
 
-function startPress() {
-  pressTimer = setTimeout(() => {
-    resetDialog.style.display = "block";
-  }, 5000);
+btn.addEventListener("mouseup", cancelPress);
+btn.addEventListener("mouseleave", cancelPress);
+btn.addEventListener("touchend", cancelPress);
+btn.addEventListener("touchcancel", cancelPress);
+
+function startPress(e){
+  e.preventDefault();
+  pressTimer = setTimeout(()=>{
+    if(confirm("おみくじ履歴がクリアされます。\n本当にリセットしますか？")){
+      totalCount = 0;
+      for(let key in fortuneCounts){ fortuneCounts[key]=0; }
+      history.textContent = "";
+      updateProbPopup();
+      alert("履歴をリセットしました。");
+    }
+  },5000); // 5秒長押し
 }
-function cancelPress() {
+
+function cancelPress(){
   clearTimeout(pressTimer);
 }
-
-document.body.addEventListener("mousedown", startPress);
-document.body.addEventListener("mouseup", cancelPress);
-document.body.addEventListener("mouseleave", cancelPress);
-document.body.addEventListener("touchstart", startPress);
-document.body.addEventListener("touchend", cancelPress);
-document.body.addEventListener("touchcancel", cancelPress);
-
-resetYes.addEventListener("click", ()=> location.reload());
-resetNo.addEventListener("click", ()=> resetDialog.style.display="none");
 </script>
 </body>
 </html>
-
