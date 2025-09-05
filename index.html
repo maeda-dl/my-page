@@ -30,19 +30,20 @@ html, body {
   bottom: 20%;
   left: 50%;
   transform: translate(-50%,0);
-  width:180px;          /* 横幅少し広げる */
-  padding:12px 20px;
-  font-size:22px;
-  font-weight:bold;
-  border:none;
-  border-radius:50px;
+  min-width: 200px;      /* 最小幅を広めに */
+  padding: 12px 25px;    /* 左右の余白を広げる */
+  font-size: 22px;
+  font-weight: bold;
+  border: none;
+  border-radius: 50px;
   background: linear-gradient(145deg, #1a2a6c, #0f1b4c);
-  color:#fff;
-  cursor:pointer;
-  z-index:4;
-  display:none;
-  white-space:nowrap;
-  text-align:center;     /* 追加 */
+  color: #fff;
+  cursor: pointer;
+  z-index: 4;
+  display: none;
+  white-space: nowrap;
+  text-align: center;
+  box-sizing: border-box; /* パディングを含めて幅計算 */
 }
 #probBtn { position: fixed; bottom:20px; right:20px; padding:10px 15px; font-size:16px; border:none; border-radius:8px; background: linear-gradient(145deg, #0f1b4c, #1a2a6c); color:#fff; cursor:pointer; display:none; z-index:4; }
 #history { display:none; position: fixed; bottom:20px; left:20px; font-size:16px; background:#fff; color:#0f1b4c; padding:5px 10px; border-radius:8px; max-width:250px; z-index:99999; text-align:center; word-break:break-word; }
@@ -325,5 +326,6 @@ document.body.addEventListener("click",initDeviceMotion,{once:true});
 </script>
 </body>
 </html>
+
 
 
