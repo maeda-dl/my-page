@@ -209,4 +209,177 @@ window.addEventListener("resize",()=>{canvas.width=window.innerWidth; canvas.hei
 function fadeIn(el,delay){ setTimeout(()=>{el.style.opacity=1;}, delay); }
 fadeIn(document.getElementById("msg1"),500);
 const dataLine = document.getElementById("dataLine");
-data
+dataLine.innerHTML = dataLine.textContent.split('').map((c,i)=> 
+  `<span style="animation-delay:${i*0.2}s">${c}</span>`).join('');
+fadeIn(document.getElementById("dataLine"),2000);
+fadeIn(document.getElementById("imgA"),5000);
+
+// --- 画像A/B切替 ---
+setTimeout(()=>{
+  const imgA = document.getElementById("imgA");
+  const imgB = document.getElementById("imgB");
+  const name = document.getElementById("name");
+  imgA.style.zIndex = 2; imgB.style.zIndex = 1;
+  imgA.style.opacity = 1; imgB.style.opacity = 0; name.style.opacity = 1;
+  let showA = true;
+  setInterval(()=>{
+    showA = !showA;
+    if(showA){ imgA.style.zIndex=2; imgB.style.zIndex=1; imgA.style.opacity=1; imgB.style.opacity=0; }
+    else { imgB.style.zIndex=2; imgA.style.zIndex=1; imgB.style.opacity=1; imgA.style.opacity=0; }
+  },2000);
+  document.getElementById("omikujiBtn").style.display="inline-block";
+  document.getElementById("probBtn").style.display="inline-block";
+},8000);
+
+// --- 傾き反応 ---
+let targetX=0, targetY=0, currentX=0, currentY=0;
+window.addEventListener('deviceorientation', (e)=>{
+  targetY = e.gamma/2;
+  targetX = e.beta/3;
+});
+function animateTilt(){
+  currentY += (targetY - currentY)*0.15;
+  currentX += (targetX - currentX)*0.15;
+  document.querySelector('.container').style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
+  requestAnimationFrame(animateTilt);
+}
+animateTilt();
+
+// --- 確率詳細 ---
+const fortunes=[
+  {name:"大吉 🎉",probability:0.05},{name:"中吉 😀",probability:0.1},{name:"小吉 🙂",probability:0.2},
+  {name:"吉 😊",probability:0.4},{name:"末吉 😌",probability:0.2},{name:"凶 😱",probability:0.04},{name:"大凶 💀",probability:0.01}
+];
+const fortuneCounts = {};
+fortunes.forEach(f=>fortuneCounts[f.name]=0);
+const probBtn=document.getElementById("probBtn");
+const probPopup=document.getElementById("probPopup");
+function updateProbPopup(){
+  probPopup.innerHTML = fortunes.map(f=>
+    `<div class="probLine"><span>${f.name}</span><span>${(f.probability*100).toFixed(1)}% (${fortuneCounts[f.name]}回)</span></div>`
+  ).join("");
+}
+probBtn.addEventListener("click",()=>{
+  updateProbPopup();
+  probPopup.classList.toggle("open");
+});
+document.body.addEventListener("click", (e)=>{
+  if(probPopup.classList.contains("open") && e.target!==probBtn && !probPopup.contains(e.target)){
+    probPopup.classList.remove("open");
+  }
+});
+
+// --- おみくじ ---
+const roulette=document.getElementById("roulette");
+const rouletteInner=document.getElementById("rouletteInner");
+const resultDisplay=document.getElementById("resultDisplay");
+const history=document.getElementById("history");
+const btn=document.getElementById("omikujiBtn");
+let totalCount=0;
+
+function pickFortune(){
+  const rand = Math.random();
+  let sum=0;
+  for(let f of fortunes){ sum+=f.probability; if(rand<=sum) return f.name; }
+  return fortunes[fortunes.length-1].name;
+}
+
+btn.addEventListener("click",()=>{
+  btn.style.display="none";
+  roulette.style.display="block";
+  rouletteInner.innerHTML="";
+  rouletteInner.style.transition='none';
+  rouletteInner.style.transform='translateX(0)';
+  rouletteInner.offsetHeight;
+
+  for(let i=0;i<20;i++){
+    fortunes.forEach(f=>{
+      const div=document.createElement("div");
+      div.className="fortune"; div.textContent=f.name;
+      rouletteInner.appendChild(div);
+    });
+  }
+
+  const selectedName = pickFortune();
+  const allFortunes = rouletteInner.querySelectorAll(".fortune");
+  let stopIndex = Math.floor(allFortunes.length * 0.8) + fortunes.findIndex(f => f.name === selectedName);
+  const selectedDiv = allFortunes[stopIndex];
+  const offset = -selectedDiv.offsetLeft + (roulette.offsetWidth / 2) - (selectedDiv.offsetWidth / 2);
+  selectedDiv.classList.add('selected');
+
+  rouletteInner.style.transition = `transform 1200ms cubic-bezier(0.25,0.1,0.25,1)`;
+  rouletteInner.style.transform = `translateX(${offset + 50}px)`;
+
+  setTimeout(() => {
+    rouletteInner.style.transition = `transform 800ms ease-out`;
+    rouletteInner.style.transform = `translateX(${offset}px)`;
+
+    setTimeout(() => {
+      totalCount++;
+      fortuneCounts[selectedName]++;
+      resultDisplay.textContent = selectedName;
+      resultDisplay.style.display = "block";
+      setTimeout(() => {
+        resultDisplay.style.display = "none";
+        btn.style.display = "inline-block";
+        history.textContent = `${selectedName}（${fortuneCounts[selectedName]}回目 / ${totalCount}回中）`;
+        history.style.display = "block";
+        roulette.style.display = "none";
+        selectedDiv.classList.remove('selected');
+      }, 3000);
+    }, 1300);
+  }, 1200);
+});
+
+// --- 背景色順番用 ---
+const bgColors = ["#fef6f0", "#e6f7ff", "#f0fff0", "#fff0f5", "#fffaf0", "#f5f5dc" , "#ffffff"];
+let bgIndex = 0;
+function nextBackgroundColor(){
+  document.body.style.background = bgColors[bgIndex];
+  bgIndex = (bgIndex + 1) % bgColors.length;
+}
+
+// --- シェイク判定（2回で背景、4回でリセット） ---
+let shakeTimes = 0;
+let lastAcc = {x:0,y:0,z:0};
+const modal = document.getElementById("resetModal");
+const btnYes = document.getElementById("modalYes");
+const btnNo = document.getElementById("modalNo");
+
+window.addEventListener('devicemotion', (event)=>{
+  const acc = event.accelerationIncludingGravity;
+  if(!acc) return;
+
+  const diffX = acc.x - lastAcc.x;
+  const diffY = acc.y - lastAcc.y;
+  const diffZ = acc.z - lastAcc.z;
+  const totalDiff = Math.sqrt(diffX*diffX + diffY*diffY + diffZ*diffZ);
+
+  lastAcc = {x: acc.x, y: acc.y, z: acc.z};
+
+  const threshold = 25;
+  if(totalDiff > threshold){
+    shakeTimes++;
+    if(shakeTimes === 2){
+      nextBackgroundColor(); // 背景変更
+    } else if(shakeTimes >= 4){
+      modal.style.display = "block"; // リセットモーダル
+      shakeTimes = 0;
+    }
+  }
+});
+
+btnYes.addEventListener("click", ()=>{
+  for(let key in fortuneCounts) fortuneCounts[key] = 0;
+  totalCount = 0;
+  history.style.display = "none";
+  resultDisplay.style.display = "none";
+  roulette.style.display = "none";
+  updateProbPopup();
+  nextBackgroundColor();
+  modal.style.display = "none";
+});
+btnNo.addEventListener("click", ()=>{ modal.style.display = "none"; });
+</script>
+</body>
+</html>
