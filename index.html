@@ -11,7 +11,7 @@ html, body {
   margin:0; padding:0; height:100%;
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  background: #ffffff;
+  background: #ffffff; /* 初期白 */
   overflow-x: hidden;
   overflow-y: hidden;
 }
@@ -108,16 +108,8 @@ html, body {
   box-shadow:0 8px 20px rgba(0,0,0,0.3);
   transition: bottom 0.4s ease;
 }
-#probPopup.open {
-  bottom: 80px;
-}
-#probPopup .probLine {
-  display:flex; justify-content:space-between; 
-  padding:6px 10px; margin:5px 0;
-  background:rgba(255,255,255,0.05);
-  border-radius:6px;
-  font-weight:bold;
-}
+#probPopup.open { bottom: 80px; }
+#probPopup .probLine { display:flex; justify-content:space-between; padding:6px 10px; margin:5px 0; background:rgba(255,255,255,0.05); border-radius:6px; font-weight:bold; }
 
 #roulette { position: fixed; bottom:30%; left:50%; transform:translateX(-50%);
   width:90%; max-width:200px; height:70px; display:none; align-items:center; justify-content:center;
@@ -178,7 +170,6 @@ html, body {
 <button id="probBtn">確率詳細</button>
 <div id="probPopup"></div>
 
-<!-- モーダル -->
 <div id="resetModal">
   <p>おみくじ履歴をリセットしますか？</p>
   <button id="modalYes">Yes</button>
@@ -339,17 +330,18 @@ btn.addEventListener("click",()=>{
   }, 1200);
 });
 
-// --- 背景色順番用 ---
-const bgColors = ["#fef6f0", "#e6f7ff", "#f0fff0", "#fff0f5", "#fffaf0", "#f5f5dc", "#f0f8ff"];
+// --- 背景色順番用（白を標準） ---
+const bgColors = ["#ffffff", "#fef6f0", "#e6f7ff", "#f0fff0", "#fff0f5", "#fffaf0", "#f5f5dc"];
 let bgIndex = 0;
 function nextBackgroundColor(){
   document.body.style.background = bgColors[bgIndex];
   bgIndex = (bgIndex + 1) % bgColors.length;
 }
 
-// --- モーダル＋ダブルシェイク判定 ---
+// --- モーダル＋ダブルシェイク判定（感度調整済） ---
 let lastShakeTime = 0;
 let shakeCount = 0;
+let lastAcc = {x:0,y:0,z:0};
 const modal = document.getElementById("resetModal");
 const btnYes = document.getElementById("modalYes");
 const btnNo = document.getElementById("modalNo");
@@ -358,12 +350,18 @@ window.addEventListener('devicemotion', (event) => {
   const acc = event.accelerationIncludingGravity;
   if(!acc) return;
 
-  const threshold = 25;
-  const now = Date.now();
-  const totalAcc = Math.sqrt(acc.x*acc.x + acc.y*acc.y + acc.z*acc.z);
+  const diffX = acc.x - lastAcc.x;
+  const diffY = acc.y - lastAcc.y;
+  const diffZ = acc.z - lastAcc.z;
+  const totalDiff = Math.sqrt(diffX*diffX + diffY*diffY + diffZ*diffZ);
 
-  if(totalAcc > threshold){
-    if(now - lastShakeTime < 1000){
+  lastAcc = {x: acc.x, y: acc.y, z: acc.z};
+
+  const threshold = 25; // 感度調整：軽い揺れでは反応しにくい
+  const now = Date.now();
+
+  if(totalDiff > threshold){
+    if(now - lastShakeTime < 1000){ // 1秒以内に2回
       shakeCount++;
       if(shakeCount >= 2){
         shakeCount = 0;
@@ -393,4 +391,3 @@ btnNo.addEventListener("click", ()=>{
 </script>
 </body>
 </html>
-
